@@ -1,0 +1,91 @@
+apply plugin: 'com.android.application'
+apply plugin: 'com.google.gms.google-services'
+
+android {
+    compileSdkVersion 28
+
+    defaultConfig {
+        applicationId "cn.rongcloud.im"
+        minSdkVersion 16
+        targetSdkVersion 28
+        versionCode 1
+        versionName "1.0"
+        flavorDimensions "versionCode"
+        multiDexEnabled true
+        ndk {
+            abiFilters "armeabi-v7a", "x86"
+        }
+    }
+
+    configurations.all {
+        resolutionStrategy.eachDependency { details ->
+            def requested = details.requested
+            if (requested.group == 'com.android.support') {
+                if (!requested.name.startsWith("multidex")) {
+                    details.useVersion '26.0.0'
+                }
+            }
+        }
+    }
+
+    signingConfigs {
+        config {
+            storeFile file("rong.key")
+            storePassword "Amigo123"
+            keyAlias "RongCloud"
+            keyPassword "Amigo123"
+        }
+    }
+
+    sourceSets {
+        main {
+            jni.srcDirs = []
+            jniLibs.srcDirs = ['libs']
+        }
+    }
+
+    packagingOptions {
+        exclude 'AndroidManifest.xml'
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            signingConfig signingConfigs.config //for release
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+        debug {
+            minifyEnabled false
+            signingConfig signingConfigs.config //for release
+        }
+    }
+
+    lintOptions {
+        checkReleaseBuilds false
+
+        abortOnError false
+    }
+
+    dexOptions {
+        javaMaxHeapSize "4g"
+    }
+}
+
+dependencies {
+    api fileTree(include: ['*.jar'], dir: 'libs')
+    api 'com.android.support:support-v4:28.0.0'
+    api project(':recognizer')
+    api project(':contactcard')
+    api project(':RedPacket')
+    api project(':CallKit')
+    api project(':IMKit')
+    api project(':RCSticker')
+    api project(':Sight')
+    api 'com.android.support:multidex:1.0.1'
+    api 'com.facebook.stetho:stetho:1.4.1'
+    api 'com.huawei.android.hms:push:2.6.1.301'
+    api 'com.meizu.flyme.internet:push-internal:3.6.+@aar'
+    api 'com.google.firebase:firebase-messaging:17.6.0'
+    api 'com.google.android.gms:play-services:12.0.1'
+}
+
