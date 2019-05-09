@@ -36,14 +36,12 @@ android {
             keyPassword "Amigo123"
         }
     }
-
     sourceSets {
         main {
             jni.srcDirs = []
             jniLibs.srcDirs = ['libs']
         }
     }
-
     packagingOptions {
         exclude 'AndroidManifest.xml'
     }
@@ -65,10 +63,17 @@ android {
 
         abortOnError false
     }
-
     dexOptions {
         javaMaxHeapSize "4g"
     }
+
+//    configurations {
+//        all*.exclude group: 'com.google.code.gson'
+//        all*.exclude group: 'com.squareup.okhttp3'
+//        all*.exclude group: 'com.squareup.okio'
+//        all*.exclude group: 'com.android.support',module:'support-v13'
+//    }
+
 }
 
 dependencies {
@@ -82,10 +87,30 @@ dependencies {
     api project(':RCSticker')
     api project(':Sight')
     api 'com.android.support:multidex:1.0.1'
-    api 'com.facebook.stetho:stetho:1.4.1'
+//    api 'com.facebook.stetho:stetho:1.4.1'
     api 'com.huawei.android.hms:push:2.6.1.301'
     api 'com.meizu.flyme.internet:push-internal:3.6.+@aar'
     api 'com.google.firebase:firebase-messaging:17.6.0'
     api 'com.google.android.gms:play-services:12.0.1'
+
+
+    // ext
+    //    rxJava
+    api 'io.reactivex.rxjava2:rxjava:2.1.9'
+    api 'io.reactivex.rxjava2:rxandroid:2.0.2'
+//    api 'com.jakewharton.rxbinding2:rxbinding:2.1.1'
+//    // If you want pre-written Activities and Fragments you can subclass as providers
+//    api 'com.trello.rxlifecycle2:rxlifecycle-components:2.2.1'
+//    //    log
+//    api 'com.orhanobut:logger:2.2.0'
+    //    net
+    api 'com.squareup.retrofit2:retrofit:2.3.0'
+    api 'com.squareup.retrofit2:converter-gson:2.3.0'
+    api 'com.squareup.retrofit2:adapter-rxjava2:2.3.0'
+    api 'com.squareup.okhttp3:okhttp:3.10.0'
+    api 'com.squareup.okhttp3:logging-interceptor:3.9.0'
+    //    图片
+//    api 'com.github.bumptech.glide:glide:4.7.1'
+//    annotationProcessor 'com.github.bumptech.glide:compiler:4.7.1'
 }
 

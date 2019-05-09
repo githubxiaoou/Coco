@@ -28,11 +28,17 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.concurrent.TimeUnit;
 
 import cn.rongcloud.im.App;
 import cn.rongcloud.im.R;
 import cn.rongcloud.im.SealConst;
 import cn.rongcloud.im.SealUserInfoManager;
+import cn.rongcloud.im.model.NetData;
+import cn.rongcloud.im.net.HttpUtil;
+import cn.rongcloud.im.server.BaseAction;
 import cn.rongcloud.im.server.broadcast.BroadcastManager;
 import cn.rongcloud.im.server.network.http.HttpException;
 import cn.rongcloud.im.server.response.QiNiuTokenResponse;
@@ -42,9 +48,22 @@ import cn.rongcloud.im.server.utils.photo.PhotoUtils;
 import cn.rongcloud.im.server.widget.BottomMenuDialog;
 import cn.rongcloud.im.server.widget.LoadDialog;
 import cn.rongcloud.im.server.widget.SelectableRoundedImageView;
+import io.reactivex.Scheduler;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Action;
+import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
 import io.rong.imageloader.core.ImageLoader;
 import io.rong.imkit.RongIM;
 import io.rong.imlib.model.UserInfo;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 
 public class MyAccountActivity extends BaseActivity implements View.OnClickListener {
@@ -110,7 +129,10 @@ public class MyAccountActivity extends BaseActivity implements View.OnClickListe
                 if (uri != null && !TextUtils.isEmpty(uri.getPath())) {
                     selectUri = uri;
                     LoadDialog.show(mContext);
-                    request(GET_QI_NIU_TOKEN);
+                    // 原来的
+//                    request(GET_QI_NIU_TOKEN);
+                    // 改成直接上传图片
+                    uploadImage(selectUri);
                 }
             }
 
@@ -170,10 +192,10 @@ public class MyAccountActivity extends BaseActivity implements View.OnClickListe
                     LoadDialog.dismiss(mContext);
                     break;
                 case GET_QI_NIU_TOKEN:
-                    QiNiuTokenResponse response = (QiNiuTokenResponse) result;
-                    if (response.getCode() == 200) {
-                        uploadImage(response.getResult().getDomain(), response.getResult().getToken(), selectUri);
-                    }
+//                    QiNiuTokenResponse response = (QiNiuTokenResponse) result;
+//                    if (response.getCode() == 200) {
+//                        uploadImage(response.getResult().getDomain(), response.getResult().getToken(), selectUri);
+//                    }
                     break;
             }
         }
@@ -273,35 +295,79 @@ public class MyAccountActivity extends BaseActivity implements View.OnClickListe
     }
 
 
-    public void uploadImage(final String domain, String imageToken, Uri imagePath) {
-        if (TextUtils.isEmpty(domain) && TextUtils.isEmpty(imageToken) && TextUtils.isEmpty(imagePath.toString())) {
-            throw new RuntimeException("upload parameter is null!");
-        }
-        File imageFile = new File(imagePath.getPath());
+//    public void uploadImage(final String domain, String imageToken, Uri imagePath) {
+//        if (TextUtils.isEmpty(domain) && TextUtils.isEmpty(imageToken) && TextUtils.isEmpty(imagePath.toString())) {
+//            throw new RuntimeException("upload parameter is null!");
+//        }
+//        File imageFile = new File(imagePath.getPath());
+//
+//        if (this.uploadManager == null) {
+//            this.uploadManager = new UploadManager();
+//        }
+//        this.uploadManager.put(imageFile, null, imageToken, new UpCompletionHandler() {
+//
+//            @Override
+//            public void complete(String s, ResponseInfo responseInfo, JSONObject jsonObject) {
+//                if (responseInfo.isOK()) {
+//                    try {
+//                        String key = (String) jsonObject.get("key");
+//                        imageUrl = "http://" + domain + "/" + key;
+//                        Log.e("uploadImage", imageUrl);
+//                        if (!TextUtils.isEmpty(imageUrl)) {
+//                            request(UP_LOAD_PORTRAIT);
+//                        }
+//                    } catch (JSONException e) {
+//                        e.printStackTrace();
+//                    }
+//                } else {
+//                    NToast.shortToast(mContext, getString(R.string.upload_portrait_failed));
+//                    LoadDialog.dismiss(mContext);
+//                }
+//            }
+//        }, null);
+//    }
 
-        if (this.uploadManager == null) {
-            this.uploadManager = new UploadManager();
+    public void uploadImage(Uri imagePath) {
+        File imageFile = new File("file:/storage/emulated/0/crop_file.jpg");
+        if (!imageFile.isFile()) {
+            return;
         }
-        this.uploadManager.put(imageFile, null, imageToken, new UpCompletionHandler() {
+        RequestBody body = RequestBody.create(MediaType.parse("image/jpeg"), imageFile);
+        OkHttpClient client = new OkHttpClient();
+        MultipartBody.Builder builder = new MultipartBody.Builder();
+        //设置类型
+        builder.setType(MultipartBody.FORM);
+        MultipartBody photo = builder.addFormDataPart("photo", imageFile.getName(), body).build();
+        Request request = new Request.Builder().url(BaseAction.DOMAIN + "/" + "image/upload").post(photo).build();
+        Call call = client.newBuilder().writeTimeout(60, TimeUnit.SECONDS).build().newCall(request);
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.e("swo", e.toString());
+            }
 
             @Override
-            public void complete(String s, ResponseInfo responseInfo, JSONObject jsonObject) {
-                if (responseInfo.isOK()) {
-                    try {
-                        String key = (String) jsonObject.get("key");
-                        imageUrl = "http://" + domain + "/" + key;
-                        Log.e("uploadImage", imageUrl);
-                        if (!TextUtils.isEmpty(imageUrl)) {
-                            request(UP_LOAD_PORTRAIT);
-                        }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                } else {
-                    NToast.shortToast(mContext, getString(R.string.upload_portrait_failed));
-                    LoadDialog.dismiss(mContext);
-                }
+            public void onResponse(Call call, Response response) throws IOException {
+                Log.e("swo", response.toString());
             }
-        }, null);
+        });
+
+        //        MultipartBody.Part file = MultipartBody.Part.createFormData("photo", imageFile.getName(), body);
+//        HttpUtil.apiS().uploadImageInfo(file)
+//                .subscribeOn(Schedulers.io())
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .doOnTerminate(new Action() {
+//                    @Override
+//                    public void run() throws Exception {
+//                        LoadDialog.dismiss(mContext);
+//                    }
+//                })
+//                .subscribe(new Consumer<NetData<String>>() {
+//                    @Override
+//                    public void accept(NetData<String> stringNetData) throws Exception {
+//                        NToast.shortToast(mContext, stringNetData.data);
+//                    }
+//                });
     }
+
 }

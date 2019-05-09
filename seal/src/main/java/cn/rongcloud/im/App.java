@@ -15,10 +15,10 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 
-import com.facebook.stetho.Stetho;
-import com.facebook.stetho.dumpapp.DumperPlugin;
-import com.facebook.stetho.inspector.database.DefaultDatabaseConnectionProvider;
-import com.facebook.stetho.inspector.protocol.ChromeDevtoolsDomain;
+//import com.facebook.stetho.Stetho;
+//import com.facebook.stetho.dumpapp.DumperPlugin;
+//import com.facebook.stetho.inspector.database.DefaultDatabaseConnectionProvider;
+//import com.facebook.stetho.inspector.protocol.ChromeDevtoolsDomain;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,9 +31,9 @@ import cn.rongcloud.im.message.provider.TestMessageProvider;
 import cn.rongcloud.im.server.pinyin.CharacterParser;
 import cn.rongcloud.im.server.utils.NLog;
 import cn.rongcloud.im.server.utils.RongGenerate;
-import cn.rongcloud.im.stetho.RongDatabaseDriver;
-import cn.rongcloud.im.stetho.RongDatabaseFilesProvider;
-import cn.rongcloud.im.stetho.RongDbFilesDumperPlugin;
+//import cn.rongcloud.im.stetho.RongDatabaseDriver;
+//import cn.rongcloud.im.stetho.RongDatabaseFilesProvider;
+//import cn.rongcloud.im.stetho.RongDbFilesDumperPlugin;
 import cn.rongcloud.im.ui.activity.UserDetailActivity;
 import cn.rongcloud.im.utils.SharedPreferencesContext;
 import io.rong.contactcard.ContactCardExtensionModule;
@@ -66,21 +66,22 @@ public class App extends MultiDexApplication {
         super.onCreate();
         sInstance = this;
 
-        Stetho.initialize(new Stetho.Initializer(this) {
-            @Override
-            protected Iterable<DumperPlugin> getDumperPlugins() {
-                return new Stetho.DefaultDumperPluginsBuilder(App.this)
-                        .provide(new RongDbFilesDumperPlugin(App.this, new RongDatabaseFilesProvider(App.this)))
-                        .finish();
-            }
-
-            @Override
-            protected Iterable<ChromeDevtoolsDomain> getInspectorModules() {
-                Stetho.DefaultInspectorModulesBuilder defaultInspectorModulesBuilder = new Stetho.DefaultInspectorModulesBuilder(App.this);
-                defaultInspectorModulesBuilder.provideDatabaseDriver(new RongDatabaseDriver(App.this, new RongDatabaseFilesProvider(App.this), new DefaultDatabaseConnectionProvider()));
-                return defaultInspectorModulesBuilder.finish();
-            }
-        });
+        // fackbook的拦截器和retrofit冲突
+//        Stetho.initialize(new Stetho.Initializer(this) {
+//            @Override
+//            protected Iterable<DumperPlugin> getDumperPlugins() {
+//                return new Stetho.DefaultDumperPluginsBuilder(App.this)
+//                        .provide(new RongDbFilesDumperPlugin(App.this, new RongDatabaseFilesProvider(App.this)))
+//                        .finish();
+//            }
+//
+//            @Override
+//            protected Iterable<ChromeDevtoolsDomain> getInspectorModules() {
+//                Stetho.DefaultInspectorModulesBuilder defaultInspectorModulesBuilder = new Stetho.DefaultInspectorModulesBuilder(App.this);
+//                defaultInspectorModulesBuilder.provideDatabaseDriver(new RongDatabaseDriver(App.this, new RongDatabaseFilesProvider(App.this), new DefaultDatabaseConnectionProvider()));
+//                return defaultInspectorModulesBuilder.finish();
+//            }
+//        });
 
         if (getApplicationInfo().packageName.equals(getCurProcessName(getApplicationContext()))) {
 
