@@ -336,6 +336,8 @@
     <string name="not_support_now">Not supported yet</string>
     <string name="nick_name_change_success">Nickname is changed successful</string>
     <string name="nick_name_can_not_empty">Nickname input cannot be empty</string>
+    <string name="mail_change_success">Mail is changed successful</string>
+    <string name="mail_can_not_empty">Mail input cannot be empty</string>
     <string name="change_password_failed">Password change failed</string>
     <string name="change_password_request_failed">Change password failed</string>
     <string name="beijing">Beijing</string>

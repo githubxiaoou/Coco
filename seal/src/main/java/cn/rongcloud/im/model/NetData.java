@@ -10,5 +10,5 @@ public class NetData<T> implements Serializable {
     public String msg;
     public int code;
     public String url;
-    public T data;
+    public T result;
 }

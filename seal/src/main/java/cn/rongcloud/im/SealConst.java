@@ -13,8 +13,11 @@ public class SealConst {
     public static final String GROUP_LIST_UPDATE = "GROUP_LIST_UPDATE";
     public static final String EXIT = "EXIT";
     public static final String CHANGEINFO = "CHANGEINFO";
+    public static final String SEALTALK_USER_ID = "userid";
     public static final String SEALTALK_LOGIN_ID = "loginid";
     public static final String SEALTALK_LOGIN_NAME = "loginnickname";
+    public static final String SEALTALK_MAIL = "mail";
+    public static final String SEALTALK_GENDER = "gender";
     public static final String SEALTALK_LOGING_PORTRAIT = "loginPortrait";
     public static final String SEALTALK_LOGING_PHONE = "loginphone";
     public static final String SEALTALK_LOGING_PASSWORD = "loginpassword";

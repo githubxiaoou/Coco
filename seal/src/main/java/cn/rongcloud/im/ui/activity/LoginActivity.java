@@ -367,7 +367,10 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                 case LOGIN:
                     LoginResponse loginResponse = (LoginResponse) result;
                     if (loginResponse.getCode() == 200) {
+                        /*保存id，token，userId*/
                         loginToken = loginResponse.getResult().getToken();
+                        editor.putString(SealConst.SEALTALK_USER_ID, loginResponse.getResult().getUser_id());
+                        editor.commit();
                         if (!TextUtils.isEmpty(loginToken)) {
                             RongIM.connect(loginToken, new RongIMClient.ConnectCallback() {
                                 @Override
@@ -408,8 +411,12 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                         }
                         String nickName = userInfoByIdResponse.getResult().getNickname();
                         String portraitUri = userInfoByIdResponse.getResult().getPortraitUri();
+                        String sex = userInfoByIdResponse.getResult().getSex();
+                        String email = userInfoByIdResponse.getResult().getEmail();
                         editor.putString(SealConst.SEALTALK_LOGIN_NAME, nickName);
                         editor.putString(SealConst.SEALTALK_LOGING_PORTRAIT, portraitUri);
+                        editor.putString(SealConst.SEALTALK_GENDER, sex);
+                        editor.putString(SealConst.SEALTALK_MAIL, email);
                         editor.commit();
                         RongIM.getInstance().refreshUserInfoCache(new UserInfo(connectResultId, nickName, Uri.parse(portraitUri)));
                     }

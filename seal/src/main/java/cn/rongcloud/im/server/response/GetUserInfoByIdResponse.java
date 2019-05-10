@@ -8,7 +8,7 @@ public class GetUserInfoByIdResponse {
 
     /**
      * code : 200
-     * result : {"id":"10YVscJI3","nickname":"阿明","portraitUri":""}
+     * result : {"id":"kFpN4KiZn","nickname":"孙大圣","portraitUri":"http://10.43.19.140:8866/upload/19/05/10/14/c6efcef441310f2bbe8a625a55ead24a.jpg","sex":0,"email":"1"}
      */
 
     private int code;
@@ -40,6 +40,24 @@ public class GetUserInfoByIdResponse {
         private String id;
         private String nickname;
         private String portraitUri;
+        private String sex;
+        private String email;
+
+        public String getSex() {
+            return sex;
+        }
+
+        public void setSex(String sex) {
+            this.sex = sex;
+        }
+
+        public String getEmail() {
+            return email;
+        }
+
+        public void setEmail(String email) {
+            this.email = email;
+        }
 
         public void setId(String id) {
             this.id = id;

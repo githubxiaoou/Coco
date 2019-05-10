@@ -10,6 +10,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -19,11 +20,15 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.bigkoo.pickerview.builder.OptionsPickerBuilder;
+import com.bigkoo.pickerview.listener.OnOptionsSelectChangeListener;
+import com.bigkoo.pickerview.listener.OnOptionsSelectListener;
+import com.bigkoo.pickerview.view.OptionsPickerView;
 import com.qiniu.android.storage.UploadManager;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import cn.rongcloud.im.App;
@@ -70,6 +75,12 @@ public class MyAccountActivity extends BaseActivity implements View.OnClickListe
     private UploadManager uploadManager;
     private String imageUrl;
     private Uri selectUri;
+    private TextView mTvAccount;
+    private TextView mTvCode;
+    private TextView mTvMyPic;
+    private TextView mTvGender;
+    private TextView mTvMail;
+    private String mUserId;
 
 
     @Override
@@ -88,14 +99,32 @@ public class MyAccountActivity extends BaseActivity implements View.OnClickListe
         TextView mPhone = (TextView) findViewById(R.id.tv_my_phone);
         RelativeLayout portraitItem = (RelativeLayout) findViewById(R.id.rl_my_portrait);
         RelativeLayout nameItem = (RelativeLayout) findViewById(R.id.rl_my_username);
+        RelativeLayout accountItem = (RelativeLayout) findViewById(R.id.rl_account);
+        RelativeLayout codeItem = (RelativeLayout) findViewById(R.id.rl_code);
+        RelativeLayout picItem = (RelativeLayout) findViewById(R.id.rl_my_pic);
+        RelativeLayout genderItem = (RelativeLayout) findViewById(R.id.rl_gender);
+        RelativeLayout mailItem = (RelativeLayout) findViewById(R.id.rl_mail);
         mImageView = (SelectableRoundedImageView) findViewById(R.id.img_my_portrait);
         mName = (TextView) findViewById(R.id.tv_my_username);
+        mTvAccount = ((TextView) findViewById(R.id.tv_account));
+        mTvCode = ((TextView) findViewById(R.id.tv_code));
+        mTvMyPic = ((TextView) findViewById(R.id.tv_my_pic));
+        mTvGender = ((TextView) findViewById(R.id.tv_gender));
+        mTvMail = ((TextView) findViewById(R.id.tv_mail));
+
         portraitItem.setOnClickListener(this);
         nameItem.setOnClickListener(this);
+        accountItem.setOnClickListener(this);
+        codeItem.setOnClickListener(this);
+        picItem.setOnClickListener(this);
+        genderItem.setOnClickListener(this);
+        mailItem.setOnClickListener(this);
         String cacheName = sp.getString(SealConst.SEALTALK_LOGIN_NAME, "");
         String cachePortrait = sp.getString(SealConst.SEALTALK_LOGING_PORTRAIT, "");
         String cachePhone = sp.getString(SealConst.SEALTALK_LOGING_PHONE, "");
         String cacheRegion = sp.getString(SealConst.SEALTALK_LOGIN_REGION, "86");
+        String cacheMail = sp.getString(SealConst.SEALTALK_MAIL, "");
+        String cacheGender = sp.getString(SealConst.SEALTALK_GENDER, "");
         if (!TextUtils.isEmpty(cachePhone)) {
             mPhone.setText("+" + cacheRegion + " " + cachePhone);
         }
@@ -106,13 +135,26 @@ public class MyAccountActivity extends BaseActivity implements View.OnClickListe
                     cacheId, cacheName, Uri.parse(cachePortrait)));
             ImageLoader.getInstance().displayImage(portraitUri, mImageView, App.getOptions());
         }
+        if (!TextUtils.isEmpty(cacheMail)) {
+            mTvMail.setText(cacheMail);
+        }
+        if (!TextUtils.isEmpty(cacheGender) && !"0".equals(cacheGender)) {
+            mTvGender.setText("1".equals(cacheGender) ? "男" : "女");
+        }
+
         setPortraitChangeListener();
         BroadcastManager.getInstance(mContext).addAction(SealConst.CHANGEINFO, new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 mName.setText(sp.getString(SealConst.SEALTALK_LOGIN_NAME, ""));
+                mTvMail.setText(sp.getString(SealConst.SEALTALK_MAIL, ""));
+                String gender = sp.getString(SealConst.SEALTALK_GENDER, "");
+                mTvGender.setText("1".equals(gender) ? "男" : "女");
             }
         });
+
+        initOptionPicker();
+        mUserId = sp.getString(SealConst.SEALTALK_USER_ID, "");
     }
 
     private void setPortraitChangeListener() {
@@ -150,6 +192,18 @@ public class MyAccountActivity extends BaseActivity implements View.OnClickListe
                 break;
             case R.id.rl_my_username:
                 startActivity(new Intent(this, UpdateNameActivity.class));
+                break;
+            case R.id.rl_account:
+                break;
+            case R.id.rl_code:
+                break;
+            case R.id.rl_my_pic:
+                break;
+            case R.id.rl_gender:
+                pvOptions.show();
+                break;
+            case R.id.rl_mail:
+                startActivity(new Intent(this, UpdateMailActivity.class));
                 break;
         }
     }
@@ -327,7 +381,7 @@ public class MyAccountActivity extends BaseActivity implements View.OnClickListe
 //                        NToast.shortToast(mContext, "图片上传成功");
                         Log.e("swo", "图片上传成功");
                         if (stringNetData.code == 200) {
-                            imageUrl = BaseAction.DOMAIN_IAMGE + "/" + stringNetData.url;
+                            imageUrl = BaseAction.DOMAIN_IMAGE + stringNetData.url;
                             Log.e("uploadImage", imageUrl);
                             if (!TextUtils.isEmpty(imageUrl)) {
                                 request(UP_LOAD_PORTRAIT);
@@ -340,6 +394,53 @@ public class MyAccountActivity extends BaseActivity implements View.OnClickListe
                         NToast.shortToast(mContext, "图片上传失败");
                     }
                 });
+    }
+
+    private OptionsPickerView pvOptions;
+    private ArrayList<String> genders = new ArrayList<>();
+
+    private void initOptionPicker() {//条件选择器初始化
+        genders.add("男");
+        genders.add("女");
+        pvOptions = new OptionsPickerBuilder(this, new OnOptionsSelectListener() {
+            @Override
+            public void onOptionsSelect(final int options1, int options2, int options3, View v) {
+                //返回的分别是三个级别的选中位置
+                //  0男1女 接口是1男2女
+                LoadDialog.show(mContext);
+                HttpUtil.apiS().updateUserInfo(mUserId, "", "", String.valueOf(options1 + 1), "", "")
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .doOnTerminate(new Action() {
+                            @Override
+                            public void run() throws Exception {
+                                LoadDialog.dismiss(mContext);
+                            }
+                        })
+                        .subscribe(new NetObserver<NetData>() {
+                            @Override
+                            public void Successful(NetData netData) {
+                                if (netData.code == 200) {
+                                    editor.putString(SealConst.SEALTALK_GENDER, String.valueOf(options1 + 1));
+                                    editor.commit();
+
+                                    BroadcastManager.getInstance(mContext).sendBroadcast(SealConst.CHANGEINFO);
+
+                                    NToast.shortToast(mContext, "修改成功");
+                                }
+                            }
+
+                            @Override
+                            public void Failure(Throwable t) {
+                                NToast.shortToast(mContext, "修改失败");
+                            }
+                        });
+            }
+        })
+                .isRestoreItem(true)//切换时是否还原，设置默认选中第一项。
+                .isCenterLabel(false) //是否只显示中间选中项的label文字，false则每项item全部都带有label。
+                .build();
+        pvOptions.setPicker(genders);//一级选择器
     }
 
 }
