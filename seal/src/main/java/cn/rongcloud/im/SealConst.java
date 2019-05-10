@@ -21,5 +21,5 @@ public class SealConst {
     public static final String SEALTALK_LOGIN_REGION = "loginregion";
     public static final String SEALTALK_LOGIN_COUNTRY_CN = "logincountrycn";
     public static final String SEALTALK_LOGIN_COUNTRY_EN = "logincountryen";
-
+    public static final Boolean DEBUG = BuildConfig.DEBUG;
 }

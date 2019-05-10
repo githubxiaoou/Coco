@@ -19,18 +19,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import com.qiniu.android.http.ResponseInfo;
-import com.qiniu.android.storage.UpCompletionHandler;
 import com.qiniu.android.storage.UploadManager;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.File;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.concurrent.TimeUnit;
+import java.util.List;
 
 import cn.rongcloud.im.App;
 import cn.rongcloud.im.R;
@@ -38,32 +32,29 @@ import cn.rongcloud.im.SealConst;
 import cn.rongcloud.im.SealUserInfoManager;
 import cn.rongcloud.im.model.NetData;
 import cn.rongcloud.im.net.HttpUtil;
+import cn.rongcloud.im.net.NetObserver;
 import cn.rongcloud.im.server.BaseAction;
 import cn.rongcloud.im.server.broadcast.BroadcastManager;
 import cn.rongcloud.im.server.network.http.HttpException;
-import cn.rongcloud.im.server.response.QiNiuTokenResponse;
 import cn.rongcloud.im.server.response.SetPortraitResponse;
 import cn.rongcloud.im.server.utils.NToast;
 import cn.rongcloud.im.server.utils.photo.PhotoUtils;
 import cn.rongcloud.im.server.widget.BottomMenuDialog;
 import cn.rongcloud.im.server.widget.LoadDialog;
 import cn.rongcloud.im.server.widget.SelectableRoundedImageView;
-import io.reactivex.Scheduler;
+import io.reactivex.Observable;
+import io.reactivex.ObservableSource;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.Action;
-import io.reactivex.functions.Consumer;
+import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 import io.rong.imageloader.core.ImageLoader;
 import io.rong.imkit.RongIM;
 import io.rong.imlib.model.UserInfo;
-import okhttp3.Call;
-import okhttp3.Callback;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
 import okhttp3.RequestBody;
-import okhttp3.Response;
+import top.zibin.luban.Luban;
 
 
 public class MyAccountActivity extends BaseActivity implements View.OnClickListener {
@@ -89,6 +80,8 @@ public class MyAccountActivity extends BaseActivity implements View.OnClickListe
         sp = getSharedPreferences("config", MODE_PRIVATE);
         editor = sp.edit();
         initView();
+        // for debug
+//        uploadImage(Uri.fromFile(new File("")));
     }
 
     private void initView() {
@@ -294,80 +287,59 @@ public class MyAccountActivity extends BaseActivity implements View.OnClickListe
         }
     }
 
-
-//    public void uploadImage(final String domain, String imageToken, Uri imagePath) {
-//        if (TextUtils.isEmpty(domain) && TextUtils.isEmpty(imageToken) && TextUtils.isEmpty(imagePath.toString())) {
-//            throw new RuntimeException("upload parameter is null!");
-//        }
-//        File imageFile = new File(imagePath.getPath());
-//
-//        if (this.uploadManager == null) {
-//            this.uploadManager = new UploadManager();
-//        }
-//        this.uploadManager.put(imageFile, null, imageToken, new UpCompletionHandler() {
-//
-//            @Override
-//            public void complete(String s, ResponseInfo responseInfo, JSONObject jsonObject) {
-//                if (responseInfo.isOK()) {
-//                    try {
-//                        String key = (String) jsonObject.get("key");
-//                        imageUrl = "http://" + domain + "/" + key;
-//                        Log.e("uploadImage", imageUrl);
-//                        if (!TextUtils.isEmpty(imageUrl)) {
-//                            request(UP_LOAD_PORTRAIT);
-//                        }
-//                    } catch (JSONException e) {
-//                        e.printStackTrace();
-//                    }
-//                } else {
-//                    NToast.shortToast(mContext, getString(R.string.upload_portrait_failed));
-//                    LoadDialog.dismiss(mContext);
-//                }
-//            }
-//        }, null);
-//    }
-
     public void uploadImage(Uri imagePath) {
-        File imageFile = new File("file:/storage/emulated/0/crop_file.jpg");
-        if (!imageFile.isFile()) {
-            return;
-        }
-        RequestBody body = RequestBody.create(MediaType.parse("image/jpeg"), imageFile);
-        OkHttpClient client = new OkHttpClient();
-        MultipartBody.Builder builder = new MultipartBody.Builder();
-        //设置类型
-        builder.setType(MultipartBody.FORM);
-        MultipartBody photo = builder.addFormDataPart("photo", imageFile.getName(), body).build();
-        Request request = new Request.Builder().url(BaseAction.DOMAIN + "/" + "image/upload").post(photo).build();
-        Call call = client.newBuilder().writeTimeout(60, TimeUnit.SECONDS).build().newCall(request);
-        call.enqueue(new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                Log.e("swo", e.toString());
-            }
+        // for debug
+//        final File imageFile = new File("/storage/emulated/0/crop_file.jpg");
+        final File imageFile = new File(imagePath.getPath());
+//        if (imageFile.exists()) {
+//            Toast.makeText(this, "文件是存在的", Toast.LENGTH_SHORT).show();
+//        }
+//        if (!imageFile.isFile()) {
+//            return;
+//        }
 
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                Log.e("swo", response.toString());
-            }
-        });
+        Observable.just(imageFile)
+                .observeOn(Schedulers.io())
+                .map(new Function<File, List<File>>() {
+                    @Override
+                    public List<File> apply(File file) throws Exception {
+                        return Luban.with(MyAccountActivity.this).load(imageFile).ignoreBy(1024).get();
+                    }
+                })
+                .flatMap(new Function<List<File>, ObservableSource<NetData<String>>>() {
+                    @Override
+                    public ObservableSource<NetData<String>> apply(List<File> files) throws Exception {
+                        File image = files.get(0);// 第一张
+                        RequestBody body = RequestBody.create(MediaType.parse("image/jpeg"), image);
+                        MultipartBody.Part file = MultipartBody.Part.createFormData("photo", image.getName(), body);
+                        return HttpUtil.apiS().uploadImageInfo(file);
+                    }
+                }).observeOn(AndroidSchedulers.mainThread())
+                .doOnTerminate(new Action() {
+                    @Override
+                    public void run() throws Exception {
+                        LoadDialog.dismiss(mContext);
+                    }
+                })
+                .subscribe(new NetObserver<NetData<String>>() {
+                    @Override
+                    public void Successful(NetData<String> stringNetData) {
+//                        NToast.shortToast(mContext, "图片上传成功");
+                        Log.e("swo", "图片上传成功");
+                        if (stringNetData.code == 200) {
+                            imageUrl = BaseAction.DOMAIN_IAMGE + "/" + stringNetData.url;
+                            Log.e("uploadImage", imageUrl);
+                            if (!TextUtils.isEmpty(imageUrl)) {
+                                request(UP_LOAD_PORTRAIT);
+                            }
+                        }
+                    }
 
-        //        MultipartBody.Part file = MultipartBody.Part.createFormData("photo", imageFile.getName(), body);
-//        HttpUtil.apiS().uploadImageInfo(file)
-//                .subscribeOn(Schedulers.io())
-//                .observeOn(AndroidSchedulers.mainThread())
-//                .doOnTerminate(new Action() {
-//                    @Override
-//                    public void run() throws Exception {
-//                        LoadDialog.dismiss(mContext);
-//                    }
-//                })
-//                .subscribe(new Consumer<NetData<String>>() {
-//                    @Override
-//                    public void accept(NetData<String> stringNetData) throws Exception {
-//                        NToast.shortToast(mContext, stringNetData.data);
-//                    }
-//                });
+                    @Override
+                    public void Failure(Throwable t) {
+                        NToast.shortToast(mContext, "图片上传失败");
+                    }
+                });
     }
 
 }

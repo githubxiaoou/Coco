@@ -8,6 +8,7 @@ import java.io.Serializable;
  */
 public class NetData<T> implements Serializable {
     public String msg;
-    public int error;
+    public int code;
+    public String url;
     public T data;
 }
