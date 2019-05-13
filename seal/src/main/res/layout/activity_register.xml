@@ -15,7 +15,7 @@
             android:layout_marginLeft="-50dp"
             android:layout_marginRight="-300dp"
             android:scaleType="centerCrop"
-            android:src="@drawable/de_bg" />
+            android:src="@color/gray" />
 
     </FrameLayout>
 
@@ -33,7 +33,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="61dip"
-            android:src="@drawable/seal_logo" />
+            android:src="@drawable/ic_launcher" />
 
         <cn.rongcloud.im.server.widget.ClearWriteEditText
             android:id="@+id/reg_username"
@@ -61,6 +61,7 @@
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
             android:layout_marginTop="20dp"
+            android:visibility="gone"
             android:gravity="center_vertical"
             android:orientation="horizontal"
             >
@@ -225,7 +226,8 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Powered by RongCloud"
+        android:text="Powered by xxxx"
+        android:visibility="gone"
         android:textSize="12sp"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
@@ -251,6 +253,7 @@
         android:textColor="#FFF"
         android:textSize="16sp"
         android:padding="15dp"
+        android:visibility="gone"
         android:layout_alignParentTop="true"
         android:layout_alignParentRight="true"
         android:layout_width="wrap_content"
