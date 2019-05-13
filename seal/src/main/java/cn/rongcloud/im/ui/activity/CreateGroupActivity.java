@@ -27,6 +27,10 @@ import cn.rongcloud.im.SealConst;
 import cn.rongcloud.im.SealUserInfoManager;
 import cn.rongcloud.im.db.Friend;
 import cn.rongcloud.im.db.Groups;
+import cn.rongcloud.im.model.NetData;
+import cn.rongcloud.im.net.HttpUtil;
+import cn.rongcloud.im.net.NetObserver;
+import cn.rongcloud.im.server.BaseAction;
 import cn.rongcloud.im.server.broadcast.BroadcastManager;
 import cn.rongcloud.im.server.network.http.HttpException;
 import cn.rongcloud.im.server.response.CreateGroupResponse;
@@ -37,11 +41,21 @@ import cn.rongcloud.im.server.utils.photo.PhotoUtils;
 import cn.rongcloud.im.server.widget.BottomMenuDialog;
 import cn.rongcloud.im.server.widget.ClearWriteEditText;
 import cn.rongcloud.im.server.widget.LoadDialog;
+import io.reactivex.Observable;
+import io.reactivex.ObservableSource;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Action;
+import io.reactivex.functions.Function;
+import io.reactivex.schedulers.Schedulers;
 import io.rong.imageloader.core.ImageLoader;
 import io.rong.imkit.RongIM;
 import io.rong.imkit.emoticon.AndroidEmoji;
 import io.rong.imkit.widget.AsyncImageView;
 import io.rong.imlib.model.Conversation;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
+import top.zibin.luban.Luban;
 
 /**
  * Created by AMing on 16/1/25.
@@ -49,7 +63,7 @@ import io.rong.imlib.model.Conversation;
  */
 public class CreateGroupActivity extends BaseActivity implements View.OnClickListener {
 
-    private static final int GET_QI_NIU_TOKEN = 131;
+//    private static final int GET_QI_NIU_TOKEN = 131;
     private static final int CREATE_GROUP = 16;
     private static final int SET_GROUP_PORTRAIT_URI = 17;
     public static final String REFRESH_GROUP_UI = "REFRESH_GROUP_UI";
@@ -87,7 +101,8 @@ public class CreateGroupActivity extends BaseActivity implements View.OnClickLis
                 if (uri != null && !TextUtils.isEmpty(uri.getPath())) {
                     selectUri = uri;
                     LoadDialog.show(mContext);
-                    request(GET_QI_NIU_TOKEN);
+//                    request(GET_QI_NIU_TOKEN);
+                    uploadImage(uri);
                 }
             }
 
@@ -145,8 +160,8 @@ public class CreateGroupActivity extends BaseActivity implements View.OnClickLis
                 return action.createGroup(mGroupName, groupIds);
             case SET_GROUP_PORTRAIT_URI:
                 return action.setGroupPortrait(mGroupId, imageUrl);
-            case GET_QI_NIU_TOKEN:
-                return action.getQiNiuToken();
+//            case GET_QI_NIU_TOKEN:
+//                return action.getQiNiuToken();
         }
         return null;
     }
@@ -183,12 +198,12 @@ public class CreateGroupActivity extends BaseActivity implements View.OnClickLis
                         RongIM.getInstance().startConversation(mContext, Conversation.ConversationType.GROUP, mGroupId, mGroupName);
                         finish();
                     }
-                case GET_QI_NIU_TOKEN:
-                    QiNiuTokenResponse response = (QiNiuTokenResponse) result;
-                    if (response.getCode() == 200) {
-                        uploadImage(response.getResult().getDomain(), response.getResult().getToken(), selectUri);
-                    }
-                    break;
+//                case GET_QI_NIU_TOKEN:
+//                    QiNiuTokenResponse response = (QiNiuTokenResponse) result;
+//                    if (response.getCode() == 200) {
+//                        uploadImage(response.getResult().getDomain(), response.getResult().getToken(), selectUri);
+//                    }
+//                    break;
             }
         }
     }
@@ -200,10 +215,10 @@ public class CreateGroupActivity extends BaseActivity implements View.OnClickLis
                 LoadDialog.dismiss(mContext);
                 NToast.shortToast(mContext, getString(R.string.group_create_api_fail));
                 break;
-            case GET_QI_NIU_TOKEN:
-                LoadDialog.dismiss(mContext);
-                NToast.shortToast(mContext, getString(R.string.upload_portrait_failed));
-                break;
+//            case GET_QI_NIU_TOKEN:
+//                LoadDialog.dismiss(mContext);
+//                NToast.shortToast(mContext, getString(R.string.upload_portrait_failed));
+//                break;
             case SET_GROUP_PORTRAIT_URI:
                 LoadDialog.dismiss(mContext);
                 NToast.shortToast(mContext, getString(R.string.group_header_api_fail));
@@ -261,39 +276,85 @@ public class CreateGroupActivity extends BaseActivity implements View.OnClickLis
         }
     }
 
+    public void uploadImage(Uri imagePath) {
+        final File imageFile = new File(imagePath.getPath());
 
-    public void uploadImage(final String domain, String imageToken, Uri imagePath) {
-        if (TextUtils.isEmpty(domain) && TextUtils.isEmpty(imageToken) && TextUtils.isEmpty(imagePath.toString())) {
-            throw new RuntimeException("upload parameter is null!");
-        }
-        File imageFile = new File(imagePath.getPath());
-
-        if (this.uploadManager == null) {
-            this.uploadManager = new UploadManager();
-        }
-        this.uploadManager.put(imageFile, null, imageToken, new UpCompletionHandler() {
-
-            @Override
-            public void complete(String s, ResponseInfo responseInfo, JSONObject jsonObject) {
-                if (responseInfo.isOK()) {
-                    try {
-                        String key = (String) jsonObject.get("key");
-                        imageUrl = "http://" + domain + "/" + key;
-                        Log.e("uploadImage", imageUrl);
-                        if (!TextUtils.isEmpty(imageUrl)) {
-                            ImageLoader.getInstance().displayImage(imageUrl, asyncImageView);
-                            LoadDialog.dismiss(mContext);
-                        }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
+        Observable.just(imageFile)
+                .observeOn(Schedulers.io())
+                .map(new Function<File, List<File>>() {
+                    @Override
+                    public List<File> apply(File file) throws Exception {
+                        return Luban.with(CreateGroupActivity.this).load(imageFile).ignoreBy(1024).get();
                     }
-                } else {
-                    NToast.shortToast(mContext, getString(R.string.upload_portrait_failed));
-                    LoadDialog.dismiss(mContext);
-                }
-            }
-        }, null);
+                })
+                .flatMap(new Function<List<File>, ObservableSource<NetData<String>>>() {
+                    @Override
+                    public ObservableSource<NetData<String>> apply(List<File> files) throws Exception {
+                        File image = files.get(0);// 第一张
+                        RequestBody body = RequestBody.create(MediaType.parse("image/jpeg"), image);
+                        MultipartBody.Part file = MultipartBody.Part.createFormData("photo", image.getName(), body);
+                        return HttpUtil.apiS().uploadImageInfo(file);
+                    }
+                }).observeOn(AndroidSchedulers.mainThread())
+                .doOnTerminate(new Action() {
+                    @Override
+                    public void run() throws Exception {
+                        LoadDialog.dismiss(mContext);
+                    }
+                })
+                .subscribe(new NetObserver<NetData<String>>() {
+                    @Override
+                    public void Successful(NetData<String> stringNetData) {
+//                        NToast.shortToast(mContext, "图片上传成功");
+                        Log.e("swo", "图片上传成功");
+                        if (stringNetData.code == 200) {
+                            imageUrl = BaseAction.DOMAIN_IMAGE + stringNetData.url;
+                            Log.e("uploadImage", imageUrl);
+                            if (!TextUtils.isEmpty(imageUrl)) {
+                                ImageLoader.getInstance().displayImage(imageUrl, asyncImageView);
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void Failure(Throwable t) {
+                        NToast.shortToast(mContext, "图片上传失败");
+                    }
+                });
     }
+
+//    public void uploadImage(final String domain, String imageToken, Uri imagePath) {
+//        if (TextUtils.isEmpty(domain) && TextUtils.isEmpty(imageToken) && TextUtils.isEmpty(imagePath.toString())) {
+//            throw new RuntimeException("upload parameter is null!");
+//        }
+//        File imageFile = new File(imagePath.getPath());
+//
+//        if (this.uploadManager == null) {
+//            this.uploadManager = new UploadManager();
+//        }
+//        this.uploadManager.put(imageFile, null, imageToken, new UpCompletionHandler() {
+//
+//            @Override
+//            public void complete(String s, ResponseInfo responseInfo, JSONObject jsonObject) {
+//                if (responseInfo.isOK()) {
+//                    try {
+//                        String key = (String) jsonObject.get("key");
+//                        imageUrl = "http://" + domain + "/" + key;
+//                        Log.e("uploadImage", imageUrl);
+//                        if (!TextUtils.isEmpty(imageUrl)) {
+//                            ImageLoader.getInstance().displayImage(imageUrl, asyncImageView);
+//                            LoadDialog.dismiss(mContext);
+//                        }
+//                    } catch (JSONException e) {
+//                        e.printStackTrace();
+//                    }
+//                } else {
+//                    NToast.shortToast(mContext, getString(R.string.upload_portrait_failed));
+//                    LoadDialog.dismiss(mContext);
+//                }
+//            }
+//        }, null);
+//    }
 
     private void hintKbTwo() {
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);

@@ -71,6 +71,7 @@ public class MainActivity extends BaseActivity implements
     private boolean isDebug;
     private Context mContext;
     private Conversation.ConversationType[] mConversationsTypes = null;
+    private TextView mTvTitle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,23 +103,25 @@ public class MainActivity extends BaseActivity implements
     private void initViews() {
         RelativeLayout chatRLayout = (RelativeLayout) findViewById(R.id.seal_chat);
         RelativeLayout contactRLayout = (RelativeLayout) findViewById(R.id.seal_contact_list);
-        RelativeLayout foundRLayout = (RelativeLayout) findViewById(R.id.seal_find);
+//        RelativeLayout foundRLayout = (RelativeLayout) findViewById(R.id.seal_find);
         RelativeLayout mineRLayout = (RelativeLayout) findViewById(R.id.seal_me);
         mImageChats = (ImageView) findViewById(R.id.tab_img_chats);
         mImageContact = (ImageView) findViewById(R.id.tab_img_contact);
-        mImageFind = (ImageView) findViewById(R.id.tab_img_find);
+//        mImageFind = (ImageView) findViewById(R.id.tab_img_find);
         mImageMe = (ImageView) findViewById(R.id.tab_img_me);
         mTextChats = (TextView) findViewById(R.id.tab_text_chats);
         mTextContact = (TextView) findViewById(R.id.tab_text_contact);
-        mTextFind = (TextView) findViewById(R.id.tab_text_find);
+//        mTextFind = (TextView) findViewById(R.id.tab_text_find);
         mTextMe = (TextView) findViewById(R.id.tab_text_me);
         mMineRed = (ImageView) findViewById(R.id.mine_red);
         moreImage = (ImageView) findViewById(R.id.seal_more);
         mSearchImageView = (ImageView) findViewById(R.id.ac_iv_search);
+        mTvTitle = ((TextView) findViewById(R.id.tv_title1));
+        mTvTitle.setText("会话");
 
         chatRLayout.setOnClickListener(this);
         contactRLayout.setOnClickListener(this);
-        foundRLayout.setOnClickListener(this);
+//        foundRLayout.setOnClickListener(this);
         mineRLayout.setOnClickListener(this);
         moreImage.setOnClickListener(this);
         mSearchImageView.setOnClickListener(this);
@@ -141,7 +144,7 @@ public class MainActivity extends BaseActivity implements
 
         mFragment.add(conversationList);
         mFragment.add(new ContactsFragment());
-        mFragment.add(new DiscoverFragment());
+//        mFragment.add(new DiscoverFragment());
         mFragment.add(new MineFragment());
         FragmentPagerAdapter fragmentPagerAdapter = new FragmentPagerAdapter(getSupportFragmentManager()) {
             @Override
@@ -222,11 +225,11 @@ public class MainActivity extends BaseActivity implements
     private void changeTextViewColor() {
         mImageChats.setBackgroundDrawable(getResources().getDrawable(R.drawable.tab_chat));
         mImageContact.setBackgroundDrawable(getResources().getDrawable(R.drawable.tab_contacts));
-        mImageFind.setBackgroundDrawable(getResources().getDrawable(R.drawable.tab_found));
+//        mImageFind.setBackgroundDrawable(getResources().getDrawable(R.drawable.tab_found));
         mImageMe.setBackgroundDrawable(getResources().getDrawable(R.drawable.tab_me));
         mTextChats.setTextColor(Color.parseColor("#abadbb"));
         mTextContact.setTextColor(Color.parseColor("#abadbb"));
-        mTextFind.setTextColor(Color.parseColor("#abadbb"));
+//        mTextFind.setTextColor(Color.parseColor("#abadbb"));
         mTextMe.setTextColor(Color.parseColor("#abadbb"));
     }
 
@@ -235,18 +238,30 @@ public class MainActivity extends BaseActivity implements
             case 0:
                 mTextChats.setTextColor(Color.parseColor("#0099ff"));
                 mImageChats.setBackgroundDrawable(getResources().getDrawable(R.drawable.tab_chat_hover));
+                mTvTitle.setText("会话");
+                mTvTitle.setTextColor(getResources().getColor(R.color.white));
+                mSearchImageView.setVisibility(View.VISIBLE);
+                moreImage.setVisibility(View.VISIBLE);
                 break;
             case 1:
                 mTextContact.setTextColor(Color.parseColor("#0099ff"));
                 mImageContact.setBackgroundDrawable(getResources().getDrawable(R.drawable.tab_contacts_hover));
+                mTvTitle.setText("通讯录");
+                mTvTitle.setTextColor(getResources().getColor(R.color.white));
+                mSearchImageView.setVisibility(View.VISIBLE);
+                moreImage.setVisibility(View.GONE);
                 break;
+//            case 2:
+//                mTextFind.setTextColor(Color.parseColor("#0099ff"));
+//                mImageFind.setBackgroundDrawable(getResources().getDrawable(R.drawable.tab_found_hover));
+//                break;
             case 2:
-                mTextFind.setTextColor(Color.parseColor("#0099ff"));
-                mImageFind.setBackgroundDrawable(getResources().getDrawable(R.drawable.tab_found_hover));
-                break;
-            case 3:
                 mTextMe.setTextColor(Color.parseColor("#0099ff"));
                 mImageMe.setBackgroundDrawable(getResources().getDrawable(R.drawable.tab_me_hover));
+                mTvTitle.setText("我");
+                mTvTitle.setTextColor(getResources().getColor(R.color.white));
+                mSearchImageView.setVisibility(View.GONE);
+                moreImage.setVisibility(View.GONE);
                 break;
         }
     }
@@ -285,11 +300,11 @@ public class MainActivity extends BaseActivity implements
             case R.id.seal_contact_list:
                 mViewPager.setCurrentItem(1, false);
                 break;
-            case R.id.seal_find:
-                mViewPager.setCurrentItem(2, false);
-                break;
+//            case R.id.seal_find:
+//                mViewPager.setCurrentItem(2, false);
+//                break;
             case R.id.seal_me:
-                mViewPager.setCurrentItem(3, false);
+                mViewPager.setCurrentItem(2, false);
                 mMineRed.setVisibility(View.GONE);
                 break;
             case R.id.seal_more:

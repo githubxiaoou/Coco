@@ -36,7 +36,7 @@ public class AboutRongCloudActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_about);
-        setTitle(R.string.set_rongcloud);
+        setTitle("关于XX");
 
         RelativeLayout mUpdateLog = (RelativeLayout) findViewById(R.id.rl_update_log);
         RelativeLayout mFunctionIntroduce = (RelativeLayout) findViewById(R.id.rl_function_introduce);

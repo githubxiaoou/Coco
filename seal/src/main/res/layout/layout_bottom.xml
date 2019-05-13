@@ -119,7 +119,7 @@
             </RelativeLayout>
         </RelativeLayout>
 
-        <RelativeLayout
+        <!--<RelativeLayout
             android:id="@+id/seal_find"
             android:layout_width="0dp"
             android:layout_height="match_parent"
@@ -140,7 +140,7 @@
                     android:background="#ffffff"
                     android:focusable="false"
                     android:scaleType="centerInside" />
-                <!--android:src="@drawable/tab_find"-->
+                &lt;!&ndash;android:src="@drawable/tab_find"&ndash;&gt;
 
                 <TextView
                     android:id="@+id/tab_text_find"
@@ -155,7 +155,7 @@
 
 
             </RelativeLayout>
-        </RelativeLayout>
+        </RelativeLayout>-->
 
         <RelativeLayout
             android:id="@+id/seal_me"

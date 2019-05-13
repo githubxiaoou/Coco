@@ -28,7 +28,7 @@ public class SplashActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-        setContentView(R.layout.activity_splash);
+//        setContentView(R.layout.activity_splash);
         context = this;
         SharedPreferences sp = getSharedPreferences("config", MODE_PRIVATE);
         String cacheToken = sp.getString("loginToken", "");

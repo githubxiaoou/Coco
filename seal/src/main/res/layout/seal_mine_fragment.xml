@@ -42,6 +42,78 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/mine_sao"
+        android:layout_width="match_parent"
+        android:layout_height="45.5dp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/btn_list_item_bg"
+        android:clickable="true">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="14dp"
+            android:drawableLeft="@drawable/mine_set"
+            android:drawablePadding="14sp"
+            android:text="扫一扫"
+            android:textColor="@color/text_color"
+            android:textSize="16sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="#fff">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.25dp"
+            android:layout_marginLeft="14dp"
+            android:layout_marginRight="14dp"
+            android:background="#dfdfdd" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/mine_pc"
+        android:layout_width="match_parent"
+        android:layout_height="45.5dp"
+        android:background="@drawable/btn_list_item_bg"
+        android:clickable="true">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="14dp"
+            android:drawableLeft="@drawable/mine_set"
+            android:drawablePadding="14sp"
+            android:text="闲聊网页版"
+            android:textColor="@color/text_color"
+            android:textSize="16sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/mine_collect"
+        android:layout_width="match_parent"
+        android:layout_height="45.5dp"
+        android:background="@drawable/btn_list_item_bg"
+        android:layout_marginTop="20dp"
+        android:clickable="true">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="14dp"
+            android:drawableLeft="@drawable/mine_set"
+            android:drawablePadding="14sp"
+            android:text="收藏"
+            android:textColor="@color/text_color"
+            android:textSize="16sp" />
+    </LinearLayout>
+
+    <LinearLayout
         android:id="@+id/mine_setting"
         android:layout_width="match_parent"
         android:layout_height="45.5dp"
@@ -56,10 +128,9 @@
             android:layout_marginLeft="14dp"
             android:drawableLeft="@drawable/mine_set"
             android:drawablePadding="14sp"
-            android:text="@string/mine_setting"
+            android:text="设置"
             android:textColor="@color/text_color"
             android:textSize="16sp" />
-
 
     </LinearLayout>
 
@@ -71,6 +142,7 @@
         android:background="@drawable/btn_list_item_bg"
         android:orientation="horizontal"
         android:gravity="center_vertical"
+        android:visibility="gone"
         android:clickable="true">
 
         <TextView
@@ -103,6 +175,7 @@
         android:layout_height="45.5dp"
         android:layout_marginTop="20dp"
         android:background="@drawable/btn_list_item_bg"
+        android:visibility="gone"
         android:clickable="true">
 
         <TextView
@@ -124,6 +197,7 @@
         android:layout_height="45.5dp"
         android:layout_marginTop="20dp"
         android:background="@drawable/btn_list_item_bg"
+        android:visibility="gone"
         android:clickable="true">
 
         <TextView
@@ -198,6 +272,7 @@
         android:layout_width="match_parent"
         android:layout_height="45.5dp"
         android:background="@drawable/btn_list_item_bg"
+        android:visibility="visible"
         android:clickable="true">
 
         <TextView
@@ -205,9 +280,9 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_marginLeft="14dp"
-            android:drawableLeft="@drawable/mine_about"
+            android:drawableLeft="@drawable/mine_set"
             android:drawablePadding="14sp"
-            android:text="@string/mine_about"
+            android:text="关于"
             android:textColor="@color/text_color"
             android:textSize="16sp" />
 

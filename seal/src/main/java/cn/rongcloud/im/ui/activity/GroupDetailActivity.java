@@ -39,7 +39,11 @@ import cn.rongcloud.im.db.Friend;
 import cn.rongcloud.im.db.GroupMember;
 import cn.rongcloud.im.db.Groups;
 import cn.rongcloud.im.db.GroupsDao;
+import cn.rongcloud.im.model.NetData;
 import cn.rongcloud.im.model.SealSearchConversationResult;
+import cn.rongcloud.im.net.HttpUtil;
+import cn.rongcloud.im.net.NetObserver;
+import cn.rongcloud.im.server.BaseAction;
 import cn.rongcloud.im.server.broadcast.BroadcastManager;
 import cn.rongcloud.im.server.network.http.HttpException;
 import cn.rongcloud.im.server.pinyin.CharacterParser;
@@ -62,6 +66,12 @@ import cn.rongcloud.im.server.widget.LoadDialog;
 import cn.rongcloud.im.server.widget.SelectableRoundedImageView;
 import cn.rongcloud.im.ui.widget.DemoGridView;
 import cn.rongcloud.im.ui.widget.switchbutton.SwitchButton;
+import io.reactivex.Observable;
+import io.reactivex.ObservableSource;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Action;
+import io.reactivex.functions.Function;
+import io.reactivex.schedulers.Schedulers;
 import io.rong.imageloader.core.ImageLoader;
 import io.rong.imkit.RongIM;
 import io.rong.imkit.emoticon.AndroidEmoji;
@@ -71,6 +81,10 @@ import io.rong.imlib.model.Conversation;
 import io.rong.imlib.model.Group;
 import io.rong.imlib.model.Message;
 import io.rong.imlib.model.UserInfo;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
+import top.zibin.luban.Luban;
 
 /**
  * Created by AMing on 16/1/27.
@@ -85,7 +99,7 @@ public class GroupDetailActivity extends BaseActivity implements View.OnClickLis
     private static final int SET_GROUP_NAME = 29;
     private static final int GET_GROUP_INFO = 30;
     private static final int UPDATE_GROUP_NAME = 32;
-    private static final int GET_QI_NIU_TOKEN = 133;
+//    private static final int GET_QI_NIU_TOKEN = 133;
     private static final int UPDATE_GROUP_HEADER = 25;
     private static final int SEARCH_TYPE_FLAG = 1;
     private static final int CHECKGROUPURL = 39;
@@ -280,8 +294,8 @@ public class GroupDetailActivity extends BaseActivity implements View.OnClickLis
                 return action.getGroupInfo(fromConversationId);
             case UPDATE_GROUP_HEADER:
                 return action.setGroupPortrait(fromConversationId, imageUrl);
-            case GET_QI_NIU_TOKEN:
-                return action.getQiNiuToken();
+//            case GET_QI_NIU_TOKEN:
+//                return action.getQiNiuToken();
             case UPDATE_GROUP_NAME:
                 return action.setGroupName(fromConversationId, newGroupName);
             case CHECKGROUPURL:
@@ -398,12 +412,12 @@ public class GroupDetailActivity extends BaseActivity implements View.OnClickLis
                     }
 
                     break;
-                case GET_QI_NIU_TOKEN:
-                    QiNiuTokenResponse response6 = (QiNiuTokenResponse) result;
-                    if (response6.getCode() == 200) {
-                        uploadImage(response6.getResult().getDomain(), response6.getResult().getToken(), selectUri);
-                    }
-                    break;
+//                case GET_QI_NIU_TOKEN:
+//                    QiNiuTokenResponse response6 = (QiNiuTokenResponse) result;
+//                    if (response6.getCode() == 200) {
+//                        uploadImage(response6.getResult().getDomain(), response6.getResult().getToken(), selectUri);
+//                    }
+//                    break;
                 case UPDATE_GROUP_NAME:
                     SetGroupNameResponse response7 = (SetGroupNameResponse) result;
                     if (response7.getCode() == 200) {
@@ -859,7 +873,8 @@ public class GroupDetailActivity extends BaseActivity implements View.OnClickLis
                 if (uri != null && !TextUtils.isEmpty(uri.getPath())) {
                     selectUri = uri;
                     LoadDialog.show(mContext);
-                    request(GET_QI_NIU_TOKEN);
+//                    request(GET_QI_NIU_TOKEN);
+                    uploadImage(uri);
                 }
             }
 
@@ -901,35 +916,81 @@ public class GroupDetailActivity extends BaseActivity implements View.OnClickLis
         dialog.show();
     }
 
+    public void uploadImage(Uri imagePath) {
+        final File imageFile = new File(imagePath.getPath());
 
-    public void uploadImage(final String domain, String imageToken, Uri imagePath) {
-        if (TextUtils.isEmpty(domain) && TextUtils.isEmpty(imageToken) && TextUtils.isEmpty(imagePath.toString())) {
-            throw new RuntimeException("upload parameter is null!");
-        }
-        File imageFile = new File(imagePath.getPath());
-
-        if (this.uploadManager == null) {
-            this.uploadManager = new UploadManager();
-        }
-        this.uploadManager.put(imageFile, null, imageToken, new UpCompletionHandler() {
-
-            @Override
-            public void complete(String s, ResponseInfo responseInfo, JSONObject jsonObject) {
-                if (responseInfo.isOK()) {
-                    try {
-                        String key = (String) jsonObject.get("key");
-                        imageUrl = "http://" + domain + "/" + key;
-                        Log.e("uploadImage", imageUrl);
-                        if (!TextUtils.isEmpty(imageUrl)) {
-                            request(UPDATE_GROUP_HEADER);
-                        }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
+        Observable.just(imageFile)
+                .observeOn(Schedulers.io())
+                .map(new Function<File, List<File>>() {
+                    @Override
+                    public List<File> apply(File file) throws Exception {
+                        return Luban.with(GroupDetailActivity.this).load(imageFile).ignoreBy(1024).get();
                     }
-                }
-            }
-        }, null);
+                })
+                .flatMap(new Function<List<File>, ObservableSource<NetData<String>>>() {
+                    @Override
+                    public ObservableSource<NetData<String>> apply(List<File> files) throws Exception {
+                        File image = files.get(0);// 第一张
+                        RequestBody body = RequestBody.create(MediaType.parse("image/jpeg"), image);
+                        MultipartBody.Part file = MultipartBody.Part.createFormData("photo", image.getName(), body);
+                        return HttpUtil.apiS().uploadImageInfo(file);
+                    }
+                }).observeOn(AndroidSchedulers.mainThread())
+                .doOnTerminate(new Action() {
+                    @Override
+                    public void run() throws Exception {
+                        LoadDialog.dismiss(mContext);
+                    }
+                })
+                .subscribe(new NetObserver<NetData<String>>() {
+                    @Override
+                    public void Successful(NetData<String> stringNetData) {
+//                        NToast.shortToast(mContext, "图片上传成功");
+                        Log.e("swo", "图片上传成功");
+                        if (stringNetData.code == 200) {
+                            imageUrl = BaseAction.DOMAIN_IMAGE + stringNetData.url;
+                            Log.e("uploadImage", imageUrl);
+                            if (!TextUtils.isEmpty(imageUrl)) {
+                                request(UPDATE_GROUP_HEADER);
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void Failure(Throwable t) {
+                        NToast.shortToast(mContext, "图片上传失败");
+                    }
+                });
     }
+
+//    public void uploadImage(final String domain, String imageToken, Uri imagePath) {
+//        if (TextUtils.isEmpty(domain) && TextUtils.isEmpty(imageToken) && TextUtils.isEmpty(imagePath.toString())) {
+//            throw new RuntimeException("upload parameter is null!");
+//        }
+//        File imageFile = new File(imagePath.getPath());
+//
+//        if (this.uploadManager == null) {
+//            this.uploadManager = new UploadManager();
+//        }
+//        this.uploadManager.put(imageFile, null, imageToken, new UpCompletionHandler() {
+//
+//            @Override
+//            public void complete(String s, ResponseInfo responseInfo, JSONObject jsonObject) {
+//                if (responseInfo.isOK()) {
+//                    try {
+//                        String key = (String) jsonObject.get("key");
+//                        imageUrl = "http://" + domain + "/" + key;
+//                        Log.e("uploadImage", imageUrl);
+//                        if (!TextUtils.isEmpty(imageUrl)) {
+//                            request(UPDATE_GROUP_HEADER);
+//                        }
+//                    } catch (JSONException e) {
+//                        e.printStackTrace();
+//                    }
+//                }
+//            }
+//        }, null);
+//    }
 
 
     private void initViews() {

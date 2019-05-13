@@ -11,7 +11,7 @@
         android:layout_gravity="center_horizontal"
         android:layout_marginBottom="14dp"
         android:layout_marginTop="24dp"
-        android:src="@drawable/about_seal" />
+        android:src="@drawable/ic_launcher" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -110,7 +110,7 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_marginLeft="25dp"
-            android:text="@string/ac_about_seal_talk_version"
+            android:text="XX版本"
             android:textColor="#353535"
             android:textSize="16sp" />
 
@@ -166,7 +166,7 @@
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:layout_marginRight="18dp"
-            android:text="2.6.6 Stable"
+            android:text="XXXXXXXXXX"
             android:textColor="#999"
             android:textSize="14sp" />
 
@@ -229,7 +229,7 @@
         android:layout_gravity="center_horizontal"
         android:layout_marginBottom="14dp"
         android:gravity="bottom"
-        android:text="Powered by RongCloud"
+        android:text="Powered by XXXXXXX"
         android:textColor="#999"
         android:textSize="14sp" />
 
