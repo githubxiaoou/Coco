@@ -19,6 +19,9 @@ import java.util.Locale;
 
 import cn.rongcloud.im.App;
 import cn.rongcloud.im.R;
+import cn.rongcloud.im.model.NetData;
+import cn.rongcloud.im.net.HttpUtil;
+import cn.rongcloud.im.net.NetObserver;
 import cn.rongcloud.im.server.network.http.HttpException;
 import cn.rongcloud.im.server.response.CheckPhoneResponse;
 import cn.rongcloud.im.server.response.RestPasswordResponse;
@@ -30,6 +33,8 @@ import cn.rongcloud.im.server.utils.downtime.DownTimer;
 import cn.rongcloud.im.server.utils.downtime.DownTimerListener;
 import cn.rongcloud.im.server.widget.ClearWriteEditText;
 import cn.rongcloud.im.server.widget.LoadDialog;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 import io.rong.common.RLog;
 import io.rong.imkit.RongConfigurationManager;
 import io.rong.imkit.utilities.LangUtils;
@@ -128,7 +133,7 @@ public class ForgetPasswordActivity extends BaseActivity implements View.OnClick
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (s.length() == 6) {
+                if (s.length() == 4) {
 //                    AMUtils.onInactive(mContext, mCode);
                     if (available) {
                         mOK.setClickable(true);
@@ -178,7 +183,8 @@ public class ForgetPasswordActivity extends BaseActivity implements View.OnClick
             case SEND_CODE:
                 return action.sendCode(region, phone);
             case CHANGE_PASSWORD:
-                return action.restPassword(mPassword1.getText().toString(), mCodeToken);
+//                return action.restPassword(mPassword1.getText().toString(), mCodeToken);
+                return action.restPassword(mPassword1.getText().toString(), phone);
             case VERIFY_CODE:
                 return action.verifyCode(region, phone, mCode.getText().toString());
         }
@@ -197,26 +203,27 @@ public class ForgetPasswordActivity extends BaseActivity implements View.OnClick
                             mGetCode.setClickable(false);
                             mGetCode.setBackgroundDrawable(getResources().getDrawable(R.drawable.rs_select_btn_gray));
                         } else {
-                            request(SEND_CODE);
+//                            request(SEND_CODE);
+                            getVCode();
                             mGetCode.setClickable(false);
                             mGetCode.setBackgroundDrawable(getResources().getDrawable(R.drawable.rs_select_btn_gray));
                         }
                     }
                     break;
-                case SEND_CODE:
-                    SendCodeResponse scrres = (SendCodeResponse) result;
-                    if (scrres.getCode() == 200) {
-                        DownTimer downTimer = new DownTimer();
-                        downTimer.setListener(this);
-                        downTimer.startDown(60 * 1000);
-                        available = true;
-                        NToast.shortToast(mContext, R.string.messge_send);
-                    } else if (scrres.getCode() == 5000) {
-                        NToast.shortToast(mContext, R.string.message_frequency);
-                    } else if(scrres.getCode() == 3102){
-                        NToast.shortToast(mContext, R.string.Illegal_phone_number);
-                    }
-                    break;
+//                case SEND_CODE:
+//                    SendCodeResponse scrres = (SendCodeResponse) result;
+//                    if (scrres.getCode() == 200) {
+//                        DownTimer downTimer = new DownTimer();
+//                        downTimer.setListener(this);
+//                        downTimer.startDown(60 * 1000);
+//                        available = true;
+//                        NToast.shortToast(mContext, R.string.messge_send);
+//                    } else if (scrres.getCode() == 5000) {
+//                        NToast.shortToast(mContext, R.string.message_frequency);
+//                    } else if(scrres.getCode() == 3102){
+//                        NToast.shortToast(mContext, R.string.Illegal_phone_number);
+//                    }
+//                    break;
                 case VERIFY_CODE:
                     VerifyCodeResponse vcres = (VerifyCodeResponse) result;
                     switch (vcres.getCode()) {
@@ -268,8 +275,12 @@ public class ForgetPasswordActivity extends BaseActivity implements View.OnClick
             case CHECK_PHONE:
                 Toast.makeText(mContext, mContext.getString(R.string.phone_enable_check_request_failed), Toast.LENGTH_SHORT).show();
                 break;
-            case SEND_CODE:
-                NToast.shortToast(mContext, mContext.getString(R.string.get_verify_code_request_failed));
+//            case SEND_CODE:
+//                NToast.shortToast(mContext, mContext.getString(R.string.get_verify_code_request_failed));
+//                break;
+            case CHANGE_PASSWORD:
+                LoadDialog.dismiss(mContext);
+                NToast.shortToast(mContext, "更改失败");
                 break;
         }
     }
@@ -328,8 +339,16 @@ public class ForgetPasswordActivity extends BaseActivity implements View.OnClick
                     return;
                 }
 
+                // 本地做验证码校验
+                if (!mCode.getText().toString().equals(mVCodeFromNet)) {
+                    NToast.shortToast(mContext, "验证码不正确");
+                    return;
+                }
+
                 LoadDialog.show(mContext);
-                request(VERIFY_CODE);
+//                request(VERIFY_CODE);
+
+                request(CHANGE_PASSWORD);
                 break;
             case R.id.reg_country_select:
                 startActivityForResult(new Intent(this, SelectCountryActivity.class), REQUEST_CODE_SELECT_COUNTRY);
@@ -363,6 +382,35 @@ public class ForgetPasswordActivity extends BaseActivity implements View.OnClick
                 changeLanguage();
                 break;
         }
+    }
+
+    private String mVCodeFromNet;// 记录短信验证码，只进行本地验证
+    private void getVCode() {
+        HttpUtil.apiS().sendMessage(phone)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new NetObserver<NetData<String>>() {
+                    @Override
+                    public void Successful(NetData<String> stringNetData) {
+                        if (stringNetData.code == 200) {
+                            mVCodeFromNet = stringNetData.result;
+                            available = true;
+                            DownTimer downTimer = new DownTimer();
+                            downTimer.setListener(ForgetPasswordActivity.this);
+                            downTimer.startDown(60 * 1000);
+                            NToast.shortToast(mContext, R.string.messge_send);
+                        } else if (stringNetData.code == 5000) {
+                            NToast.shortToast(mContext, R.string.message_frequency);
+                        } else if (stringNetData.code == 3102) {
+                            NToast.shortToast(mContext, R.string.Illegal_phone_number);
+                        }
+                    }
+
+                    @Override
+                    public void Failure(Throwable t) {
+                        NToast.shortToast(mContext, mContext.getString(R.string.get_verify_code_request_failed));
+                    }
+                });
     }
 
     private void changeLanguage() {

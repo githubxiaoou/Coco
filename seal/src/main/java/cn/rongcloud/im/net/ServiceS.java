@@ -29,4 +29,7 @@ public interface ServiceS {
                                        @Query("sex") String sex,// 1男 2女
                                        @Query("status") String status);// 1正常 0 禁用
 
+    /*获取验证码接口*/
+    @GET("user/send-message")
+    Observable<NetData<String>> sendMessage(@Query("phone") String phone);
 }

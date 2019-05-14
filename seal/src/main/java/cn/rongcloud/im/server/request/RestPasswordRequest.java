@@ -14,14 +14,15 @@ public class RestPasswordRequest {
 
     private String password;
     private String verification_token;
+    private String phone;
 
     public void setPassword(String password) {
         this.password = password;
     }
 
-    public RestPasswordRequest(String password, String verification_token) {
+    public RestPasswordRequest(String password, String phone) {
         this.password = password;
-        this.verification_token = verification_token;
+        this.phone = phone;
     }
 
     public void setVerification_token(String verification_token) {
@@ -34,5 +35,13 @@ public class RestPasswordRequest {
 
     public String getVerification_token() {
         return verification_token;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 }

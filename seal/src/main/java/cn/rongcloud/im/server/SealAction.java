@@ -188,14 +188,15 @@ public class SealAction extends BaseAction {
      *
      * @param nickname           昵称
      * @param password           密码
-     * @param verification_token 验证码
+//     * @param verification_token 验证码
+     * @param phone 手机号
      * @throws HttpException
      */
-    public RegisterResponse register(String nickname, String password, String verification_token) throws HttpException {
+    public RegisterResponse register(String nickname, String password, String phone) throws HttpException {
         String url = getURL("user/register");
         StringEntity entity = null;
         try {
-            entity = new StringEntity(JsonMananger.beanToJson(new RegisterRequest(nickname, password, verification_token)), ENCODING);
+            entity = new StringEntity(JsonMananger.beanToJson(new RegisterRequest(nickname, password, phone)), ENCODING);
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
@@ -330,14 +331,16 @@ public class SealAction extends BaseAction {
 
     /**
      * 通过手机验证码重置密码
+     * 改：和注册接口一致，短信验证码改为本地验证，所以这里的token也改为传电话号码
      *
      * @param password           密码，6 到 20 个字节，不能包含空格
-     * @param verification_token 调用 /user/verify_code 成功后返回的 activation_token
+//     * @param verification_token 调用 /user/verify_code 成功后返回的 activation_token
+     * @param phone 电话号码
      * @throws HttpException
      */
-    public RestPasswordResponse restPassword(String password, String verification_token) throws HttpException {
+    public RestPasswordResponse restPassword(String password, String phone) throws HttpException {
         String uri = getURL("user/reset_password");
-        String json = JsonMananger.beanToJson(new RestPasswordRequest(password, verification_token));
+        String json = JsonMananger.beanToJson(new RestPasswordRequest(password, phone));
         StringEntity entity = null;
         try {
             entity = new StringEntity(json, ENCODING);
