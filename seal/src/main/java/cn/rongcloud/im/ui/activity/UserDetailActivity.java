@@ -56,6 +56,7 @@ import io.rong.imlib.model.UserInfo;
 import io.rong.imlib.model.UserOnlineStatusInfo;
 
 /**
+ * 用户详情页
  * Created by tiankui on 16/11/2.
  */
 

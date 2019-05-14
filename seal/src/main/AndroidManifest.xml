@@ -576,6 +576,7 @@
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
         <activity android:name=".ui.activity.UpdateMailActivity" />
+        <activity android:name=".ui.activity.ScanActivity" />
         <!--推送配置项-->
         <meta-data
             android:name="com.vivo.push.api_key"

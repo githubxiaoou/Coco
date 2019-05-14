@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,10 +33,12 @@ import cn.rongcloud.im.server.network.async.AsyncTaskManager;
 import cn.rongcloud.im.server.network.async.OnDataListener;
 import cn.rongcloud.im.server.network.http.HttpException;
 import cn.rongcloud.im.server.response.VersionResponse;
+import cn.rongcloud.im.server.utils.NToast;
 import cn.rongcloud.im.server.widget.SelectableRoundedImageView;
 import cn.rongcloud.im.ui.activity.AboutRongCloudActivity;
 import cn.rongcloud.im.ui.activity.AccountSettingActivity;
 import cn.rongcloud.im.ui.activity.MyAccountActivity;
+import cn.rongcloud.im.ui.activity.ScanActivity;
 import cn.rongcloud.im.ui.activity.SetLanguageActivity;
 import io.rong.imageloader.core.ImageLoader;
 import io.rong.imkit.RongConfigurationManager;
@@ -43,6 +46,8 @@ import io.rong.imkit.RongIM;
 import io.rong.imkit.utilities.LangUtils;
 import io.rong.imlib.model.CSCustomServiceInfo;
 import io.rong.imlib.model.UserInfo;
+
+import static android.app.Activity.RESULT_OK;
 
 /**
  * Created by AMing on 16/6/21.
@@ -142,6 +147,7 @@ public class MineFragment extends Fragment implements View.OnClickListener {
         LinearLayout mMineService = (LinearLayout) mView.findViewById(R.id.mine_service);
         LinearLayout mMineXN = (LinearLayout) mView.findViewById(R.id.mine_xiaoneng);
         LinearLayout mMineAbout = (LinearLayout) mView.findViewById(R.id.mine_about);
+        LinearLayout mMineSao = (LinearLayout) mView.findViewById(R.id.mine_sao);
         mCurrentLanguageTv = (TextView) mView.findViewById(R.id.tv_mine_current_language);
         mCurrentLanguageTv.setText(getLanguageStr());
 
@@ -156,6 +162,7 @@ public class MineFragment extends Fragment implements View.OnClickListener {
         mMineService.setOnClickListener(this);
         mMineAbout.setOnClickListener(this);
         mMineXN.setOnClickListener(this);
+        mMineSao.setOnClickListener(this);
         mView.findViewById(R.id.my_wallet).setOnClickListener(this);
     }
 
@@ -196,12 +203,29 @@ public class MineFragment extends Fragment implements View.OnClickListener {
             case R.id.my_wallet:
                 JrmfClient.intentWallet(getActivity());
                 break;
+            case R.id.mine_sao:
+                ScanActivity.actionStartFagment(this);
+                break;
         }
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK) {
+            if (requestCode == ScanActivity.REQUEST_CODE) {
+                if (data != null) {
+                    String result = data.getStringExtra(ScanActivity.SCAN_RESULT);
+                    NToast.shortToast(getActivity(), result);
+                    Log.e("swo", result);
+                }
+            }
+        }
     }
 
     private void updateUserInfo() {
