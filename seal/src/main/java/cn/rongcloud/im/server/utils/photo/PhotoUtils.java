@@ -106,6 +106,18 @@ public class PhotoUtils {
     }
 
     /**
+     * demo中默认选择照片之后都是要裁剪的，添加一个选择照片之后不要裁剪的方法
+     * 不用裁剪needCrop置为false，用过后重新置为true
+     * @param activity
+     */
+    private boolean needCrop = true;
+    public void selectPictureWithoutCrop(Activity activity) {
+        needCrop = false;
+        selectPicture(activity);
+    }
+
+
+    /**
      * 构建uri
      *
      * @param activity
@@ -198,6 +210,11 @@ public class PhotoUtils {
             case INTENT_SELECT:
                 if (data != null && data.getData() != null) {
                     Uri imageUri = data.getData();
+                    if (!needCrop) {
+                        needCrop = true;
+                        onPhotoResultListener.onPhotoResult(imageUri);
+                        return;
+                    }
                     if (corp(activity, imageUri)) {
                         return;
                     }

@@ -4,21 +4,27 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
 import android.media.SoundPool;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.text.TextUtils;
+import android.util.Log;
 import android.util.SparseIntArray;
+import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.TextView;
 
-import java.util.Collections;
+import java.net.URL;
 import java.util.List;
 
 import cn.bingoogolapple.qrcode.core.QRCodeView;
 import cn.bingoogolapple.qrcode.zxing.ZXingView;
 import cn.rongcloud.im.R;
 import cn.rongcloud.im.server.utils.NToast;
+import cn.rongcloud.im.server.utils.photo.PhotoUtils;
+import cn.rongcloud.im.server.widget.LoadDialog;
 import pub.devrel.easypermissions.AppSettingsDialog;
 import pub.devrel.easypermissions.EasyPermissions;
 
@@ -28,16 +34,17 @@ import pub.devrel.easypermissions.EasyPermissions;
  * 一维码二维码扫描
  */
 
-public class ScanActivity extends BaseActivity implements QRCodeView.Delegate ,EasyPermissions.PermissionCallbacks{
+public class ScanActivity extends BaseActivity implements QRCodeView.Delegate ,EasyPermissions.PermissionCallbacks, View.OnClickListener {
 
     public static final int REQUEST_CODE = 10001;
     public static final String SCAN_RESULT = "scan_result";
-    private static final String PERMISSION = Manifest.permission.CAMERA;
+    private static final String[] PERMISSION = {Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE};
     TextView mTvTitle;
     ZXingView mZXingView;
     CheckBox mCbScan;
     private SoundPool mSoundPool = null;
     private SparseIntArray soundID = new SparseIntArray();
+    private PhotoUtils mPhotoUtils;
 
 
     public static void actionStart(Activity activity) {
@@ -64,9 +71,13 @@ public class ScanActivity extends BaseActivity implements QRCodeView.Delegate ,E
         mZXingView = findViewById(R.id.zxingview);
         mTvTitle = findViewById(R.id.tv_title);
         mCbScan = findViewById(R.id.cb_scan);
+        TextView tvRight = findViewById(R.id.text_right);
+        tvRight.setText("图片");
+        tvRight.setVisibility(View.VISIBLE);
+        tvRight.setOnClickListener(this);
 //        mZXingView.setType(BarcodeType.TWO_DIMENSION, null); // 只识别二维条码
 //        mZXingView.setType(BarcodeType.ONE_DIMENSION, null); // 只识别一维条码
-        setTitle("扫描");
+        setTitle("二维码");
         mCbScan.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -80,6 +91,25 @@ public class ScanActivity extends BaseActivity implements QRCodeView.Delegate ,E
             }
         });
 
+        setPortraitChangeListener();
+    }
+
+    private void setPortraitChangeListener() {
+        mPhotoUtils = new PhotoUtils(new PhotoUtils.OnPhotoResultListener() {
+            @Override
+            public void onPhotoResult(Uri uri) {
+                Log.e("swo", uri.toString());
+                if (uri != null && !TextUtils.isEmpty(uri.getPath())) {
+//                    LoadDialog.show(mContext);
+                    NToast.shortToast(mContext, "ZBar识别");
+                }
+            }
+
+            @Override
+            public void onPhotoCancel() {
+                Log.e("swo", "onPhotoCancel");
+            }
+        });
     }
 
     @Override
@@ -175,7 +205,7 @@ public class ScanActivity extends BaseActivity implements QRCodeView.Delegate ,E
 
     @Override
     public void onPermissionsDenied(int requestCode, @NonNull List<String> perms) {
-        if (EasyPermissions.somePermissionPermanentlyDenied(this, Collections.singletonList(PERMISSION))) {
+        if (EasyPermissions.somePermissionPermanentlyDenied(this, perms)) {
             new AppSettingsDialog.Builder(this)
                     .setTitle("权限申请")
                     .setRationale("无相机权限功能将无法使用。")
@@ -186,14 +216,28 @@ public class ScanActivity extends BaseActivity implements QRCodeView.Delegate ,E
         }
 
     }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == AppSettingsDialog.DEFAULT_SETTINGS_REQ_CODE) {
-            if (!EasyPermissions.hasPermissions(this, PERMISSION)) {
-                finish();
-            }
+        switch (requestCode) {
+            case AppSettingsDialog.DEFAULT_SETTINGS_REQ_CODE:
+                if (!EasyPermissions.hasPermissions(this, PERMISSION)) {
+                    finish();
+                }
+                break;
+            case PhotoUtils.INTENT_SELECT:
+                mPhotoUtils.onActivityResult(ScanActivity.this, requestCode, resultCode, data);
+                break;
         }
     }
 
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.text_right:
+                mPhotoUtils.selectPictureWithoutCrop(ScanActivity.this);
+                break;
+        }
+    }
 }
