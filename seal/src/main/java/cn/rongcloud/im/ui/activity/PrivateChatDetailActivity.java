@@ -54,7 +54,7 @@ public class PrivateChatDetailActivity extends BaseActivity implements View.OnCl
     private Conversation.ConversationType mConversationType;
     private String fromConversationId;
     private SealSearchConversationResult mResult;
-
+    private static final int CLICK_CONVERSATION_USER_PORTRAIT = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,7 +105,7 @@ public class PrivateChatDetailActivity extends BaseActivity implements View.OnCl
                 Friend friend = CharacterParser.getInstance().generateFriendFromUserInfo(mUserInfo);
                 intent.putExtra("friend", friend);
                 intent.putExtra("conversationType", Conversation.ConversationType.PRIVATE.getValue());
-                intent.putExtra("type", 1);
+                intent.putExtra("type", CLICK_CONVERSATION_USER_PORTRAIT);
                 PrivateChatDetailActivity.this.startActivity(intent);
             }
         });

@@ -117,7 +117,7 @@ public class MainActivity extends BaseActivity implements
         moreImage = (ImageView) findViewById(R.id.seal_more);
         mSearchImageView = (ImageView) findViewById(R.id.ac_iv_search);
         mTvTitle = ((TextView) findViewById(R.id.tv_title1));
-        mTvTitle.setText("会话");
+        mTvTitle.setText("对话");
 
         chatRLayout.setOnClickListener(this);
         contactRLayout.setOnClickListener(this);
@@ -238,7 +238,7 @@ public class MainActivity extends BaseActivity implements
             case 0:
                 mTextChats.setTextColor(Color.parseColor("#0099ff"));
                 mImageChats.setBackgroundDrawable(getResources().getDrawable(R.drawable.tab_chat_hover));
-                mTvTitle.setText("会话");
+                mTvTitle.setText("对话");
                 mTvTitle.setTextColor(getResources().getColor(R.color.white));
                 mSearchImageView.setVisibility(View.VISIBLE);
                 moreImage.setVisibility(View.VISIBLE);

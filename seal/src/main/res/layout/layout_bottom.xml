@@ -167,15 +167,12 @@
             <FrameLayout
                 android:layout_width="60dp"
                 android:layout_height="match_parent"
-                android:layout_centerHorizontal="true"
-                android:gravity="center">
-
+                android:layout_centerHorizontal="true">
 
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    android:padding="3dp">
+                    android:gravity="center">
 
                     <ImageView
                         android:id="@+id/tab_img_me"
@@ -186,14 +183,13 @@
                         android:focusable="false"
                         android:scaleType="centerInside" />
 
-
                     <TextView
                         android:id="@+id/tab_text_me"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_below="@id/tab_img_me"
                         android:layout_centerHorizontal="true"
-                        android:layout_marginTop="2.2dp"
+                        android:layout_marginTop="3dp"
                         android:text="@string/me"
                         android:textColor="#abadbb"
                         android:textSize="12sp" />
@@ -206,9 +202,8 @@
                     android:layout_height="10dp"
                     android:layout_gravity="right"
                     android:layout_marginRight="16dp"
-                    android:layout_toRightOf="@id/tab_img_me"
                     android:background="@drawable/aii"
-                    android:visibility="gone" />
+                    android:visibility="visible" />
 
             </FrameLayout>
         </RelativeLayout>

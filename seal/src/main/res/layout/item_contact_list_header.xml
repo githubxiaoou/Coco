@@ -20,7 +20,7 @@
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
             android:layout_marginLeft="12dp"
-            android:background="@drawable/default_fmessage"
+            android:background="@drawable/ic_contacts_new"
             app:sriv_left_bottom_corner_radius="3dip"
             app:sriv_left_top_corner_radius="3dip"
             app:sriv_right_bottom_corner_radius="3dip"
@@ -60,7 +60,7 @@
         android:background="#d9d9d9" />
 
     <RelativeLayout
-        android:id="@+id/re_chatroom"
+        android:id="@+id/re_addfriend"
         android:layout_width="match_parent"
         android:layout_height="52dp"
         android:background="@drawable/btn_list_item_bg"
@@ -73,7 +73,85 @@
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
             android:layout_marginLeft="12dp"
-            android:background="@drawable/default_chatroom"
+            android:background="@drawable/icon_contact_addfriend"
+            app:sriv_left_bottom_corner_radius="3dip"
+            app:sriv_left_top_corner_radius="3dip"
+            app:sriv_right_bottom_corner_radius="3dip"
+            app:sriv_right_top_corner_radius="3dip" />
+
+        <TextView
+            android:id="@+id/tv_addfriend"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="12dp"
+            android:layout_toRightOf="@id/iv_avatar2"
+            android:text="添加好友"
+            android:textColor="#353535"
+            android:textSize="16sp" />
+    </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.1dp"
+        android:layout_marginLeft="12dp"
+        android:layout_marginRight="12dp"
+        android:background="#d9d9d9" />
+
+    <RelativeLayout
+        android:id="@+id/re_matching"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:background="@drawable/btn_list_item_bg"
+        android:clickable="true">
+
+        <cn.rongcloud.im.server.widget.SelectableRoundedImageView
+            android:id="@+id/iv_avatar3"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="12dp"
+            android:background="@drawable/icon_addfriend_contactmatch"
+            app:sriv_left_bottom_corner_radius="3dip"
+            app:sriv_left_top_corner_radius="3dip"
+            app:sriv_right_bottom_corner_radius="3dip"
+            app:sriv_right_top_corner_radius="3dip" />
+
+        <TextView
+            android:id="@+id/tv_matching"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="12dp"
+            android:layout_toRightOf="@id/iv_avatar3"
+            android:text="手机通讯录匹配"
+            android:textColor="#353535"
+            android:textSize="16sp" />
+    </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.1dp"
+        android:layout_marginLeft="12dp"
+        android:layout_marginRight="12dp"
+        android:background="#d9d9d9" />
+
+    <RelativeLayout
+        android:id="@+id/re_chatroom"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:background="@drawable/btn_list_item_bg"
+        android:clickable="true">
+
+        <cn.rongcloud.im.server.widget.SelectableRoundedImageView
+            android:id="@+id/iv_avatar4"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="12dp"
+            android:background="@drawable/icon_contact_groupcontact"
             app:sriv_left_bottom_corner_radius="3dip"
             app:sriv_left_top_corner_radius="3dip"
             app:sriv_right_bottom_corner_radius="3dip"
@@ -85,29 +163,22 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_marginLeft="12dp"
-            android:layout_toRightOf="@id/iv_avatar2"
-            android:text="@string/group"
+            android:layout_toRightOf="@id/iv_avatar4"
+            android:text="已保存的群组"
             android:textColor="#353535"
             android:textSize="16sp" />
     </RelativeLayout>
 
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="0.1dp"
-        android:layout_marginLeft="12dp"
-        android:layout_marginRight="12dp"
-        android:background="#d9d9d9" />
-
     <RelativeLayout
         android:id="@+id/publicservice"
+        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="52dp"
         android:background="@drawable/btn_list_item_bg"
         android:clickable="true">
 
         <cn.rongcloud.im.server.widget.SelectableRoundedImageView
-            android:id="@+id/iv_avatar4"
+            android:id="@+id/iv_avatar5"
             android:layout_width="36dp"
             android:layout_height="36dp"
             android:layout_alignParentLeft="true"
@@ -125,25 +196,18 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_marginLeft="12dp"
-            android:layout_toRightOf="@id/iv_avatar4"
+            android:layout_toRightOf="@id/iv_avatar5"
             android:text="@string/public_service"
             android:textColor="#353535"
             android:textSize="16sp" />
     </RelativeLayout>
-
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="0.1dp"
-        android:layout_marginLeft="12dp"
-        android:layout_marginRight="12dp"
-        android:background="#d9d9d9" />
 
     <RelativeLayout
         android:id="@+id/contact_me_item"
         android:layout_width="match_parent"
         android:layout_height="52dp"
         android:background="@drawable/btn_list_item_bg"
+        android:visibility="gone"
         android:clickable="true">
 
         <cn.rongcloud.im.server.widget.SelectableRoundedImageView

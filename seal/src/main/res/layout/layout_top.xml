@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:layout_alignParentTop="true"
-        android:background="#0195ff" >
+        android:background="#373233" >
 
         <ImageView
             android:layout_width="wrap_content"
@@ -24,7 +24,7 @@
 
         <TextView
             android:id="@+id/tv_title1"
-            tools:text="会话"
+            tools:text="对话"
             android:textSize="20sp"
             android:textColor="@color/white"
             android:layout_centerInParent="true"

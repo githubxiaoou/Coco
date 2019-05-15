@@ -8,7 +8,7 @@
     <color name="main_title_backgroud">#F2F2F2</color>
     <color name="main_regist">#ffffff</color>
     <color name="button_backgroud">#0195ff</color>
-    <color name="de_title_bg">#0195ff</color>
+    <color name="de_title_bg">#373233</color>
     <color name="seal_bg">#f0f0f6</color>
 
     <color name="rc_text_color_secondary_inverse">@android:color/white</color>

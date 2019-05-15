@@ -33,6 +33,7 @@ import cn.rongcloud.im.server.broadcast.BroadcastManager;
 import cn.rongcloud.im.server.pinyin.CharacterParser;
 import cn.rongcloud.im.server.pinyin.PinyinComparator;
 import cn.rongcloud.im.server.pinyin.SideBar;
+import cn.rongcloud.im.server.utils.NToast;
 import cn.rongcloud.im.server.widget.SelectableRoundedImageView;
 import cn.rongcloud.im.ui.activity.GroupListActivity;
 import cn.rongcloud.im.ui.activity.NewFriendListActivity;
@@ -114,6 +115,8 @@ public class ContactsFragment extends Fragment implements View.OnClickListener {
         RelativeLayout groupLayout = (RelativeLayout) mHeadView.findViewById(R.id.re_chatroom);
         RelativeLayout publicServiceLayout = (RelativeLayout) mHeadView.findViewById(R.id.publicservice);
         RelativeLayout selfLayout = (RelativeLayout) mHeadView.findViewById(R.id.contact_me_item);
+        RelativeLayout addFriendLayout = (RelativeLayout) mHeadView.findViewById(R.id.re_addfriend);
+        RelativeLayout matchingLayout = (RelativeLayout) mHeadView.findViewById(R.id.re_matching);
         mSelectableRoundedImageView = (SelectableRoundedImageView) mHeadView.findViewById(R.id.contact_me_img);
         mNameTextView = (TextView) mHeadView.findViewById(R.id.contact_me_name);
         updatePersonalUI();
@@ -124,6 +127,8 @@ public class ContactsFragment extends Fragment implements View.OnClickListener {
         groupLayout.setOnClickListener(this);
         newFriendsLayout.setOnClickListener(this);
         publicServiceLayout.setOnClickListener(this);
+        addFriendLayout.setOnClickListener(this);
+        matchingLayout.setOnClickListener(this);
         //设置右侧触摸监听
         mSidBar.setOnTouchingLetterChangedListener(new SideBar.OnTouchingLetterChangedListener() {
 
@@ -215,6 +220,12 @@ public class ContactsFragment extends Fragment implements View.OnClickListener {
                 break;
             case R.id.contact_me_item:
                 RongIM.getInstance().startPrivateChat(getActivity(), mId, mCacheName);
+                break;
+            case R.id.re_addfriend:
+                NToast.shortToast(getActivity(), "添加朋友");
+                break;
+            case R.id.re_matching:
+                NToast.shortToast(getActivity(), "匹配通讯录");
                 break;
         }
     }
