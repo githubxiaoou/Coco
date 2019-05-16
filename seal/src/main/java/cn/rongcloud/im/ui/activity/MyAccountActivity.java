@@ -81,6 +81,7 @@ public class MyAccountActivity extends BaseActivity implements View.OnClickListe
     private TextView mTvGender;
     private TextView mTvMail;
     private String mUserId;
+    private String mLoginId;
 
 
     @Override
@@ -91,8 +92,6 @@ public class MyAccountActivity extends BaseActivity implements View.OnClickListe
         sp = getSharedPreferences("config", MODE_PRIVATE);
         editor = sp.edit();
         initView();
-        // for debug
-//        uploadImage(Uri.fromFile(new File("")));
     }
 
     private void initView() {
@@ -155,6 +154,7 @@ public class MyAccountActivity extends BaseActivity implements View.OnClickListe
 
         initOptionPicker();
         mUserId = sp.getString(SealConst.SEALTALK_USER_ID, "");
+        mLoginId = sp.getString(SealConst.SEALTALK_LOGIN_ID, "");
     }
 
     private void setPortraitChangeListener() {
@@ -196,6 +196,7 @@ public class MyAccountActivity extends BaseActivity implements View.OnClickListe
             case R.id.rl_account:
                 break;
             case R.id.rl_code:
+                MyCodeActivity.actionStart(this, mLoginId);
                 break;
             case R.id.rl_my_pic:
                 break;

@@ -31,6 +31,7 @@ import cn.rongcloud.im.server.utils.NToast;
 import cn.rongcloud.im.server.utils.RongGenerate;
 import cn.rongcloud.im.server.utils.photo.PhotoUtils;
 import cn.rongcloud.im.server.widget.LoadDialog;
+import io.rong.imkit.userInfoCache.RongUserInfoManager;
 import io.rong.imlib.model.UserInfo;
 import pub.devrel.easypermissions.AppSettingsDialog;
 import pub.devrel.easypermissions.EasyPermissions;
@@ -182,16 +183,24 @@ public class ScanActivity extends BaseActivity implements QRCodeView.Delegate ,E
         if (mSoundPool != null) {
             mSoundPool.play(soundID.get(1), 1, 1, 0, 0, 1);
         }
-        vibrate();
+//        vibrate();
         LoadDialog.dismiss(mContext);
         Intent data = new Intent();
         data.putExtra(SCAN_RESULT, result);
 //        setResult(RESULT_OK, data);
-        result = "z2mlAvb0c";// 测试用
+//        result = "z2mlAvb0c";// 测试用
         Intent intent = new Intent(this, UserDetailActivity.class);
-        UserInfo userInfo = new UserInfo(result,
-                "Sync111",
-                Uri.parse(RongGenerate.generateDefaultAvatar("Sync111", result)));
+//        UserInfo userInfo = new UserInfo(result,
+//                "Sync111",
+//                Uri.parse(RongGenerate.generateDefaultAvatar("Sync111", result)));
+
+        // TODO: 2019/5/16 不确定是不是这样就可以了,还是需要手动调用网络接口
+        UserInfo userInfo = RongUserInfoManager.getInstance().getUserInfo(result);
+        if (userInfo == null) {
+            NToast.shortToast(mContext, "不认识的二维码");
+            mZXingView.startSpot(); // 重新开始识别
+            return;
+        }
         Friend friend = CharacterParser.getInstance().generateFriendFromUserInfo(userInfo);
         intent.putExtra("friend", friend);
         intent.putExtra("type", CLICK_CONVERSATION_USER_PORTRAIT);

@@ -45,13 +45,15 @@
 
         <Button
             android:id="@+id/btn_right"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
+            android:layout_width="48dp"
+            android:layout_height="match_parent"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:layout_marginRight="15dp"
-            android:background="@null"
+            android:background="@drawable/selector_btn_back"
+            android:drawableLeft="@drawable/more_white_point"
+            android:paddingLeft="10dp"
             android:onClick="onHeadRightButtonClick"
+            android:visibility="gone"
             android:maxLines="1"
             android:textColor="@drawable/selector_btn_top" />
 
@@ -67,6 +69,7 @@
             android:textColor="#fff"
             android:textSize="18sp"
             android:visibility="gone" />
+
     </LinearLayout>
 
 
