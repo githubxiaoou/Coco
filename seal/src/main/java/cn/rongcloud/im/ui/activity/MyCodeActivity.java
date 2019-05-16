@@ -28,7 +28,7 @@ import io.rong.imageloader.core.ImageLoader;
 import io.rong.imkit.userInfoCache.RongUserInfoManager;
 import io.rong.imlib.model.UserInfo;
 
-public class MyCodeActivity extends BaseActivity {
+public class MyCodeActivity extends BaseActivity implements View.OnClickListener {
 
     private SelectableRoundedImageView mIvPortrait;
     private TextView mTvName;
@@ -87,19 +87,26 @@ public class MyCodeActivity extends BaseActivity {
 
     private void initView() {
         mLoginId = getIntent().getStringExtra("loginId");
+        ImageView ivRight = (ImageView) findViewById(R.id.iv_right);
         mIvPortrait = (SelectableRoundedImageView) findViewById(R.id.iv_portrait);
         mTvName = (TextView) findViewById(R.id.tv_name);
         mIvCode = (ImageView) findViewById(R.id.iv_code);
-        setHeadRightButtonVisibility(View.VISIBLE);
-    }
-
-    @Override
-    public void onHeadRightButtonClick(View v) {
-        NToast.shortToast(this, "更多");
+//        setHeadRightButtonVisibility(View.GONE);
+//        ivRight.setVisibility(View.VISIBLE);
+        ivRight.setOnClickListener(this);
     }
 
     @Override
     public void onHeadLeftButtonClick(View v) {
         finish();
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.iv_right:
+                NToast.shortToast(mContext, "更多");
+                break;
+        }
     }
 }

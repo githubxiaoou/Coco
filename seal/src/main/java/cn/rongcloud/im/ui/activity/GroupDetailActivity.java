@@ -611,6 +611,9 @@ public class GroupDetailActivity extends BaseActivity implements View.OnClickLis
                 tempIntent.putExtra("targetId", fromConversationId);
                 startActivity(tempIntent);
                 break;
+            case R.id.group_manage:
+                // TODO: 2019-05-16 群管理
+                break;
         }
     }
 
@@ -1027,6 +1030,8 @@ public class GroupDetailActivity extends BaseActivity implements View.OnClickLis
         groupClean.setOnClickListener(this);
         mGroupNotice.setOnClickListener(this);
         mSearchMessagesLinearLayout.setOnClickListener(this);
+        LinearLayout llGroupName = (LinearLayout) findViewById(R.id.group_manage);
+        llGroupName.setOnClickListener(this);
     }
 
     @Override

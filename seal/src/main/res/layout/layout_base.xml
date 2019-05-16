@@ -43,7 +43,7 @@
             android:textColor="@color/white"
             android:textSize="18sp" />
 
-        <Button
+        <!--<Button
             android:id="@+id/btn_right"
             android:layout_width="48dp"
             android:layout_height="match_parent"
@@ -54,6 +54,29 @@
             android:paddingLeft="10dp"
             android:onClick="onHeadRightButtonClick"
             android:visibility="gone"
+            android:maxLines="1"
+            android:textColor="@drawable/selector_btn_top" />-->
+
+        <ImageView
+            android:id="@+id/iv_right"
+            android:visibility="gone"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            android:src="@drawable/more_white_point"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"/>
+
+        <Button
+            android:id="@+id/btn_right"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="15dp"
+            android:background="@null"
+            android:onClick="onHeadRightButtonClick"
             android:maxLines="1"
             android:textColor="@drawable/selector_btn_top" />
 
