@@ -31,11 +31,12 @@
     <color name="text_tips_color">#666666</color>
     <color name="mine_head_color">#cccccc</color>
     <color name="text_color">#353535</color>
+    <color name="text_red">#FA5973</color>
 
     <color name="color_gray_text">#939393</color>
     <color name="color_divider_line">#E5E5E5</color>
     <color name="register_select_country_text_color">#4a4a4a</color>
-    <color name="register_select_country_bg">#f1f1f1</color>
+    <color name="register_select_country_bg">#FA5973</color>
 
 
     <!--SWITCH-->

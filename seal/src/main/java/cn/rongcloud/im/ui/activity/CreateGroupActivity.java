@@ -11,12 +11,7 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 
-import com.qiniu.android.http.ResponseInfo;
-import com.qiniu.android.storage.UpCompletionHandler;
 import com.qiniu.android.storage.UploadManager;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -34,7 +29,6 @@ import cn.rongcloud.im.server.BaseAction;
 import cn.rongcloud.im.server.broadcast.BroadcastManager;
 import cn.rongcloud.im.server.network.http.HttpException;
 import cn.rongcloud.im.server.response.CreateGroupResponse;
-import cn.rongcloud.im.server.response.QiNiuTokenResponse;
 import cn.rongcloud.im.server.response.SetGroupPortraitResponse;
 import cn.rongcloud.im.server.utils.NToast;
 import cn.rongcloud.im.server.utils.photo.PhotoUtils;
@@ -308,7 +302,7 @@ public class CreateGroupActivity extends BaseActivity implements View.OnClickLis
 //                        NToast.shortToast(mContext, "图片上传成功");
                         Log.e("swo", "图片上传成功");
                         if (stringNetData.code == 200) {
-                            imageUrl = BaseAction.DOMAIN_IMAGE + stringNetData.url;
+                            imageUrl = BaseAction.DOMAIN_APP + stringNetData.url;
                             Log.e("uploadImage", imageUrl);
                             if (!TextUtils.isEmpty(imageUrl)) {
                                 ImageLoader.getInstance().displayImage(imageUrl, asyncImageView);

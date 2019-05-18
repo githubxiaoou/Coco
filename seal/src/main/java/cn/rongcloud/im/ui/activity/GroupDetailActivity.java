@@ -18,12 +18,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.qiniu.android.http.ResponseInfo;
-import com.qiniu.android.storage.UpCompletionHandler;
 import com.qiniu.android.storage.UploadManager;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -49,7 +44,6 @@ import cn.rongcloud.im.server.network.http.HttpException;
 import cn.rongcloud.im.server.pinyin.CharacterParser;
 import cn.rongcloud.im.server.response.DismissGroupResponse;
 import cn.rongcloud.im.server.response.GetGroupInfoResponse;
-import cn.rongcloud.im.server.response.QiNiuTokenResponse;
 import cn.rongcloud.im.server.response.QuitGroupResponse;
 import cn.rongcloud.im.server.response.SetGroupDisplayNameResponse;
 import cn.rongcloud.im.server.response.SetGroupNameResponse;
@@ -64,6 +58,7 @@ import cn.rongcloud.im.server.widget.BottomMenuDialog;
 import cn.rongcloud.im.server.widget.DialogWithYesOrNoUtils;
 import cn.rongcloud.im.server.widget.LoadDialog;
 import cn.rongcloud.im.server.widget.SelectableRoundedImageView;
+import cn.rongcloud.im.ui.activity.groupmanage.GroupManageActivity;
 import cn.rongcloud.im.ui.widget.DemoGridView;
 import cn.rongcloud.im.ui.widget.switchbutton.SwitchButton;
 import io.reactivex.Observable;
@@ -612,7 +607,9 @@ public class GroupDetailActivity extends BaseActivity implements View.OnClickLis
                 startActivity(tempIntent);
                 break;
             case R.id.group_manage:
-                // TODO: 2019-05-16 群管理
+                Intent manageIntent = new Intent(this, GroupManageActivity.class);
+                manageIntent.putExtra("GroupId", mGroup.getGroupsId());
+                startActivity(manageIntent);
                 break;
         }
     }
@@ -691,6 +688,7 @@ public class GroupDetailActivity extends BaseActivity implements View.OnClickLis
 
                 });
             } else if ((isCreated && position == getCount() - 2) || (!isCreated && position == getCount() - 1)) {
+                // 加人按钮
                 tv_username.setText("");
                 badge_delete.setVisibility(View.GONE);
                 iv_avatar.setBackground(getResources().getDrawable(R.drawable.jy_drltsz_btn_addperson));
@@ -951,7 +949,7 @@ public class GroupDetailActivity extends BaseActivity implements View.OnClickLis
 //                        NToast.shortToast(mContext, "图片上传成功");
                         Log.e("swo", "图片上传成功");
                         if (stringNetData.code == 200) {
-                            imageUrl = BaseAction.DOMAIN_IMAGE + stringNetData.url;
+                            imageUrl = BaseAction.DOMAIN_APP + stringNetData.url;
                             Log.e("uploadImage", imageUrl);
                             if (!TextUtils.isEmpty(imageUrl)) {
                                 request(UPDATE_GROUP_HEADER);

@@ -21,6 +21,7 @@
                 android:id="@+id/rl_adjust_manager"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
+                android:layout_marginTop="20dp"
                 android:background="@drawable/btn_list_item_bg"
                 android:clickable="true">
 
@@ -299,6 +300,16 @@
                     app:kswThumbMarginTop="-2.5dp" />
             </LinearLayout>
 
+            <TextView
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginTop="5dp"
+                android:text="开启后，群成员无法通过该群添加好友。"
+                android:textColor="@color/gray"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"/>
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
@@ -336,6 +347,16 @@
                     app:kswThumbMarginTop="-2.5dp" />
             </LinearLayout>
 
+            <TextView
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginTop="5dp"
+                android:text="开启后，需管理员同意才能加入群聊，同时将停用二维码进群方式。"
+                android:textColor="@color/gray"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"/>
         </LinearLayout>
+
     </ScrollView>
 </LinearLayout>

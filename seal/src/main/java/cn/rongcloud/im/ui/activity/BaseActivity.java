@@ -5,6 +5,7 @@ import android.graphics.drawable.Drawable;
 import android.media.AudioManager;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -25,7 +26,7 @@ import cn.rongcloud.im.server.network.http.HttpException;
 import cn.rongcloud.im.server.utils.NToast;
 import io.rong.imkit.RongConfigurationManager;
 
-public abstract class BaseActivity extends FragmentActivity implements OnDataListener {
+public abstract class BaseActivity extends AppCompatActivity implements OnDataListener {
 
     protected Context mContext;
     public AsyncTaskManager mAsyncTaskManager;

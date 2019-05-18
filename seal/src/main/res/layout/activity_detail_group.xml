@@ -25,7 +25,7 @@
                 android:background="#ffffff"
                 android:gravity="start"
                 android:listSelector="@android:color/transparent"
-                android:numColumns="4"/>
+                android:numColumns="5"/>
 
             <LinearLayout
                 android:layout_width="wrap_content"

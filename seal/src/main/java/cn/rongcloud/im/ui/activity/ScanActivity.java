@@ -24,6 +24,7 @@ import java.util.List;
 
 import cn.bingoogolapple.qrcode.core.QRCodeView;
 import cn.bingoogolapple.qrcode.zxing.ZXingView;
+import cn.rongcloud.im.BuildConfig;
 import cn.rongcloud.im.R;
 import cn.rongcloud.im.db.Friend;
 import cn.rongcloud.im.server.pinyin.CharacterParser;
@@ -197,7 +198,9 @@ public class ScanActivity extends BaseActivity implements QRCodeView.Delegate ,E
         // TODO: 2019/5/16 不确定是不是这样就可以了,还是需要手动调用网络接口
         UserInfo userInfo = RongUserInfoManager.getInstance().getUserInfo(result);
         if (userInfo == null) {
-            NToast.shortToast(mContext, "不认识的二维码");
+            if (BuildConfig.DEBUG) {
+                NToast.shortToast(mContext, "result");
+            }
             mZXingView.startSpot(); // 重新开始识别
             return;
         }

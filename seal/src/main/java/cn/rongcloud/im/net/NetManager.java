@@ -29,7 +29,7 @@ public class NetManager {
 
         private static Retrofit INSTANCE = new Retrofit.Builder()
                 .client(okHttpClient)
-                .baseUrl(BaseAction.DOMAIN_IMAGE + BaseAction.API + "/")
+                .baseUrl(BaseAction.DOMAIN_APP + BaseAction.API + "/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .build();

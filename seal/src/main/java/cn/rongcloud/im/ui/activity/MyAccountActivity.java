@@ -10,7 +10,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -22,7 +21,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bigkoo.pickerview.builder.OptionsPickerBuilder;
-import com.bigkoo.pickerview.listener.OnOptionsSelectChangeListener;
 import com.bigkoo.pickerview.listener.OnOptionsSelectListener;
 import com.bigkoo.pickerview.view.OptionsPickerView;
 import com.qiniu.android.storage.UploadManager;
@@ -382,7 +380,7 @@ public class MyAccountActivity extends BaseActivity implements View.OnClickListe
 //                        NToast.shortToast(mContext, "图片上传成功");
                         Log.e("swo", "图片上传成功");
                         if (stringNetData.code == 200) {
-                            imageUrl = BaseAction.DOMAIN_IMAGE + stringNetData.url;
+                            imageUrl = BaseAction.DOMAIN_APP + stringNetData.url;
                             Log.e("uploadImage", imageUrl);
                             if (!TextUtils.isEmpty(imageUrl)) {
                                 request(UP_LOAD_PORTRAIT);

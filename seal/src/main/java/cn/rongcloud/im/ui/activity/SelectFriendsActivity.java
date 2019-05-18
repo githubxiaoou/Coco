@@ -31,6 +31,9 @@ import cn.rongcloud.im.SealConst;
 import cn.rongcloud.im.SealUserInfoManager;
 import cn.rongcloud.im.db.Friend;
 import cn.rongcloud.im.db.GroupMember;
+import cn.rongcloud.im.model.NetData;
+import cn.rongcloud.im.net.HttpUtil;
+import cn.rongcloud.im.net.NetObserver;
 import cn.rongcloud.im.server.broadcast.BroadcastManager;
 import cn.rongcloud.im.server.network.http.HttpException;
 import cn.rongcloud.im.server.pinyin.CharacterParser;
@@ -43,6 +46,9 @@ import cn.rongcloud.im.server.utils.NToast;
 import cn.rongcloud.im.server.widget.DialogWithYesOrNoUtils;
 import cn.rongcloud.im.server.widget.LoadDialog;
 import cn.rongcloud.im.server.widget.SelectableRoundedImageView;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Action;
+import io.reactivex.schedulers.Schedulers;
 import io.rong.imageloader.core.ImageLoader;
 import io.rong.imkit.RongIM;
 import io.rong.imkit.userInfoCache.RongUserInfoManager;
@@ -86,8 +92,9 @@ public class SelectFriendsActivity extends BaseActivity implements View.OnClickL
     private boolean isCrateGroup;
     private boolean isConversationActivityStartDiscussion;
     private boolean isConversationActivityStartPrivate;
-    private List<GroupMember> addGroupMemberList;
-    private List<GroupMember> deleteGroupMemberList;
+    private List<GroupMember> addGroupMemberList;// 除群内人员的其他朋友
+    private List<GroupMember> deleteGroupMemberList;// 群内非群主的成员
+    private List<GroupMember> setManagerList;// 群内可设置为管理员的成员(非群主，非管理员)
     private String groupId;
     private String conversationStartId;
     private String conversationStartType = "null";
@@ -97,6 +104,7 @@ public class SelectFriendsActivity extends BaseActivity implements View.OnClickL
     private List<Friend> mSelectedFriend;
     private boolean isAddGroupMember;
     private boolean isDeleteGroupMember;
+    private boolean isSetManager;
 
     @Override
     @SuppressWarnings("unchecked")
@@ -116,7 +124,8 @@ public class SelectFriendsActivity extends BaseActivity implements View.OnClickL
         groupId = getIntent().getStringExtra("GroupId");
         isAddGroupMember = getIntent().getBooleanExtra("isAddGroupMember", false);
         isDeleteGroupMember = getIntent().getBooleanExtra("isDeleteGroupMember", false);
-        if (isAddGroupMember || isDeleteGroupMember) {
+        isSetManager = getIntent().getBooleanExtra("isSetManager", false);
+        if (isAddGroupMember || isDeleteGroupMember || isSetManager) {
             initGroupMemberList();
         }
         addDisList = (ArrayList<UserInfo>) getIntent().getSerializableExtra("AddDiscuMember");
@@ -141,9 +150,12 @@ public class SelectFriendsActivity extends BaseActivity implements View.OnClickL
                 if (isAddGroupMember) {
                     addGroupMemberList = groupMembers;
                     fillSourceDataListWithFriendsInfo();
-                } else {
+                } else if (isDeleteGroupMember) {
                     deleteGroupMemberList = groupMembers;
                     fillSourceDataListForDeleteGroupMember();
+                } else if (isSetManager) {
+                    setManagerList = groupMembers;
+                    fillSourceDataListForSetManager();
                 }
             }
 
@@ -329,6 +341,22 @@ public class SelectFriendsActivity extends BaseActivity implements View.OnClickL
     private void fillSourceDataListForDeleteGroupMember() {
         if (deleteGroupMemberList != null && deleteGroupMemberList.size() > 0) {
             for (GroupMember deleteMember : deleteGroupMemberList) {
+                if (deleteMember.getUserId().contains(getSharedPreferences("config", MODE_PRIVATE).getString(SealConst.SEALTALK_LOGIN_ID, ""))) {
+                    continue;
+                }
+                data_list.add(new Friend(deleteMember.getUserId(),
+                        deleteMember.getName(), deleteMember.getPortraitUri(),
+                        null //TODO displayName 需要处理 暂为 null
+                ));
+            }
+            fillSourceDataList();
+            updateAdapter();
+        }
+    }
+
+    private void fillSourceDataListForSetManager() {
+        if (setManagerList != null && setManagerList.size() > 0) {
+            for (GroupMember deleteMember : setManagerList) {
                 if (deleteMember.getUserId().contains(getSharedPreferences("config", MODE_PRIVATE).getString(SealConst.SEALTALK_LOGIN_ID, ""))) {
                     continue;
                 }
@@ -622,7 +650,7 @@ public class SelectFriendsActivity extends BaseActivity implements View.OnClickL
         }
     }
 
-    private List<String> startDisList;
+    private List<String> startDisList;// 保存选中用户的id
     private List<Friend> createGroupList;
 
 
@@ -741,6 +769,8 @@ public class SelectFriendsActivity extends BaseActivity implements View.OnClickL
 
                             }
                         });
+                    } else if (setManagerList != null && startDisList != null && sourceDataList.size() > 0) {
+                        setManager();
                     } else if (deleDisList != null && startDisList != null && startDisList.size() > 0) {
                         Intent intent = new Intent();
                         intent.putExtra("deleteDiscuMember", (Serializable) startDisList);
@@ -810,5 +840,40 @@ public class SelectFriendsActivity extends BaseActivity implements View.OnClickL
                 }
                 break;
         }
+    }
+
+    private void setManager() {
+        LoadDialog.show(mContext);
+        StringBuilder builder = new StringBuilder();
+        boolean first = true;
+        for (String s : startDisList) {
+            if (first) {
+                builder.append(s);
+                first = false;
+                continue;
+            }
+            builder.append(",").append(s);
+        }
+        HttpUtil.apiS().groupSetAdmins(groupId, builder.toString(), "2")
+                .subscribeOn(Schedulers.io())
+                .doOnTerminate(new Action() {
+                    @Override
+                    public void run() throws Exception {
+                        LoadDialog.dismiss(mContext);
+                    }
+                })
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new NetObserver<NetData<List<String>>>() {
+                    @Override
+                    public void Successful(NetData<List<String>> listNetData) {
+                        setResult(RESULT_OK, new Intent());
+                        finish();
+                    }
+
+                    @Override
+                    public void Failure(Throwable t) {
+                        NToast.shortToast(mContext, "网络错误");
+                    }
+                });
     }
 }
