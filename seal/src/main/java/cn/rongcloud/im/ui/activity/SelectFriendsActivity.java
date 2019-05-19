@@ -18,6 +18,10 @@ import android.widget.SectionIndexer;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bigkoo.pickerview.builder.OptionsPickerBuilder;
+import com.bigkoo.pickerview.listener.OnOptionsSelectListener;
+import com.bigkoo.pickerview.view.OptionsPickerView;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -95,6 +99,7 @@ public class SelectFriendsActivity extends BaseActivity implements View.OnClickL
     private List<GroupMember> addGroupMemberList;// 除群内人员的其他朋友
     private List<GroupMember> deleteGroupMemberList;// 群内非群主的成员
     private List<GroupMember> setManagerList;// 群内可设置为管理员的成员(非群主，非管理员)
+    private List<GroupMember> setJinyanList;// 群内可设置禁言的成员(非群主，非已禁言)
     private String groupId;
     private String conversationStartId;
     private String conversationStartType = "null";
@@ -105,6 +110,9 @@ public class SelectFriendsActivity extends BaseActivity implements View.OnClickL
     private boolean isAddGroupMember;
     private boolean isDeleteGroupMember;
     private boolean isSetManager;
+    private ArrayList<String> managerIdList = new ArrayList<>();
+    private boolean isSetJinyan;
+    private ArrayList<String> jinyanIdList = new ArrayList<>();
 
     @Override
     @SuppressWarnings("unchecked")
@@ -125,7 +133,15 @@ public class SelectFriendsActivity extends BaseActivity implements View.OnClickL
         isAddGroupMember = getIntent().getBooleanExtra("isAddGroupMember", false);
         isDeleteGroupMember = getIntent().getBooleanExtra("isDeleteGroupMember", false);
         isSetManager = getIntent().getBooleanExtra("isSetManager", false);
-        if (isAddGroupMember || isDeleteGroupMember || isSetManager) {
+        isSetJinyan = getIntent().getBooleanExtra("isSetJinyan", false);
+        if (isAddGroupMember || isDeleteGroupMember || isSetManager || isSetJinyan) {
+            if (isSetManager) {
+                managerIdList = getIntent().getStringArrayListExtra("managerIdList");
+            }
+
+            if (isSetJinyan) {
+                jinyanIdList = getIntent().getStringArrayListExtra("jinyanIdList");
+            }
             initGroupMemberList();
         }
         addDisList = (ArrayList<UserInfo>) getIntent().getSerializableExtra("AddDiscuMember");
@@ -156,6 +172,9 @@ public class SelectFriendsActivity extends BaseActivity implements View.OnClickL
                 } else if (isSetManager) {
                     setManagerList = groupMembers;
                     fillSourceDataListForSetManager();
+                } else if (isSetJinyan) {
+                    setJinyanList = groupMembers;
+                    fillSourceDataListForSetJinyan();
                 }
             }
 
@@ -165,6 +184,7 @@ public class SelectFriendsActivity extends BaseActivity implements View.OnClickL
             }
         });
     }
+
 
     private void setTitle() {
         if (isConversationActivityStartPrivate) {
@@ -218,6 +238,7 @@ public class SelectFriendsActivity extends BaseActivity implements View.OnClickL
 
         adapter = new StartDiscussionAdapter(mContext, sourceDataList);
         mListView.setAdapter(adapter);
+        initOptionPicker();
     }
 
     private void initData() {
@@ -241,7 +262,7 @@ public class SelectFriendsActivity extends BaseActivity implements View.OnClickL
             fillSourceDataList();
             filterSourceDataList();
             updateAdapter();
-        } else if (!isDeleteGroupMember && !isAddGroupMember) {
+        } else if (!isDeleteGroupMember && !isAddGroupMember && !isSetManager && !isSetJinyan) {
             fillSourceDataListWithFriendsInfo();
         }
     }
@@ -355,9 +376,55 @@ public class SelectFriendsActivity extends BaseActivity implements View.OnClickL
     }
 
     private void fillSourceDataListForSetManager() {
+        String idStr = "";
+        if (null != managerIdList && managerIdList.size() != 0) {
+            StringBuilder sb = new StringBuilder();
+            for (String s : managerIdList) {
+                sb.append(s);
+                sb.append(",");
+            }
+            String str = sb.toString();
+            idStr = str.substring(0, str.length() - 1);
+        }
         if (setManagerList != null && setManagerList.size() > 0) {
             for (GroupMember deleteMember : setManagerList) {
                 if (deleteMember.getUserId().contains(getSharedPreferences("config", MODE_PRIVATE).getString(SealConst.SEALTALK_LOGIN_ID, ""))) {
+                    // 去掉群主
+                    continue;
+                }
+                if (idStr.contains(deleteMember.getUserId())) {
+                    // 去掉管理员
+                    continue;
+                }
+                data_list.add(new Friend(deleteMember.getUserId(),
+                        deleteMember.getName(), deleteMember.getPortraitUri(),
+                        null //TODO displayName 需要处理 暂为 null
+                ));
+            }
+            fillSourceDataList();
+            updateAdapter();
+        }
+    }
+
+    private void fillSourceDataListForSetJinyan() {
+        String idStr = "";
+        if (null != jinyanIdList && jinyanIdList.size() != 0) {
+            StringBuilder sb = new StringBuilder();
+            for (String s : jinyanIdList) {
+                sb.append(s);
+                sb.append(",");
+            }
+            String str = sb.toString();
+            idStr = str.substring(0, str.length() - 1);
+        }
+        if (setJinyanList != null && setJinyanList.size() > 0) {
+            for (GroupMember deleteMember : setJinyanList) {
+                if (deleteMember.getUserId().contains(getSharedPreferences("config", MODE_PRIVATE).getString(SealConst.SEALTALK_LOGIN_ID, ""))) {
+                    // 去掉群主
+                    continue;
+                }
+                if (idStr.contains(deleteMember.getUserId())) {
+                    // 已禁言
                     continue;
                 }
                 data_list.add(new Friend(deleteMember.getUserId(),
@@ -771,6 +838,8 @@ public class SelectFriendsActivity extends BaseActivity implements View.OnClickL
                         });
                     } else if (setManagerList != null && startDisList != null && sourceDataList.size() > 0) {
                         setManager();
+                    } else if (setJinyanList != null && startDisList != null && sourceDataList.size() > 0) {
+                        pvOptions.show();
                     } else if (deleDisList != null && startDisList != null && startDisList.size() > 0) {
                         Intent intent = new Intent();
                         intent.putExtra("deleteDiscuMember", (Serializable) startDisList);
@@ -875,5 +944,78 @@ public class SelectFriendsActivity extends BaseActivity implements View.OnClickL
                         NToast.shortToast(mContext, "网络错误");
                     }
                 });
+    }
+
+    private void jinyan(int minute) {
+        LoadDialog.show(mContext);
+        StringBuilder builder = new StringBuilder();
+        boolean first = true;
+        for (String s : startDisList) {
+            if (first) {
+                builder.append(s);
+                first = false;
+                continue;
+            }
+            builder.append(",").append(s);
+        }
+        HttpUtil.apiS().groupJinyan(groupId, builder.toString(), String.valueOf(minute))
+                .subscribeOn(Schedulers.io())
+                .doOnTerminate(new Action() {
+                    @Override
+                    public void run() throws Exception {
+                        LoadDialog.dismiss(mContext);
+                    }
+                })
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new NetObserver<NetData<List<String>>>() {
+                    @Override
+                    public void Successful(NetData<List<String>> listNetData) {
+                        setResult(RESULT_OK, new Intent());
+                        finish();
+                    }
+
+                    @Override
+                    public void Failure(Throwable t) {
+                        NToast.shortToast(mContext, "网络错误");
+                    }
+                });
+    }
+
+    private OptionsPickerView pvOptions;
+    private ArrayList<String> times = new ArrayList<>();
+
+    private void initOptionPicker() {//条件选择器初始化
+        times.add("10分钟");
+        times.add("1小时");
+        times.add("12小时");
+        times.add("1天");
+
+        pvOptions = new OptionsPickerBuilder(this, new OnOptionsSelectListener() {
+            @Override
+            public void onOptionsSelect(final int options1, int options2, int options3, View v) {
+                //返回的分别是三个级别的选中位置
+                int minute = 0;
+                switch (options1) {
+                    case 0:
+                        minute = 10;
+                        break;
+                    case 1:
+                        minute = 60;
+                        break;
+                    case 2:
+                        minute = 12 * 60;
+                        break;
+                    case 3:
+                        minute = 24 * 60;
+                        break;
+                }
+                LoadDialog.show(mContext);
+                jinyan(minute);
+            }
+        })
+                .isRestoreItem(true)//切换时是否还原，设置默认选中第一项。
+                .isCenterLabel(false) //是否只显示中间选中项的label文字，false则每项item全部都带有label。
+                .build();
+        pvOptions.setPicker(times);//一级选择器
     }
 }

@@ -5,6 +5,7 @@ import java.util.List;
 import cn.rongcloud.im.model.NetData;
 import cn.rongcloud.im.server.response.GetAdminListResponse;
 import cn.rongcloud.im.server.response.GroupMenberListResponse;
+import cn.rongcloud.im.server.response.JinyanResponse;
 import io.reactivex.Observable;
 import okhttp3.MultipartBody;
 import retrofit2.http.GET;
@@ -48,8 +49,18 @@ public interface ServiceS {
 
     /*禁言用户*/
     @GET("group/jinyan")
-    Observable<NetData<String>> groupJinyan(@Query("group_id") String groupId,
-                                            @Query("user_id") String userId);
+    Observable<NetData<List<String>>> groupJinyan(@Query("group_id") String groupId,
+                                            @Query("user_id") String userId,
+                                                  @Query("minute") String minute);// 禁言时间；解禁传空
+
+    /*全体禁言/解禁*/
+    @GET("group/jinyan-all")
+    Observable<NetData<List<String>>> groupJinyanAll(@Query("group_id") String groupId,
+                                                     @Query("type") String type);// 1:禁言 2解禁
+
+    /*禁言成员列表*/
+    @GET("group/jinyan-list")
+    Observable<NetData<List<JinyanResponse>>> groupJinyanList(@Query("group_id") String groupId);
 
     /*最后使用时间*/
     @GET("group/last-use-time")
@@ -57,7 +68,7 @@ public interface ServiceS {
 
     /*不活跃用户列表*/
     @GET("group/inactive-group-member")
-    Observable<NetData<String>> groupInactiveMember(@Query("group_id") String groupId,
+    Observable<NetData<List<JinyanResponse>>> groupInactiveMember(@Query("group_id") String groupId,
                                                     @Query("type") String type);// 1:3天 2:1周 3:1个月
 
     /*设置新群主*/

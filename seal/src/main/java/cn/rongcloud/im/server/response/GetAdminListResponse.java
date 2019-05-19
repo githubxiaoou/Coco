@@ -2,6 +2,7 @@ package cn.rongcloud.im.server.response;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
 import java.util.List;
 
 import cn.rongcloud.im.model.NetData;
@@ -13,7 +14,7 @@ public class GetAdminListResponse extends NetData {
     @SerializedName("admin")
     public List<Info> admin;
 
-    public static class Info {
+    public static class Info implements Serializable {
         /**
          * id : 9
          * phone : 13023176525

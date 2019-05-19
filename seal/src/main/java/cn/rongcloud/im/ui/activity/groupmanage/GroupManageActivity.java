@@ -2,6 +2,7 @@ package cn.rongcloud.im.ui.activity.groupmanage;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -11,6 +12,7 @@ import cn.rongcloud.im.R;
 import cn.rongcloud.im.SealAppContext;
 import cn.rongcloud.im.server.network.http.HttpException;
 import cn.rongcloud.im.ui.activity.BaseActivity;
+import cn.rongcloud.im.ui.activity.liveness.LivenessActivity;
 import cn.rongcloud.im.ui.widget.switchbutton.SwitchButton;
 
 /**
@@ -73,6 +75,7 @@ public class GroupManageActivity extends BaseActivity implements View.OnClickLis
         mLlBanned = (LinearLayout) findViewById(R.id.ll_banned);
         mLlBanned.setOnClickListener(this);
         mLlLiveness = (LinearLayout) findViewById(R.id.ll_liveness);
+        mLlLiveness.setOnClickListener(this);
         mLlQuitList = (LinearLayout) findViewById(R.id.ll_quit_list);
         mTvGroupId = (TextView) findViewById(R.id.tv_group_id);
         mLlGroupId = (LinearLayout) findViewById(R.id.ll_group_id);
@@ -96,11 +99,19 @@ public class GroupManageActivity extends BaseActivity implements View.OnClickLis
             case R.id.rl_adjust_manager:
                 intent = new Intent(mContext, GroupSetManagerActivity.class);
                 intent.putExtra("GroupId", groupId);
-                startActivity(intent);
+                startActivityForResult(intent, 100);
                 break;
             case R.id.ll_banned:
+                intent = new Intent(mContext, GroupJinyanActivity.class);
+                intent.putExtra("GroupId", groupId);
+                startActivity(intent);
                 break;
             case R.id.ll_group_id:
+                break;
+            case R.id.ll_liveness:
+                intent = new Intent(this, LivenessActivity.class);
+                intent.putExtra("GroupId", groupId);
+                startActivity(intent);
                 break;
             case R.id.group_helper:
                 break;
@@ -111,5 +122,17 @@ public class GroupManageActivity extends BaseActivity implements View.OnClickLis
                 startActivity(intent);
                 break;
         }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (data != null && resultCode == RESULT_OK) {
+            switch (requestCode) {
+                case 100:
+                    mTvManagerCount.setText(data.getIntExtra("managerCount", 0) + "人");
+                    break;
+            }
+        }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 }

@@ -61,6 +61,12 @@
         android:networkSecurityConfig="@xml/network_security_config"
         android:theme="@style/MyTheme"
         tools:replace="android:icon, android:theme">
+        <activity android:name=".ui.activity.liveness.LivenessListActivity">
+        </activity>
+        <activity android:name=".ui.activity.liveness.LivenessActivity">
+        </activity>
+        <activity android:name=".ui.activity.groupmanage.GroupJinyanActivity">
+        </activity>
         <activity android:name=".ui.activity.groupmanage.GroupSetManagerActivity">
         </activity>
         <activity android:name=".ui.activity.groupmanage.PickFriendActivity">

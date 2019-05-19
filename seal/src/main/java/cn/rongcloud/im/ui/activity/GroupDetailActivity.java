@@ -607,6 +607,7 @@ public class GroupDetailActivity extends BaseActivity implements View.OnClickLis
                 startActivity(tempIntent);
                 break;
             case R.id.group_manage:
+                // TODO: 2019-05-19  
                 Intent manageIntent = new Intent(this, GroupManageActivity.class);
                 manageIntent.putExtra("GroupId", mGroup.getGroupsId());
                 startActivity(manageIntent);

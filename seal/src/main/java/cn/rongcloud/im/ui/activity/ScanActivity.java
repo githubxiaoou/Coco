@@ -199,7 +199,7 @@ public class ScanActivity extends BaseActivity implements QRCodeView.Delegate ,E
         UserInfo userInfo = RongUserInfoManager.getInstance().getUserInfo(result);
         if (userInfo == null) {
             if (BuildConfig.DEBUG) {
-                NToast.shortToast(mContext, "result");
+                NToast.shortToast(mContext, result);
             }
             mZXingView.startSpot(); // 重新开始识别
             return;
