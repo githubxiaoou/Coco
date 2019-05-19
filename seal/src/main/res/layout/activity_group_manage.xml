@@ -187,7 +187,8 @@
 
                 <TextView
                     android:id="@+id/tv_group_id"
-                    android:text="未设置"
+                    android:text=""
+                    android:hint="未设置"
                     android:textSize="14sp"
                     android:textColor="@color/color_gray_text"
                     android:layout_width="wrap_content"
@@ -229,7 +230,8 @@
 
                 <TextView
                     android:id="@+id/tv_group_helper"
-                    android:text="未设置"
+                    android:text=""
+                    android:hint="未设置"
                     android:textSize="14sp"
                     android:textColor="@color/color_gray_text"
                     android:layout_width="wrap_content"

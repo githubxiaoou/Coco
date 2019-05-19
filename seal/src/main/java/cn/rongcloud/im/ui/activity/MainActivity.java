@@ -9,7 +9,6 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
@@ -25,16 +24,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cn.rongcloud.im.R;
+import cn.rongcloud.im.SealConst;
+import cn.rongcloud.im.model.NetData;
+import cn.rongcloud.im.net.HttpUtil;
+import cn.rongcloud.im.net.NetObserver;
 import cn.rongcloud.im.server.HomeWatcherReceiver;
 import cn.rongcloud.im.server.broadcast.BroadcastManager;
 import cn.rongcloud.im.server.utils.NToast;
 import cn.rongcloud.im.server.widget.LoadDialog;
 import cn.rongcloud.im.ui.adapter.ConversationListAdapterEx;
 import cn.rongcloud.im.ui.fragment.ContactsFragment;
-import cn.rongcloud.im.ui.fragment.DiscoverFragment;
 import cn.rongcloud.im.ui.fragment.MineFragment;
 import cn.rongcloud.im.ui.widget.DragPointView;
 import cn.rongcloud.im.ui.widget.MorePopWindow;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 import io.rong.common.RLog;
 import io.rong.imkit.RongContext;
 import io.rong.imkit.RongIM;
@@ -64,6 +68,7 @@ public class MainActivity extends BaseActivity implements
     private TextView mTextChats, mTextContact, mTextFind, mTextMe;
     private DragPointView mUnreadNumView;
     private ImageView mSearchImageView;
+    private SharedPreferences sp;
     /**
      * 会话列表的fragment
      */
@@ -85,6 +90,7 @@ public class MainActivity extends BaseActivity implements
         setHeadVisibility(View.GONE);
         mContext = this;
         isDebug = getSharedPreferences("config", MODE_PRIVATE).getBoolean("isDebug", false);
+        sp = getSharedPreferences("config", MODE_PRIVATE);
         initViews();
         changeTextViewColor();
         Intent intent = getIntent();
@@ -97,6 +103,7 @@ public class MainActivity extends BaseActivity implements
             changeSelectedTabState(0);
         }
         registerHomeKeyReceiver(this);
+        lastUseTime();
     }
 
 
@@ -491,5 +498,23 @@ public class MainActivity extends BaseActivity implements
                 e.printStackTrace();
             }
         }
+    }
+
+    public void lastUseTime() {
+        HttpUtil.apiS()
+                .lastUseTime(sp.getString(SealConst.SEALTALK_LOGIN_ID, ""))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new NetObserver<NetData<List<String>>>() {
+                    @Override
+                    public void Successful(NetData<List<String>> listNetData) {
+
+                    }
+
+                    @Override
+                    public void Failure(Throwable t) {
+
+                    }
+                });
     }
 }

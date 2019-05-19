@@ -7,18 +7,6 @@
     android:gravity="center_vertical"
     android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/dis_catalog"
-        android:layout_width="fill_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1.0"
-        android:background="#f0f0f6"
-        android:paddingBottom="5dip"
-        android:paddingLeft="5dip"
-        android:paddingTop="5dip"
-        android:text="A"
-        android:textColor="#454545" />
-
     <LinearLayout
         android:id="@+id/dis_frienditem"
         android:layout_width="fill_parent"

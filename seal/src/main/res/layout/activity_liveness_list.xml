@@ -7,4 +7,8 @@
     android:layout_height="match_parent"
     tools:context=".ui.activity.liveness.LivenessListActivity">
 
+    <ListView
+        android:id="@+id/lv_member"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
 </android.support.constraint.ConstraintLayout>

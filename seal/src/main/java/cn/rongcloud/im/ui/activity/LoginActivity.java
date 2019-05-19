@@ -504,4 +504,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         startActivity(new Intent(LoginActivity.this, MainActivity.class));
         finish();
     }
+
+
 }

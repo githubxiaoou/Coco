@@ -46,7 +46,7 @@ public class LivenessActivity extends BaseActivity implements View.OnClickListen
                 intent = new Intent(mContext, LivenessListActivity.class);
                 intent.putExtra("type", "1");
                 intent.putExtra("GroupId", groupId);
-                startActivity(new Intent(mContext, LivenessListActivity.class));
+                startActivity(intent);
                 break;
             case R.id.cl_week:
                 intent = new Intent(mContext, LivenessListActivity.class);
@@ -58,7 +58,7 @@ public class LivenessActivity extends BaseActivity implements View.OnClickListen
                 intent = new Intent(mContext, LivenessListActivity.class);
                 intent.putExtra("type", "3");
                 intent.putExtra("GroupId", groupId);
-                startActivity(new Intent(mContext, LivenessListActivity.class));
+                startActivity(intent);
                 break;
         }
     }

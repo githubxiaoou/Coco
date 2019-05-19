@@ -4,6 +4,7 @@ import java.util.List;
 
 import cn.rongcloud.im.model.NetData;
 import cn.rongcloud.im.server.response.GetAdminListResponse;
+import cn.rongcloud.im.server.response.GetGroupDetailResponse;
 import cn.rongcloud.im.server.response.GroupMenberListResponse;
 import cn.rongcloud.im.server.response.JinyanResponse;
 import io.reactivex.Observable;
@@ -44,7 +45,7 @@ public interface ServiceS {
 
     /*设置群聊号*/
     @GET("group/set-group-number")
-    Observable<NetData<String>> groupSetGroupNumber(@Query("group_id") String groupId,
+    Observable<NetData<List<String>>> groupSetGroupNumber(@Query("group_id") String groupId,
                                                     @Query("group_number") String groupNumber);
 
     /*禁言用户*/
@@ -86,4 +87,19 @@ public interface ServiceS {
                                                @Query("user_id") String userId,
                                                @Query("status") String status);// 2:设置管理员 1:取消管理员
 
+    /*获取群组设置详情*/
+    @GET("group/get-group-detail")
+    Observable<NetData<GetGroupDetailResponse>> getGroupDetail(@Query("group_id") String groupId);
+
+    /*群成员保护/是否开启群认证*/
+    @GET("group/set-group-params")
+    Observable<NetData<GetGroupDetailResponse>> setGroupParams(@Query("group_id") String groupId,
+                                                     @Query("is_protected") String protect,// 1:开启 0 关闭
+                                                     @Query("is_need_verification") String auth);// 1:开启 0 关闭
+
+    /*最后使用时间
+     * 在app启动时候如果已经登录的时候调用
+     * */
+    @GET("group/last-use-time")
+    Observable<NetData<List<String>>> lastUseTime(@Query("user_id") String userId);
 }

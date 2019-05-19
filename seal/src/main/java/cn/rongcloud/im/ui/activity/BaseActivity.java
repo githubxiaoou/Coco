@@ -19,6 +19,7 @@ import android.widget.ViewFlipper;
 import com.umeng.analytics.MobclickAgent;
 
 import cn.rongcloud.im.R;
+import cn.rongcloud.im.net.HttpUtil;
 import cn.rongcloud.im.server.SealAction;
 import cn.rongcloud.im.server.network.async.AsyncTaskManager;
 import cn.rongcloud.im.server.network.async.OnDataListener;
@@ -292,4 +293,6 @@ public abstract class BaseActivity extends AppCompatActivity implements OnDataLi
             imm.hideSoftInputFromWindow(currentFocus.getWindowToken(), 0);
         }
     }
+
+
 }
