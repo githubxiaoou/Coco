@@ -669,9 +669,9 @@ public class SelectFriendsActivity extends BaseActivity implements View.OnClickL
     public Object doInBackground(int requestCode, String id) throws HttpException {
         switch (requestCode) {
             case ADD_GROUP_MEMBER:
-                return action.addGroupMember(groupId, startDisList);
+                return action.addGroupMember(groupId, userId, startDisList);
             case DELETE_GROUP_MEMBER:
-                return action.deleGroupMember(groupId, startDisList);
+                return action.deleGroupMember(groupId, userId, startDisList);
         }
         return super.doInBackground(requestCode, id);
     }

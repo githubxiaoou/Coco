@@ -9,11 +9,12 @@ import java.util.List;
 public class AddGroupMemberRequest {
 
     private String groupId;
-
+    private String user_id;
     private List<String> memberIds;
 
-    public AddGroupMemberRequest(String groupId, List<String> memberIds) {
+    public AddGroupMemberRequest(String groupId, String user_id, List<String> memberIds) {
         this.groupId = groupId;
+        this.user_id = user_id;
         this.memberIds = memberIds;
     }
 

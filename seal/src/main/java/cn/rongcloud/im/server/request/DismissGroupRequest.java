@@ -7,9 +7,10 @@ package cn.rongcloud.im.server.request;
 public class DismissGroupRequest {
 
     private String groupId;
-
-    public DismissGroupRequest(String groupId) {
+    private String user_id;
+    public DismissGroupRequest(String groupId, String userId) {
         this.groupId = groupId;
+        this.user_id = userId;
     }
 
     public String getGroupId() {
@@ -18,5 +19,13 @@ public class DismissGroupRequest {
 
     public void setGroupId(String groupId) {
         this.groupId = groupId;
+    }
+
+    public String getUser_id() {
+        return user_id;
+    }
+
+    public void setUser_id(String user_id) {
+        this.user_id = user_id;
     }
 }

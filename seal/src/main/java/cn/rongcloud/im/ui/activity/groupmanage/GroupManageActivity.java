@@ -117,6 +117,7 @@ public class GroupManageActivity extends BaseActivity implements View.OnClickLis
         mLlLiveness = (LinearLayout) findViewById(R.id.ll_liveness);
         mLlLiveness.setOnClickListener(this);
         mLlQuitList = (LinearLayout) findViewById(R.id.ll_quit_list);
+        mLlQuitList.setOnClickListener(this);
         mTvGroupId = (TextView) findViewById(R.id.tv_group_id);
         mLlGroupId = (LinearLayout) findViewById(R.id.ll_group_id);
         mLlGroupId.setOnClickListener(this);
@@ -144,6 +145,11 @@ public class GroupManageActivity extends BaseActivity implements View.OnClickLis
                 break;
             case R.id.ll_banned:
                 intent = new Intent(mContext, GroupJinyanActivity.class);
+                intent.putExtra("GroupId", groupId);
+                startActivity(intent);
+                break;
+            case R.id.ll_quit_list:
+                intent = new Intent(mContext, QuitListActivity.class);
                 intent.putExtra("GroupId", groupId);
                 startActivity(intent);
                 break;

@@ -7,6 +7,7 @@ import cn.rongcloud.im.server.response.GetAdminListResponse;
 import cn.rongcloud.im.server.response.GetGroupDetailResponse;
 import cn.rongcloud.im.server.response.GroupMenberListResponse;
 import cn.rongcloud.im.server.response.JinyanResponse;
+import cn.rongcloud.im.server.response.QuitListResponse;
 import io.reactivex.Observable;
 import okhttp3.MultipartBody;
 import retrofit2.http.GET;
@@ -119,4 +120,9 @@ public interface ServiceS {
     Observable<NetData<List<String>>> groupInvitation(@Query("group_id") String groupId,
                                                       @Query("user_id") String userId,
                                                       @Query("friend_id") String friendId);// 被邀id，id 多个以,拼接
+
+    /*邀请进群人员列表/退群人员列表*/
+    @GET("group/get-group-member-status-list")
+    Observable<NetData<List<QuitListResponse>>> getQuitList(@Query("group_id") String groupId,
+                                                            @Query("type") String type);// 1进群成员列表；2退群成员列表
 }

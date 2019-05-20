@@ -288,7 +288,7 @@ public class GroupDetailActivity extends BaseActivity implements View.OnClickLis
             case QUIT_GROUP:
                 return action.quitGroup(fromConversationId);
             case DISMISS_GROUP:
-                return action.dissmissGroup(fromConversationId);
+                return action.dissmissGroup(fromConversationId, mUserId);
             case SET_GROUP_NAME:
                 return action.setGroupDisplayName(fromConversationId, newGroupName);
             case GET_GROUP_INFO:

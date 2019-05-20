@@ -573,12 +573,13 @@ public class SealAction extends BaseAction {
      * 当前用户添加群组成员
      *
      * @param groupId   群组Id
+     * @param userId
      * @param memberIds 成员集合
      * @throws HttpException
      */
-    public AddGroupMemberResponse addGroupMember(String groupId, List<String> memberIds) throws HttpException {
+    public AddGroupMemberResponse addGroupMember(String groupId, String userId, List<String> memberIds) throws HttpException {
         String url = getURL("group/add");
-        String json = JsonMananger.beanToJson(new AddGroupMemberRequest(groupId, memberIds));
+        String json = JsonMananger.beanToJson(new AddGroupMemberRequest(groupId, userId, memberIds));
         StringEntity entity = null;
         try {
             entity = new StringEntity(json, ENCODING);
@@ -598,12 +599,13 @@ public class SealAction extends BaseAction {
      * 创建者将群组成员提出群组
      *
      * @param groupId   群组Id
+     * @param userId
      * @param memberIds 成员集合
      * @throws HttpException
      */
-    public DeleteGroupMemberResponse deleGroupMember(String groupId, List<String> memberIds) throws HttpException {
+    public DeleteGroupMemberResponse deleGroupMember(String groupId, String userId, List<String> memberIds) throws HttpException {
         String url = getURL("group/kick");
-        String json = JsonMananger.beanToJson(new DeleteGroupMemberRequest(groupId, memberIds));
+        String json = JsonMananger.beanToJson(new DeleteGroupMemberRequest(groupId, userId, memberIds));
         StringEntity entity = null;
         try {
             entity = new StringEntity(json, ENCODING);
@@ -672,11 +674,12 @@ public class SealAction extends BaseAction {
      * 创建者解散群组
      *
      * @param groupId 群组Id
+     * @param userId
      * @throws HttpException
      */
-    public DismissGroupResponse dissmissGroup(String groupId) throws HttpException {
+    public DismissGroupResponse dissmissGroup(String groupId, String userId) throws HttpException {
         String url = getURL("group/dismiss");
-        String json = JsonMananger.beanToJson(new DismissGroupRequest(groupId));
+        String json = JsonMananger.beanToJson(new DismissGroupRequest(groupId, userId));
         StringEntity entity = null;
         try {
             entity = new StringEntity(json, ENCODING);
