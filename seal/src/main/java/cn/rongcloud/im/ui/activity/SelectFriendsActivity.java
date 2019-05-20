@@ -101,6 +101,7 @@ public class SelectFriendsActivity extends BaseActivity implements View.OnClickL
     private List<GroupMember> setManagerList;// 群内可设置为管理员的成员(非群主，非管理员)
     private List<GroupMember> setJinyanList;// 群内可设置禁言的成员(非群主，非已禁言)
     private String groupId;
+    private String userId;// 添加或删除群成员的时候，会有userId
     private String conversationStartId;
     private String conversationStartType = "null";
     private ArrayList<String> discListMember;
@@ -130,6 +131,7 @@ public class SelectFriendsActivity extends BaseActivity implements View.OnClickL
         isConversationActivityStartDiscussion = getIntent().getBooleanExtra("CONVERSATION_DISCUSSION", false);
         isConversationActivityStartPrivate = getIntent().getBooleanExtra("CONVERSATION_PRIVATE", false);
         groupId = getIntent().getStringExtra("GroupId");
+        userId = getIntent().getStringExtra("userId");
         isAddGroupMember = getIntent().getBooleanExtra("isAddGroupMember", false);
         isDeleteGroupMember = getIntent().getBooleanExtra("isDeleteGroupMember", false);
         isSetManager = getIntent().getBooleanExtra("isSetManager", false);
@@ -206,6 +208,10 @@ public class SelectFriendsActivity extends BaseActivity implements View.OnClickL
             setTitle(getString(R.string.add_discussion_group_member));
         } else if (deleDisList != null) {
             setTitle(getString(R.string.remove_discussion_group_member));
+        } else if (isSetManager) {
+            setTitle("设置管理员");
+        } else if (isSetJinyan) {
+            setTitle("添加禁言");
         } else {
             setTitle(getString(R.string.select_contact));
             if (!getSharedPreferences("config", MODE_PRIVATE).getBoolean("isDebug", false)) {
@@ -682,6 +688,7 @@ public class SelectFriendsActivity extends BaseActivity implements View.OnClickL
                         setResult(101, data);
                         LoadDialog.dismiss(mContext);
                         NToast.shortToast(mContext, getString(R.string.add_successful));
+                        inviteMember();
                         finish();
                     }
                     break;
@@ -693,6 +700,7 @@ public class SelectFriendsActivity extends BaseActivity implements View.OnClickL
                         setResult(102, intent);
                         LoadDialog.dismiss(mContext);
                         NToast.shortToast(mContext, getString(R.string.remove_successful));
+                        kickMember();
                         finish();
                     } else if (response.getCode() == 400) {
                         LoadDialog.dismiss(mContext);
@@ -909,6 +917,76 @@ public class SelectFriendsActivity extends BaseActivity implements View.OnClickL
                 }
                 break;
         }
+    }
+
+    public void inviteMember() {
+        LoadDialog.show(mContext);
+        StringBuilder builder = new StringBuilder();
+        boolean first = true;
+        for (String s : startDisList) {
+            if (first) {
+                builder.append(s);
+                first = false;
+                continue;
+            }
+            builder.append(",").append(s);
+        }
+        HttpUtil.apiS().groupInvitation(groupId, userId, builder.toString())
+                .subscribeOn(Schedulers.io())
+                .doOnTerminate(new Action() {
+                    @Override
+                    public void run() throws Exception {
+                        LoadDialog.dismiss(mContext);
+                    }
+                })
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new NetObserver<NetData<List<String>>>() {
+
+                    @Override
+                    public void Successful(NetData<List<String>> listNetData) {
+
+                    }
+
+                    @Override
+                    public void Failure(Throwable t) {
+
+                    }
+                });
+    }
+
+    private void kickMember() {
+        LoadDialog.show(mContext);
+        StringBuilder builder = new StringBuilder();
+        boolean first = true;
+        for (String s : startDisList) {
+            if (first) {
+                builder.append(s);
+                first = false;
+                continue;
+            }
+            builder.append(",").append(s);
+        }
+        HttpUtil.apiS().groupKickMember(groupId, userId, builder.toString())
+                .subscribeOn(Schedulers.io())
+                .doOnTerminate(new Action() {
+                    @Override
+                    public void run() throws Exception {
+                        LoadDialog.dismiss(mContext);
+                    }
+                })
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new NetObserver<NetData<List<String>>>() {
+
+                    @Override
+                    public void Successful(NetData<List<String>> listNetData) {
+
+                    }
+
+                    @Override
+                    public void Failure(Throwable t) {
+
+                    }
+                });
     }
 
     private void setManager() {

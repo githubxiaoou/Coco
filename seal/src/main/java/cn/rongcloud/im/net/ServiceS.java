@@ -102,4 +102,21 @@ public interface ServiceS {
      * */
     @GET("group/last-use-time")
     Observable<NetData<List<String>>> lastUseTime(@Query("user_id") String userId);
+
+    /*个人退群时候调用*/
+    @GET("group/tuiqun")
+    Observable<NetData<List<String>>> groupTuiqun(@Query("group_id") String groupId,
+                                                  @Query("user_id") String userId);
+
+    /*踢人出群的的时候调用*/
+    @GET("group/kick-member")
+    Observable<NetData<List<String>>> groupKickMember(@Query("group_id") String groupId,
+                                                      @Query("user_id") String userId,
+                                                      @Query("friend_id") String friendId);// 被踢id，id 多个以,拼接
+
+    /*邀请人进群时调用*/
+    @GET("group/invitation")
+    Observable<NetData<List<String>>> groupInvitation(@Query("group_id") String groupId,
+                                                      @Query("user_id") String userId,
+                                                      @Query("friend_id") String friendId);// 被邀id，id 多个以,拼接
 }

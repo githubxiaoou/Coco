@@ -46,6 +46,7 @@ public class GroupManageActivity extends BaseActivity implements View.OnClickLis
     SwitchButton mSwGroupAuth;
 
     private String groupId;
+    private String creatorId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,7 +79,7 @@ public class GroupManageActivity extends BaseActivity implements View.OnClickLis
                     public void Successful(NetData<GetGroupDetailResponse> response) {
                         GetGroupDetailResponse result = response.result;
                         if (result != null) {
-                            mTvManagerCount.setText(result.memberCount + "人");
+                            mTvManagerCount.setText(String.format("%s人", result.adminCount));
                             mTvGroupId.setText(result.otherId);
                             if ("1".equals(result.isProtected)) {
                                 mSwGroupProtect.setChecked(true);
@@ -88,6 +89,15 @@ public class GroupManageActivity extends BaseActivity implements View.OnClickLis
                             }
                             mSwGroupProtect.setOnCheckedChangeListener(GroupManageActivity.this);
                             mSwGroupAuth.setOnCheckedChangeListener(GroupManageActivity.this);
+
+                            // 群主显示“设置管理员”和“群主权限转让”
+                            if (creatorId.equals(result.creatorId)) {
+                                mRlAdjustManager.setVisibility(View.VISIBLE);
+                                mLlOwnerTransfer.setVisibility(View.VISIBLE);
+                            } else {
+                                mRlAdjustManager.setVisibility(View.GONE);
+                                mLlOwnerTransfer.setVisibility(View.GONE);
+                            }
                         }
                     }
 
@@ -118,6 +128,7 @@ public class GroupManageActivity extends BaseActivity implements View.OnClickLis
         mSwGroupProtect = (SwitchButton) findViewById(R.id.sw_group_protect);
         mSwGroupAuth = (SwitchButton) findViewById(R.id.sw_group_auth);
         groupId = getIntent().getStringExtra("GroupId");
+        creatorId = getIntent().getStringExtra("CreatorId");
     }
 
     @Override

@@ -3,6 +3,7 @@ package cn.rongcloud.im.ui.activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -123,6 +124,9 @@ public class GroupDetailActivity extends BaseActivity implements View.OnClickLis
     private Button mDismissBtn;
     private Button mQuitBtn;
     private SealSearchConversationResult mResult;
+    private String mCreatorId;
+    private SharedPreferences sp;
+    private String mUserId;
 
 
     @Override
@@ -150,6 +154,8 @@ public class GroupDetailActivity extends BaseActivity implements View.OnClickLis
         SealAppContext.getInstance().pushActivity(this);
 
         setGroupsInfoChangeListener();
+        sp = getSharedPreferences("config", MODE_PRIVATE);
+        mUserId = sp.getString(SealConst.SEALTALK_LOGIN_ID, "");
     }
 
     private void getGroups() {
@@ -429,6 +435,7 @@ public class GroupDetailActivity extends BaseActivity implements View.OnClickLis
                     GetGroupInfoResponse groupInfoResponse = (GetGroupInfoResponse) result;
                     if (groupInfoResponse.getCode() == 200) {
                         if (groupInfoResponse.getResult() != null) {
+                            mCreatorId = groupInfoResponse.getResult().getCreatorId();
                             mGroupName.setText(groupInfoResponse.getResult().getName());
                             String portraitUri = SealUserInfoManager.getInstance().getPortraitUri(groupInfoResponse);
                             ImageLoader.getInstance().displayImage(portraitUri, mGroupHeader, App.getOptions());
@@ -464,6 +471,7 @@ public class GroupDetailActivity extends BaseActivity implements View.OnClickLis
                     public void executeEvent() {
                         LoadDialog.show(mContext);
                         request(QUIT_GROUP);
+                        quiteGroup();
                     }
 
                     @Override
@@ -607,12 +615,37 @@ public class GroupDetailActivity extends BaseActivity implements View.OnClickLis
                 startActivity(tempIntent);
                 break;
             case R.id.group_manage:
-                // TODO: 2019-05-19  
                 Intent manageIntent = new Intent(this, GroupManageActivity.class);
                 manageIntent.putExtra("GroupId", mGroup.getGroupsId());
+                manageIntent.putExtra("CreatorId", mCreatorId);
                 startActivity(manageIntent);
                 break;
         }
+    }
+
+    private void quiteGroup() {
+        LoadDialog.show(mContext);
+        HttpUtil.apiS()
+                .groupTuiqun(fromConversationId, mUserId)
+                .subscribeOn(Schedulers.io())
+                .doOnTerminate(new Action() {
+                    @Override
+                    public void run() throws Exception {
+                        LoadDialog.dismiss(mContext);
+                    }
+                })
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new NetObserver<NetData<List<String>>>() {
+                    @Override
+                    public void Successful(NetData<List<String>> listNetData) {
+
+                    }
+
+                    @Override
+                    public void Failure(Throwable t) {
+
+                    }
+                });
     }
 
     @Override
@@ -684,6 +717,7 @@ public class GroupDetailActivity extends BaseActivity implements View.OnClickLis
                         Intent intent = new Intent(GroupDetailActivity.this, SelectFriendsActivity.class);
                         intent.putExtra("isDeleteGroupMember", true);
                         intent.putExtra("GroupId", mGroup.getGroupsId());
+                        intent.putExtra("userId", mUserId);
                         startActivityForResult(intent, 101);
                     }
 
@@ -700,6 +734,7 @@ public class GroupDetailActivity extends BaseActivity implements View.OnClickLis
                         Intent intent = new Intent(GroupDetailActivity.this, SelectFriendsActivity.class);
                         intent.putExtra("isAddGroupMember", true);
                         intent.putExtra("GroupId", mGroup.getGroupsId());
+                        intent.putExtra("userId", mUserId);
                         startActivityForResult(intent, 100);
 
                     }
