@@ -13,7 +13,7 @@ android {
         flavorDimensions "versionCode"
         multiDexEnabled true
         ndk {
-            abiFilters "armeabi-v7a"
+            abiFilters "armeabi-v7a","x86"
         }
     }
 
@@ -82,7 +82,7 @@ dependencies {
     api project(':recognizer')
     api project(':contactcard')
     api project(':RedPacket')
-    api project(':CallKit')
+//    api project(':CallKit')
     api project(':IMKit')
     api project(':RCSticker')
     api project(':Sight')

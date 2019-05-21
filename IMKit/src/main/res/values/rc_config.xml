@@ -23,15 +23,15 @@
     <bool name="rc_stop_custom_service_when_quit">true</bool>
 
     <!-- 默认图片保存路径，在会话界面查看大图，长按时选择保存，会使用这个配置-->
-    <string name="rc_image_default_saved_path">/RongCloud/Image/</string>
+    <string name="rc_image_default_saved_path">/Real/Image/</string>
 
     <!-- 设置是否支持消息撤回-->
-    <bool name="rc_enable_message_recall">false</bool>
+    <bool name="rc_enable_message_recall">true</bool>
     <!-- 消息撤回有效时间（单位：秒）-->
     <integer name="rc_message_recall_interval">180</integer>
 
     <!-- 是否打开 @ 功能-->
-    <bool name="rc_enable_mentioned_message">false</bool>
+    <bool name="rc_enable_mentioned_message">true</bool>
 
     <!-- 设置已读回执，目前仅支持单聊、群聊、讨论组 -->
     <bool name="rc_read_receipt">false</bool>

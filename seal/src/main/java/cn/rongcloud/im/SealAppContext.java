@@ -32,8 +32,6 @@ import cn.rongcloud.im.ui.activity.LoginActivity;
 import cn.rongcloud.im.ui.activity.MainActivity;
 import cn.rongcloud.im.ui.activity.NewFriendListActivity;
 import cn.rongcloud.im.ui.activity.UserDetailActivity;
-import io.rong.calllib.RongCallClient;
-import io.rong.calllib.RongCallSession;
 import io.rong.imkit.DefaultExtensionModule;
 import io.rong.imkit.IExtensionModule;
 import io.rong.imkit.RongExtensionManager;
@@ -247,6 +245,7 @@ public class SealAppContext implements RongIM.ConversationListBehaviorListener,
      */
     @Override
     public boolean onReceived(Message message, int i) {
+        Log.e("swo onReceived", message.toString());
         MessageContent messageContent = message.getContent();
         if (messageContent instanceof ContactNotificationMessage) {
             ContactNotificationMessage contactNotificationMessage = (ContactNotificationMessage) messageContent;
@@ -656,9 +655,9 @@ public class SealAppContext implements RongIM.ConversationListBehaviorListener,
     }
 
     private void hangUpWhenQuitGroup() {
-        RongCallSession session = RongCallClient.getInstance().getCallSession();
-        if (session != null) {
-            RongCallClient.getInstance().hangUpCall(session.getCallId());
-        }
+//        RongCallSession session = RongCallClient.getInstance().getCallSession();
+//        if (session != null) {
+//            RongCallClient.getInstance().hangUpCall(session.getCallId());
+//        }
     }
 }

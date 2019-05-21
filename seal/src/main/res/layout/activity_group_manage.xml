@@ -4,6 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
+    android:focusableInTouchMode="true"
+    android:focusable="true"
     android:background="@color/seal_bg"
     android:orientation="vertical">
 
@@ -354,6 +356,7 @@
             </LinearLayout>
 
             <TextView
+                android:id="@+id/tv_auth_tip"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
                 android:layout_marginTop="5dp"
@@ -362,6 +365,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="16dp"/>
+
+            <cn.rongcloud.im.ui.widget.NestedListView
+                android:id="@+id/lv_invite"
+                android:visibility="gone"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
         </LinearLayout>
 
     </ScrollView>

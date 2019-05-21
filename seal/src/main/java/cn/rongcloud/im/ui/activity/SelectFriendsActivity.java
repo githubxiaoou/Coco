@@ -955,7 +955,6 @@ public class SelectFriendsActivity extends BaseActivity implements View.OnClickL
     }
 
     private void kickMember() {
-        LoadDialog.show(mContext);
         StringBuilder builder = new StringBuilder();
         boolean first = true;
         for (String s : startDisList) {

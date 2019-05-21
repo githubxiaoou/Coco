@@ -19,16 +19,12 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Locale;
 
 import cn.rongcloud.im.R;
 import cn.rongcloud.im.SealAppContext;
-import cn.rongcloud.im.SealUserInfoManager;
-import cn.rongcloud.im.db.GroupMember;
 import cn.rongcloud.im.server.utils.NLog;
 import cn.rongcloud.im.server.utils.NToast;
 import cn.rongcloud.im.ui.fragment.ConversationFragmentEx;
@@ -39,16 +35,15 @@ import io.rong.imkit.fragment.UriFragment;
 import io.rong.imkit.userInfoCache.RongUserInfoManager;
 import io.rong.imlib.MessageTag;
 import io.rong.imlib.RongIMClient;
-import io.rong.imlib.typingmessage.TypingStatus;
 import io.rong.imlib.model.Conversation;
 import io.rong.imlib.model.Discussion;
 import io.rong.imlib.model.PublicServiceProfile;
 import io.rong.imlib.model.UserInfo;
+import io.rong.imlib.typingmessage.TypingStatus;
 import io.rong.message.TextMessage;
 import io.rong.message.VoiceMessage;
 
 //CallKit start 1
-import io.rong.callkit.RongCallKit;
 //CallKit end 1
 
 /**
@@ -201,14 +196,14 @@ public class ConversationActivity extends BaseActivity implements View.OnClickLi
         SealAppContext.getInstance().pushActivity(this);
 
         //CallKit start 2
-        RongCallKit.setGroupMemberProvider(new RongCallKit.GroupMembersProvider() {
-            @Override
-            public ArrayList<String> getMemberList(String groupId, final RongCallKit.OnGroupMembersResult result) {
-                getGroupMembersForCall();
-                mCallMemberResult = result;
-                return null;
-            }
-        });
+//        RongCallKit.setGroupMemberProvider(new RongCallKit.GroupMembersProvider() {
+//            @Override
+//            public ArrayList<String> getMemberList(String groupId, final RongCallKit.OnGroupMembersResult result) {
+//                getGroupMembersForCall();
+//                mCallMemberResult = result;
+//                return null;
+//            }
+//        });
 
 
         //CallKit end 2
@@ -583,7 +578,7 @@ public class ConversationActivity extends BaseActivity implements View.OnClickLi
     @Override
     protected void onDestroy() {
         //CallKit start 3
-        RongCallKit.setGroupMemberProvider(null);
+//        RongCallKit.setGroupMemberProvider(null);
         //CallKit end 3
 
         RongIMClient.setTypingStatusListener(null);
@@ -626,28 +621,28 @@ public class ConversationActivity extends BaseActivity implements View.OnClickLi
     }
 
     //CallKit start 4
-    private RongCallKit.OnGroupMembersResult mCallMemberResult;
+//    private RongCallKit.OnGroupMembersResult mCallMemberResult;
 
     private void getGroupMembersForCall() {
-        SealUserInfoManager.getInstance().getGroupMembers(mTargetId, new SealUserInfoManager.ResultCallback<List<GroupMember>>() {
-            @Override
-            public void onSuccess(List<GroupMember> groupMembers) {
-                ArrayList<String> userIds = new ArrayList<>();
-                if (groupMembers != null) {
-                    for (GroupMember groupMember : groupMembers) {
-                        if (groupMember != null) {
-                            userIds.add(groupMember.getUserId());
-                        }
-                    }
-                }
-                mCallMemberResult.onGotMemberList(userIds);
-            }
-
-            @Override
-            public void onError(String errString) {
-                mCallMemberResult.onGotMemberList(null);
-            }
-        });
+//        SealUserInfoManager.getInstance().getGroupMembers(mTargetId, new SealUserInfoManager.ResultCallback<List<GroupMember>>() {
+//            @Override
+//            public void onSuccess(List<GroupMember> groupMembers) {
+//                ArrayList<String> userIds = new ArrayList<>();
+//                if (groupMembers != null) {
+//                    for (GroupMember groupMember : groupMembers) {
+//                        if (groupMember != null) {
+//                            userIds.add(groupMember.getUserId());
+//                        }
+//                    }
+//                }
+//                mCallMemberResult.onGotMemberList(userIds);
+//            }
+//
+//            @Override
+//            public void onError(String errString) {
+//                mCallMemberResult.onGotMemberList(null);
+//            }
+//        });
     }
     //CallKit end 4
 
