@@ -358,4 +358,7 @@
     <string name="morning">上午</string>
     <string name="afternoon">下午</string>
     <string name="save_update">确认</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

@@ -1,6 +1,5 @@
 package cn.rongcloud.im.ui.activity;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -34,6 +33,7 @@ import cn.rongcloud.im.SealUserInfoManager;
 import cn.rongcloud.im.model.SealSearchConversationResult;
 import cn.rongcloud.im.server.pinyin.CharacterParser;
 import cn.rongcloud.im.server.widget.SelectableRoundedImageView;
+import cn.rongcloud.im.ui.activity.records.FileCategoryActivity;
 import io.rong.imageloader.core.ImageLoader;
 import io.rong.imkit.RongIM;
 import io.rong.imlib.RongIMClient;
@@ -46,7 +46,7 @@ import io.rong.imlib.model.UserInfo;
  * Created by tiankui on 16/10/8.
  */
 
-public class SealSearchChattingDetailActivity extends BaseActivity {
+public class SealSearchChattingDetailActivity extends BaseActivity implements View.OnClickListener {
     private static final int SEARCH_TYPE_FLAG = 1;
 
     private TextView mTitleTextView;
@@ -66,6 +66,11 @@ public class SealSearchChattingDetailActivity extends BaseActivity {
     private ChattingRecordsAdapter mAdapter;
     private boolean mCompleteFlag;
     private long mLastMessagSentTime;
+    private LinearLayout mLLCategory;
+    private TextView mTvFile;
+    private TextView mTvDate;
+    private TextView mTvMember;
+    private TextView mTvPic;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,7 +91,22 @@ public class SealSearchChattingDetailActivity extends BaseActivity {
         mChattingRecordsListView = (ListView)findViewById(R.id.ac_lv_more_info_list_detail_info);
         mSearchNoResultsTextView = (TextView)findViewById(R.id.ac_tv_search_no_results);
         mPressBackImageView = (ImageView) findViewById(R.id.ac_iv_press_back);
-
+        mLLCategory = ((LinearLayout) findViewById(R.id.ll_category));
+        mTvFile = ((TextView) findViewById(R.id.tv_file));
+        mTvFile.setOnClickListener(this);
+        mTvDate = ((TextView) findViewById(R.id.tv_date));
+        mTvDate.setOnClickListener(this);
+        mTvPic = ((TextView) findViewById(R.id.tv_pic));
+        mTvPic.setOnClickListener(this);
+        mTvMember = ((TextView) findViewById(R.id.tv_member));
+        mTvMember.setOnClickListener(this);
+        if (null != mResult) {
+            if (mResult.getConversation().getConversationType().equals(Conversation.ConversationType.GROUP)) {
+                mTvMember.setVisibility(View.VISIBLE);
+            } else {
+                mTvMember.setVisibility(View.INVISIBLE);
+            }
+        }
     }
 
     private void initData() {
@@ -110,6 +130,7 @@ public class SealSearchChattingDetailActivity extends BaseActivity {
                         for (SearchConversationResult result : searchConversationResults) {
                             if (result.getConversation().getTargetId().equals(conversation.getTargetId())) {
                                 mMatchCount = result.getMatchCount();
+                                mLLCategory.setVisibility(View.GONE);
                                 if (result.getMatchCount() == 0) {
                                     mTitleTextView.setVisibility(View.GONE);
                                     mChattingRecordsListView.setVisibility(View.GONE);
@@ -148,6 +169,7 @@ public class SealSearchChattingDetailActivity extends BaseActivity {
                     public void onSuccess(List<Message> messages) {
                         mMessageShowCount = messages.size();
                         mMessages = messages;
+                        mLLCategory.setVisibility(View.GONE);
                         if (mMessages.size() == 0) {
                             mTitleTextView.setVisibility(View.GONE);
                             mChattingRecordsListView.setVisibility(View.GONE);
@@ -176,6 +198,7 @@ public class SealSearchChattingDetailActivity extends BaseActivity {
                             mChattingRecordsListView.setVisibility(View.GONE);
                             mTitleTextView.setVisibility(View.GONE);
                             mSearchNoResultsTextView.setVisibility(View.GONE);
+                            mLLCategory.setVisibility(View.VISIBLE);
                         }
                     }
                 });
@@ -268,6 +291,27 @@ public class SealSearchChattingDetailActivity extends BaseActivity {
             }
         });
 
+    }
+
+    @Override
+    public void onClick(View v) {
+        Intent intent;
+        switch (v.getId()) {
+            case R.id.tv_file:
+                intent = new Intent(this, FileCategoryActivity.class);
+                intent.putExtra("type", 0);
+                startActivity(intent);
+                break;
+            case R.id.tv_date:
+                break;
+            case R.id.tv_pic:
+                intent = new Intent(this, FileCategoryActivity.class);
+                intent.putExtra("type", 1);
+                startActivity(intent);
+                break;
+            case R.id.tv_member:
+                break;
+        }
     }
 
     private class ChattingRecordsAdapter extends BaseAdapter {
