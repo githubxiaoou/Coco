@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="48dp"
-    android:background="#0195ff">
+    android:background="@color/rc_main_theme">
     <ImageView
         android:id="@+id/ac_iv_press_back"
         android:layout_width="wrap_content"
@@ -14,7 +14,7 @@
         android:layout_marginBottom="12dp"
         android:layout_width="1dp"
         android:layout_height="24dp"
-        android:background="#0083e0"
+        android:background="#000000"
         />
     <EditText
         android:id="@+id/ac_et_search"
@@ -27,7 +27,7 @@
         android:drawableRight="@drawable/ac_search_cancel_icon"
         android:drawablePadding="8dp"
         android:hint="@string/Search"
-        android:textColorHint="#8ed0ff"
+        android:textColorHint="@color/gray"
         android:textColor="#ffffff"
         android:focusableInTouchMode="true"
         android:maxLines="1"

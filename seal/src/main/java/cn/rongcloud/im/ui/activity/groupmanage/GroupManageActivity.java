@@ -1,6 +1,7 @@
 package cn.rongcloud.im.ui.activity.groupmanage;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,6 +19,7 @@ import java.util.List;
 import cn.rongcloud.im.App;
 import cn.rongcloud.im.R;
 import cn.rongcloud.im.SealAppContext;
+import cn.rongcloud.im.SealConst;
 import cn.rongcloud.im.model.NetData;
 import cn.rongcloud.im.net.HttpUtil;
 import cn.rongcloud.im.net.NetObserver;
@@ -53,11 +55,13 @@ public class GroupManageActivity extends BaseActivity implements View.OnClickLis
     SwitchButton mSwGroupAuth;
 
     private String groupId;
-    private String creatorId;
+    private String mUserId;
     private TextView mTvAuthTip;
     private ListView mLvInvite;
     List<QuitListResponse> sourceDataList = new ArrayList<>();// 列表展示的数据源
     private InviteListAdapter mAdapter;
+    private SharedPreferences sp;
+    private LinearLayout mLlMasterContainer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,6 +74,8 @@ public class GroupManageActivity extends BaseActivity implements View.OnClickLis
     }
 
     private void initData() {
+        sp = getSharedPreferences("config", MODE_PRIVATE);
+        mUserId = sp.getString(SealConst.SEALTALK_LOGIN_ID, "");
         getGroupDetail();
     }
 
@@ -103,12 +109,12 @@ public class GroupManageActivity extends BaseActivity implements View.OnClickLis
                             }
 
                             // 群主显示“设置管理员”和“群主权限转让”
-                            if (creatorId.equals(result.creatorId)) {
+                            if (mUserId.equals(result.creatorId)) {
                                 mRlAdjustManager.setVisibility(View.VISIBLE);
-                                mLlOwnerTransfer.setVisibility(View.VISIBLE);
+                                mLlMasterContainer.setVisibility(View.VISIBLE);
                             } else {
                                 mRlAdjustManager.setVisibility(View.GONE);
-                                mLlOwnerTransfer.setVisibility(View.GONE);
+                                mLlMasterContainer.setVisibility(View.GONE);
                             }
                         }
                     }
@@ -138,12 +144,12 @@ public class GroupManageActivity extends BaseActivity implements View.OnClickLis
         mGroupHelper.setOnClickListener(this);
         mLlOwnerTransfer = (LinearLayout) findViewById(R.id.ll_owner_transfer);
         mLlOwnerTransfer.setOnClickListener(this);
+        mLlMasterContainer = ((LinearLayout) findViewById(R.id.ll_master_container));
         mSwGroupProtect = (SwitchButton) findViewById(R.id.sw_group_protect);
         mSwGroupAuth = (SwitchButton) findViewById(R.id.sw_group_auth);
         mTvAuthTip = ((TextView) findViewById(R.id.tv_auth_tip));
         mLvInvite = ((ListView) findViewById(R.id.lv_invite));
         groupId = getIntent().getStringExtra("GroupId");
-        creatorId = getIntent().getStringExtra("CreatorId");
 
         mAdapter = new InviteListAdapter();
         mLvInvite.setAdapter(mAdapter);
@@ -219,8 +225,6 @@ public class GroupManageActivity extends BaseActivity implements View.OnClickLis
                     mLvInvite.setVisibility(View.VISIBLE);
                 } else {
                     setGroupParams("", "0");
-                    mTvAuthTip.setVisibility(View.VISIBLE);
-                    mLvInvite.setVisibility(View.GONE);
                 }
                 break;
         }
@@ -241,7 +245,6 @@ public class GroupManageActivity extends BaseActivity implements View.OnClickLis
                 .subscribe(new NetObserver<NetData>() {
                     @Override
                     public void Successful(NetData listNetData) {
-                        NToast.shortToast(mContext, "设置成功");
                         getInviteList();
                     }
 
@@ -307,7 +310,7 @@ public class GroupManageActivity extends BaseActivity implements View.OnClickLis
             }
             ImageLoader.getInstance().displayImage(sourceDataList.get(position).friendPortraitUri, holder.mImageView, App.getOptions());
             holder.tvTitle.setText(sourceDataList.get(position).friendName);
-            holder.mTvTime.setText("于 " + sourceDataList.get(position).createdAt + " 进群");
+            holder.mTvTime.setText("邀请人: " + sourceDataList.get(position).userName);
             holder.mTvAgree.setVisibility(View.VISIBLE);
             return convertView;
         }

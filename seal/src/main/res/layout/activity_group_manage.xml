@@ -166,158 +166,161 @@
                     android:textSize="16sp" />
             </LinearLayout>
 
-
+            <!--默认不可见，群主可见-->
             <LinearLayout
-                android:id="@+id/ll_group_id"
+                android:id="@+id/ll_master_container"
+                android:orientation="vertical"
                 android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:layout_marginTop="20dp"
-                android:background="@drawable/btn_list_item_bg"
-                android:clickable="true"
-                android:orientation="horizontal"
-                android:visibility="visible">
+                android:layout_height="wrap_content">
+                <LinearLayout
+                    android:id="@+id/ll_group_id"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:background="@drawable/btn_list_item_bg"
+                    android:clickable="true"
+                    android:layout_marginTop="20dp"
+                    android:orientation="horizontal"
+                    android:visibility="visible">
 
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginBottom="10dp"
-                    android:layout_marginLeft="16dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_weight="1"
-                    android:text="群聊号"
-                    android:textColor="@color/text_color"
-                    android:textSize="16sp" />
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginBottom="10dp"
+                        android:layout_marginLeft="16dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_weight="1"
+                        android:text="群聊号"
+                        android:textColor="@color/text_color"
+                        android:textSize="16sp" />
 
-                <TextView
-                    android:id="@+id/tv_group_id"
-                    android:text=""
-                    android:hint="未设置"
-                    android:textSize="14sp"
-                    android:textColor="@color/color_gray_text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginRight="14dp"
-                    android:layout_marginEnd="14dp"/>
-
-
-            </LinearLayout>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="0.25dp"
-                android:layout_marginLeft="14dp"
-                android:layout_marginRight="14dp"
-                android:background="#dfdfdd" />
-
-            <LinearLayout
-                android:id="@+id/group_helper"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:background="@drawable/btn_list_item_bg"
-                android:clickable="true"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginBottom="10dp"
-                    android:layout_marginLeft="16dp"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_weight="1"
-                    android:text="群助手"
-                    android:textColor="@color/text_color"
-                    android:textSize="16sp" />
-
-                <TextView
-                    android:id="@+id/tv_group_helper"
-                    android:text=""
-                    android:hint="未设置"
-                    android:textSize="14sp"
-                    android:textColor="@color/color_gray_text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginRight="14dp"
-                    android:layout_marginEnd="14dp"/>
-            </LinearLayout>
+                    <TextView
+                        android:id="@+id/tv_group_id"
+                        android:text=""
+                        android:hint="未设置"
+                        android:textSize="14sp"
+                        android:textColor="@color/color_gray_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginRight="14dp"
+                        android:layout_marginEnd="14dp"/>
 
 
-            <!--群主转让，默认不可见，群主可见-->
-            <LinearLayout
-                android:id="@+id/ll_owner_transfer"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:layout_marginTop="20dp"
-                android:background="@drawable/btn_list_item_bg"
-                android:clickable="true"
-                android:visibility="gone"
-                android:orientation="horizontal">
+                </LinearLayout>
 
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginBottom="10dp"
-                    android:layout_marginLeft="16dp"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_weight="1"
-                    android:text="群主权限转让"
-                    android:textColor="@color/text_color"
-                    android:textSize="16sp" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:layout_marginTop="20dp"
-                android:background="#ffffff"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginBottom="10dp"
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="0.25dp"
                     android:layout_marginLeft="14dp"
-                    android:layout_marginStart="14dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_weight="1"
-                    android:text="群成员保护模式"
-                    android:textColor="@color/text_color"
-                    android:textSize="16sp" />
+                    android:layout_marginRight="14dp"
+                    android:background="#dfdfdd" />
 
-                <cn.rongcloud.im.ui.widget.switchbutton.SwitchButton
-                    android:id="@+id/sw_group_protect"
-                    style="@style/SwitchButtonStyle"
+                <LinearLayout
+                    android:id="@+id/group_helper"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:background="@drawable/btn_list_item_bg"
+                    android:clickable="true"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginBottom="10dp"
+                        android:layout_marginLeft="16dp"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_weight="1"
+                        android:text="群助手"
+                        android:textColor="@color/text_color"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:id="@+id/tv_group_helper"
+                        android:text=""
+                        android:hint="未设置"
+                        android:textSize="14sp"
+                        android:textColor="@color/color_gray_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginRight="14dp"
+                        android:layout_marginEnd="14dp"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/ll_owner_transfer"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:layout_marginTop="20dp"
+                    android:background="@drawable/btn_list_item_bg"
+                    android:clickable="true"
+                    android:visibility="visible"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginBottom="10dp"
+                        android:layout_marginLeft="16dp"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_weight="1"
+                        android:text="群主权限转让"
+                        android:textColor="@color/text_color"
+                        android:textSize="16sp" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:layout_marginTop="20dp"
+                    android:background="#ffffff"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginBottom="10dp"
+                        android:layout_marginLeft="14dp"
+                        android:layout_marginStart="14dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_weight="1"
+                        android:text="群成员保护模式"
+                        android:textColor="@color/text_color"
+                        android:textSize="16sp" />
+
+                    <cn.rongcloud.im.ui.widget.switchbutton.SwitchButton
+                        android:id="@+id/sw_group_protect"
+                        style="@style/SwitchButtonStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="8dp"
+                        app:kswAnimationDuration="300"
+                        app:kswBackDrawable="@drawable/ios_back_drawable"
+                        app:kswBackMeasureRatio="1.4"
+                        app:kswThumbDrawable="@drawable/ios_thumb"
+                        app:kswThumbMarginBottom="-8dp"
+                        app:kswThumbMarginLeft="-5dp"
+                        app:kswThumbMarginRight="-5dp"
+                        app:kswThumbMarginTop="-2.5dp" />
+                </LinearLayout>
+
+                <TextView
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginTop="5dp"
+                    android:text="开启后，群成员无法通过该群添加好友。"
+                    android:textColor="@color/gray"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:padding="8dp"
-                    app:kswAnimationDuration="300"
-                    app:kswBackDrawable="@drawable/ios_back_drawable"
-                    app:kswBackMeasureRatio="1.4"
-                    app:kswThumbDrawable="@drawable/ios_thumb"
-                    app:kswThumbMarginBottom="-8dp"
-                    app:kswThumbMarginLeft="-5dp"
-                    app:kswThumbMarginRight="-5dp"
-                    app:kswThumbMarginTop="-2.5dp" />
+                    android:layout_marginLeft="16dp"/>
             </LinearLayout>
-
-            <TextView
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp"
-                android:layout_marginTop="5dp"
-                android:text="开启后，群成员无法通过该群添加好友。"
-                android:textColor="@color/gray"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"/>
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
