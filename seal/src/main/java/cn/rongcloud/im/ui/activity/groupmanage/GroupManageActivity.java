@@ -233,7 +233,7 @@ public class GroupManageActivity extends BaseActivity implements View.OnClickLis
     private void setGroupParams(String protect, String auth) {
         LoadDialog.show(mContext);
         HttpUtil.apiS()
-                .setGroupParams(groupId, protect, auth)
+                .setGroupParams(groupId, mUserId, protect, auth)
                 .subscribeOn(Schedulers.io())
                 .doOnTerminate(new Action() {
                     @Override

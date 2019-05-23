@@ -688,6 +688,7 @@ public class SelectFriendsActivity extends BaseActivity implements View.OnClickL
                         setResult(101, data);
                         LoadDialog.dismiss(mContext);
                         NToast.shortToast(mContext, getString(R.string.add_successful));
+
                         inviteMember();
                         finish();
                     }

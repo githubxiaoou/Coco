@@ -156,6 +156,16 @@ public class GroupDetailActivity extends BaseActivity implements View.OnClickLis
         setGroupsInfoChangeListener();
         sp = getSharedPreferences("config", MODE_PRIVATE);
         mUserId = sp.getString(SealConst.SEALTALK_LOGIN_ID, "");
+
+        initData();
+    }
+
+    private void initData() {
+        getGroupDetail();// 判断角色，判断是否开启认证等都需要用到。
+    }
+
+    private void getGroupDetail() {
+
     }
 
     private void getGroups() {

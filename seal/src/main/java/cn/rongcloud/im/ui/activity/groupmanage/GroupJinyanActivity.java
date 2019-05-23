@@ -3,6 +3,7 @@ package cn.rongcloud.im.ui.activity.groupmanage;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,6 +20,7 @@ import java.util.List;
 
 import cn.rongcloud.im.App;
 import cn.rongcloud.im.R;
+import cn.rongcloud.im.SealConst;
 import cn.rongcloud.im.model.NetData;
 import cn.rongcloud.im.net.HttpUtil;
 import cn.rongcloud.im.net.NetObserver;
@@ -44,6 +46,8 @@ public class GroupJinyanActivity extends BaseActivity implements View.OnClickLis
     private ArrayList<String> jinyanIdList = new ArrayList<>();// 保存已经禁言的成员id，给添加禁言页面过滤使用。
     private List<JinyanResponse> mSourceDataList = new ArrayList<>();
     private SetJinyanAdapter adapter;
+    private SharedPreferences sp;
+    private String mUserId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,6 +98,8 @@ public class GroupJinyanActivity extends BaseActivity implements View.OnClickLis
         mLlBottom.setOnClickListener(this);
         adapter = new SetJinyanAdapter();
         mLv.setAdapter(adapter);
+        sp = getSharedPreferences("config", MODE_PRIVATE);
+        mUserId = sp.getString(SealConst.SEALTALK_USER_ID, "");
     }
 
     @Override
@@ -130,7 +136,7 @@ public class GroupJinyanActivity extends BaseActivity implements View.OnClickLis
     @Override
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
         LoadDialog.show(mContext);
-        HttpUtil.apiS().groupJinyanAll(groupId, isChecked ? "1" : "2")
+        HttpUtil.apiS().groupJinyanAll(groupId, mUserId, isChecked ? "1" : "2")
                 .subscribeOn(Schedulers.io())
                 .doOnTerminate(new Action() {
                     @Override

@@ -58,6 +58,7 @@ public interface ServiceS {
     /*全体禁言/解禁*/
     @GET("group/jinyan-all")
     Observable<NetData<List<String>>> groupJinyanAll(@Query("group_id") String groupId,
+                                                     @Query("user_id") String userId,
                                                      @Query("type") String type);// 1:禁言 2解禁
 
     /*禁言成员列表*/
@@ -95,6 +96,7 @@ public interface ServiceS {
     /*群成员保护/是否开启群认证*/
     @GET("group/set-group-params")
     Observable<NetData<GetGroupDetailResponse>> setGroupParams(@Query("group_id") String groupId,
+                                                     @Query("user_id") String userId,
                                                      @Query("is_protected") String protect,// 1:开启 0 关闭
                                                      @Query("is_need_verification") String auth);// 1:开启 0 关闭
 
@@ -125,4 +127,8 @@ public interface ServiceS {
     @GET("group/get-group-member-status-list")
     Observable<NetData<List<QuitListResponse>>> getQuitList(@Query("group_id") String groupId,
                                                             @Query("type") String type);// 1进群成员列表；2退群成员列表
+
+    /*群主管理员同意他人加入群组*/
+    @GET("group/agree-user-into-group")
+    Observable<NetData<List<String>>> agreeUserIntoGroup(@Query("id") String id);// 审批列表id
 }
