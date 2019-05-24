@@ -109,6 +109,7 @@ public class SelectFriendsActivity extends BaseActivity implements View.OnClickL
     private boolean isStartPrivateChat;
     private List<Friend> mSelectedFriend;
     private boolean isAddGroupMember;
+    private boolean openAuth;
     private boolean isDeleteGroupMember;
     private boolean isSetManager;
     private ArrayList<String> managerIdList = new ArrayList<>();
@@ -133,6 +134,7 @@ public class SelectFriendsActivity extends BaseActivity implements View.OnClickL
         groupId = getIntent().getStringExtra("GroupId");
         userId = getIntent().getStringExtra("userId");
         isAddGroupMember = getIntent().getBooleanExtra("isAddGroupMember", false);
+        openAuth = getIntent().getBooleanExtra("openAuth", false);
         isDeleteGroupMember = getIntent().getBooleanExtra("isDeleteGroupMember", false);
         isSetManager = getIntent().getBooleanExtra("isSetManager", false);
         isSetJinyan = getIntent().getBooleanExtra("isSetJinyan", false);
@@ -686,11 +688,9 @@ public class SelectFriendsActivity extends BaseActivity implements View.OnClickL
                         Intent data = new Intent();
                         data.putExtra("newAddMember", (Serializable) createGroupList);
                         setResult(101, data);
-                        LoadDialog.dismiss(mContext);
                         NToast.shortToast(mContext, getString(R.string.add_successful));
 
                         inviteMember();
-                        finish();
                     }
                     break;
                 case DELETE_GROUP_MEMBER:
@@ -699,7 +699,6 @@ public class SelectFriendsActivity extends BaseActivity implements View.OnClickL
                         Intent intent = new Intent();
                         intent.putExtra("deleteMember", (Serializable) createGroupList);
                         setResult(102, intent);
-                        LoadDialog.dismiss(mContext);
                         NToast.shortToast(mContext, getString(R.string.remove_successful));
                         kickMember();
                         finish();
@@ -857,8 +856,12 @@ public class SelectFriendsActivity extends BaseActivity implements View.OnClickL
 
                     } else if (addGroupMemberList != null && startDisList != null && startDisList.size() > 0) {
                         //TODO 选中添加成员的数据添加到服务端数据库  返回本地也需要更改
-                        LoadDialog.show(mContext);
-                        request(ADD_GROUP_MEMBER);
+                        if (openAuth) {
+                            inviteMember();
+                        } else {
+                            LoadDialog.show(mContext);
+                            request(ADD_GROUP_MEMBER);
+                        }
 
                     } else if (addDisList != null && startDisList != null && startDisList.size() > 0) {
                         Intent intent = new Intent();
@@ -921,7 +924,6 @@ public class SelectFriendsActivity extends BaseActivity implements View.OnClickL
     }
 
     public void inviteMember() {
-        LoadDialog.show(mContext);
         StringBuilder builder = new StringBuilder();
         boolean first = true;
         for (String s : startDisList) {
@@ -945,7 +947,10 @@ public class SelectFriendsActivity extends BaseActivity implements View.OnClickL
 
                     @Override
                     public void Successful(NetData<List<String>> listNetData) {
-
+                        if (openAuth) {
+                            NToast.shortToast(mContext, "本群已开启群认证，邀请成功，需要管理员或群主同意方可进群。");
+                        }
+                        finish();
                     }
 
                     @Override
@@ -990,7 +995,6 @@ public class SelectFriendsActivity extends BaseActivity implements View.OnClickL
     }
 
     private void setManager() {
-        LoadDialog.show(mContext);
         StringBuilder builder = new StringBuilder();
         boolean first = true;
         for (String s : startDisList) {
@@ -1087,7 +1091,6 @@ public class SelectFriendsActivity extends BaseActivity implements View.OnClickL
                         minute = 24 * 60;
                         break;
                 }
-                LoadDialog.show(mContext);
                 jinyan(minute);
             }
         })

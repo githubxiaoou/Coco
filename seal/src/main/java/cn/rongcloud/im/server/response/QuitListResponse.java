@@ -12,7 +12,7 @@ public class QuitListResponse extends NetData {
      * userId : 9
      * friendId : 9
      * type : 2
-     * status : null
+     * status : 0
      * createdAt : 2019-05-20 22:08:24
      * updatedAt : 2019-05-20 22:08:24
      * friendName : 17711112222
@@ -32,7 +32,7 @@ public class QuitListResponse extends NetData {
     @SerializedName("type")
     public String type;
     @SerializedName("status")
-    public Object status;
+    public String status;
     @SerializedName("createdAt")
     public String createdAt;
     @SerializedName("updatedAt")

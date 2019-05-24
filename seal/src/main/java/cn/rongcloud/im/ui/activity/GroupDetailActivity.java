@@ -44,6 +44,7 @@ import cn.rongcloud.im.server.broadcast.BroadcastManager;
 import cn.rongcloud.im.server.network.http.HttpException;
 import cn.rongcloud.im.server.pinyin.CharacterParser;
 import cn.rongcloud.im.server.response.DismissGroupResponse;
+import cn.rongcloud.im.server.response.GetGroupDetailResponse;
 import cn.rongcloud.im.server.response.GetGroupInfoResponse;
 import cn.rongcloud.im.server.response.QuitGroupResponse;
 import cn.rongcloud.im.server.response.SetGroupDisplayNameResponse;
@@ -127,6 +128,10 @@ public class GroupDetailActivity extends BaseActivity implements View.OnClickLis
     private String mCreatorId;
     private SharedPreferences sp;
     private String mUserId;
+    private GetGroupDetailResponse mGetGroupDetailResponse;
+    private LinearLayout mLlGroupName;
+    private GridAdapter mAdapter;
+    private boolean isAdmin;
 
 
     @Override
@@ -161,11 +166,42 @@ public class GroupDetailActivity extends BaseActivity implements View.OnClickLis
     }
 
     private void initData() {
-        getGroupDetail();// 判断角色，判断是否开启认证等都需要用到。
     }
 
+    // 判断角色，判断是否开启认证等都需要用到。
     private void getGroupDetail() {
+        LoadDialog.show(mContext);
+        HttpUtil.apiS()
+                .getGroupDetail(fromConversationId, mUserId)
+                .subscribeOn(Schedulers.io())
+                .doOnTerminate(new Action() {
+                    @Override
+                    public void run() throws Exception {
+                        LoadDialog.dismiss(mContext);
+                    }
+                })
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new NetObserver<NetData<GetGroupDetailResponse>>() {
+                    @Override
+                    public void Successful(NetData<GetGroupDetailResponse> response) {
+                        mGetGroupDetailResponse = response.result;
+                        // 判断角色，如果是普通群成员，则不显示群管理
+                        if (!"1".equals(mGetGroupDetailResponse.isAdmin) && !mUserId.equals(mGetGroupDetailResponse.creatorId)) {
+                            // 不是管理员，且不是群主，说明他是普通群成员
+                            mLlGroupName.setVisibility(View.GONE);
+                        } else {
+                            mLlGroupName.setVisibility(View.VISIBLE);
+                        }
+                        isAdmin = null != mGetGroupDetailResponse && "1".equals(mGetGroupDetailResponse.isAdmin);
+                        mAdapter = new GridAdapter(mContext, mGroupMember);
+                        mGridView.setAdapter(mAdapter);
+                    }
 
+                    @Override
+                    public void Failure(Throwable t) {
+
+                    }
+                });
     }
 
     private void getGroups() {
@@ -276,7 +312,7 @@ public class GroupDetailActivity extends BaseActivity implements View.OnClickLis
         if (mGroupMember != null && mGroupMember.size() > 0) {
             setTitle(getString(R.string.group_info) + "(" + mGroupMember.size() + ")");
             mTextViewMemberSize.setText(getString(R.string.group_member_size) + "(" + mGroupMember.size() + ")");
-            mGridView.setAdapter(new GridAdapter(mContext, mGroupMember));
+            getGroupDetail();
         } else {
             return;
         }
@@ -714,8 +750,8 @@ public class GroupDetailActivity extends BaseActivity implements View.OnClickLis
             TextView tv_username = (TextView) convertView.findViewById(R.id.tv_username);
             ImageView badge_delete = (ImageView) convertView.findViewById(R.id.badge_delete);
 
-            // 最后一个item，减人按钮
-            if (position == getCount() - 1 && isCreated) {
+            // 最后一个item，减人按钮；如果是管理员，也可以删除操作
+            if (position == getCount() - 1 && (isCreated || isAdmin)) {
                 tv_username.setText("");
                 badge_delete.setVisibility(View.GONE);
                 iv_avatar.setBackground(getResources().getDrawable(R.drawable.icon_btn_deleteperson));
@@ -732,7 +768,7 @@ public class GroupDetailActivity extends BaseActivity implements View.OnClickLis
                     }
 
                 });
-            } else if ((isCreated && position == getCount() - 2) || (!isCreated && position == getCount() - 1)) {
+            } else if ((isCreated || isAdmin && position == getCount() - 2) || (!isCreated && !isAdmin && position == getCount() - 1)) {
                 // 加人按钮
                 tv_username.setText("");
                 badge_delete.setVisibility(View.GONE);
@@ -745,6 +781,12 @@ public class GroupDetailActivity extends BaseActivity implements View.OnClickLis
                         intent.putExtra("isAddGroupMember", true);
                         intent.putExtra("GroupId", mGroup.getGroupsId());
                         intent.putExtra("userId", mUserId);
+                        // 加入认证，普通群成员需要认证
+                        if (null != mGetGroupDetailResponse && "1".equals(mGetGroupDetailResponse.isNeedVerification)
+                                            && !"1".equals(mGetGroupDetailResponse.isAdmin)
+                                            && !mUserId.equals(mGetGroupDetailResponse.creatorId)) {
+                            intent.putExtra("openAuth", true);
+                        }
                         startActivityForResult(intent, 100);
 
                     }
@@ -783,7 +825,7 @@ public class GroupDetailActivity extends BaseActivity implements View.OnClickLis
 
         @Override
         public int getCount() {
-            if (isCreated) {
+            if (isCreated || isAdmin) {
                 return list.size() + 2;
             } else {
                 return list.size() + 1;
@@ -1074,8 +1116,8 @@ public class GroupDetailActivity extends BaseActivity implements View.OnClickLis
         groupClean.setOnClickListener(this);
         mGroupNotice.setOnClickListener(this);
         mSearchMessagesLinearLayout.setOnClickListener(this);
-        LinearLayout llGroupName = (LinearLayout) findViewById(R.id.group_manage);
-        llGroupName.setOnClickListener(this);
+        mLlGroupName = (LinearLayout) findViewById(R.id.group_manage);
+        mLlGroupName.setOnClickListener(this);
     }
 
     @Override

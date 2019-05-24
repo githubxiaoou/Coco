@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -14,6 +15,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import cn.rongcloud.im.App;
@@ -23,6 +25,7 @@ import cn.rongcloud.im.SealConst;
 import cn.rongcloud.im.model.NetData;
 import cn.rongcloud.im.net.HttpUtil;
 import cn.rongcloud.im.net.NetObserver;
+import cn.rongcloud.im.server.response.AddGroupMemberResponse;
 import cn.rongcloud.im.server.response.GetGroupDetailResponse;
 import cn.rongcloud.im.server.response.QuitListResponse;
 import cn.rongcloud.im.server.utils.NToast;
@@ -31,8 +34,15 @@ import cn.rongcloud.im.server.widget.SelectableRoundedImageView;
 import cn.rongcloud.im.ui.activity.BaseActivity;
 import cn.rongcloud.im.ui.activity.liveness.LivenessActivity;
 import cn.rongcloud.im.ui.widget.switchbutton.SwitchButton;
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.ObservableSource;
+import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Action;
+import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 import io.rong.imageloader.core.ImageLoader;
 
@@ -82,7 +92,7 @@ public class GroupManageActivity extends BaseActivity implements View.OnClickLis
     private void getGroupDetail() {
         LoadDialog.show(mContext);
         HttpUtil.apiS()
-                .getGroupDetail(groupId)
+                .getGroupDetail(groupId, mUserId)
                 .subscribeOn(Schedulers.io())
                 .doOnTerminate(new Action() {
                     @Override
@@ -216,11 +226,11 @@ public class GroupManageActivity extends BaseActivity implements View.OnClickLis
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
         switch (buttonView.getId()) {
             case R.id.sw_group_protect:
-                setGroupParams(buttonView.isChecked() ? "1": "0", "");
+                setGroupParams(buttonView.isChecked() ? "1" : "0", "");
                 break;
             case R.id.sw_group_auth:
                 if (buttonView.isChecked()) {
-                    setGroupParams("","1");
+                    setGroupParams("", "1");
                     mTvAuthTip.setVisibility(View.GONE);
                     mLvInvite.setVisibility(View.VISIBLE);
                 } else {
@@ -299,7 +309,7 @@ public class GroupManageActivity extends BaseActivity implements View.OnClickLis
         }
 
         @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
+        public View getView(final int position, View convertView, ViewGroup parent) {
             ViewHolder holder;
             if (convertView == null) {
                 convertView = LayoutInflater.from(mContext).inflate(R.layout.item_quit_list, parent, false);
@@ -311,12 +321,26 @@ public class GroupManageActivity extends BaseActivity implements View.OnClickLis
             ImageLoader.getInstance().displayImage(sourceDataList.get(position).friendPortraitUri, holder.mImageView, App.getOptions());
             holder.tvTitle.setText(sourceDataList.get(position).friendName);
             holder.mTvTime.setText("邀请人: " + sourceDataList.get(position).userName);
-            holder.mTvAgree.setVisibility(View.VISIBLE);
+            if ("0".equals(sourceDataList.get(position).status)) {
+                holder.mBtnAgree.setVisibility(View.VISIBLE);
+                holder.mTvAgree.setVisibility(View.GONE);
+            } else {
+                holder.mBtnAgree.setVisibility(View.GONE);
+                holder.mTvAgree.setVisibility(View.VISIBLE);
+            }
+
+            holder.mBtnAgree.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    excuseAddToGroup(sourceDataList.get(position).id, sourceDataList.get(position).userId, sourceDataList.get(position).friendId);
+                }
+            });
             return convertView;
         }
 
         final class ViewHolder {
             private final TextView mTvAgree;
+            private final Button mBtnAgree;
             TextView tvTitle;
             SelectableRoundedImageView mImageView;
             private final TextView mTvTime;
@@ -326,7 +350,46 @@ public class GroupManageActivity extends BaseActivity implements View.OnClickLis
                 mImageView = (SelectableRoundedImageView) view.findViewById(R.id.dis_frienduri);
                 mTvTime = ((TextView) view.findViewById(R.id.dis_time));
                 mTvAgree = ((TextView) view.findViewById(R.id.tv_agree));
+                mBtnAgree = ((Button) view.findViewById(R.id.btn_agree));
             }
         }
+    }
+
+    // 先调加群接口，再调同意接口
+    private void excuseAddToGroup(final String id, final String inviteId, final String friendId) {
+        LoadDialog.show(mContext);
+        Observable.create(new ObservableOnSubscribe<AddGroupMemberResponse>() {
+            @Override
+            public void subscribe(ObservableEmitter<AddGroupMemberResponse> emitter) throws Exception {
+                emitter.onNext(action.addGroupMember(groupId, inviteId, Collections.singletonList(friendId)));
+            }
+        }).flatMap(new Function<AddGroupMemberResponse, Observable<NetData>>() {
+            @Override
+            public Observable<NetData> apply(AddGroupMemberResponse addGroupMemberResponse) throws Exception {
+                if (addGroupMemberResponse.getCode() == 200) {
+                    return HttpUtil.apiS().agreeUserIntoGroup(id);
+                } else {
+                    return null;
+                }
+            }
+        })
+                .subscribeOn(Schedulers.io())
+                .doOnTerminate(new Action() {
+                    @Override
+                    public void run() throws Exception {
+                        LoadDialog.dismiss(mContext);
+                    }
+                }).observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new NetObserver<NetData>() {
+                    @Override
+                    public void Successful(NetData listNetData) {
+                        getInviteList();
+                    }
+
+                    @Override
+                    public void Failure(Throwable t) {
+                        NToast.shortToast(mContext, "网络错误");
+                    }
+                });
     }
 }

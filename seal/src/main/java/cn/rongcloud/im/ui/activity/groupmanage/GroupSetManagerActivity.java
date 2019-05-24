@@ -111,7 +111,16 @@ public class GroupSetManagerActivity extends BaseActivity implements View.OnClic
 
     @Override
     public void onHeadLeftButtonClick(View v) {
+        Intent intent = new Intent();
+        intent.putExtra("managerCount", mSourceDataList.size());
+        setResult(RESULT_OK, intent);
         finish();
+    }
+
+    @Override
+    public void onBackPressed() {
+        onHeadLeftButtonClick(new View(this));
+        super.onBackPressed();
     }
 
     @Override
@@ -258,12 +267,4 @@ public class GroupSetManagerActivity extends BaseActivity implements View.OnClic
         }
     }
 
-
-    @Override
-    public void onPause() {
-        Intent intent = new Intent();
-        intent.putExtra("managerCount", mSourceDataList.size());
-        setResult(RESULT_OK, intent);
-        super.onPause();
-    }
 }

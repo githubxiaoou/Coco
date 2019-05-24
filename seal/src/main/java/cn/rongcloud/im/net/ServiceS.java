@@ -91,7 +91,8 @@ public interface ServiceS {
 
     /*获取群组设置详情*/
     @GET("group/get-group-detail")
-    Observable<NetData<GetGroupDetailResponse>> getGroupDetail(@Query("group_id") String groupId);
+    Observable<NetData<GetGroupDetailResponse>> getGroupDetail(@Query("group_id") String groupId,
+                                                               @Query("user_id") String userId);
 
     /*群成员保护/是否开启群认证*/
     @GET("group/set-group-params")
@@ -130,5 +131,5 @@ public interface ServiceS {
 
     /*群主管理员同意他人加入群组*/
     @GET("group/agree-user-into-group")
-    Observable<NetData<List<String>>> agreeUserIntoGroup(@Query("id") String id);// 审批列表id
+    Observable<NetData> agreeUserIntoGroup(@Query("id") String id);// 审批列表id
 }

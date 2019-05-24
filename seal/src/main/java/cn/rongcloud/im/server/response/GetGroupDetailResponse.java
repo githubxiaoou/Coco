@@ -23,6 +23,7 @@ public class GetGroupDetailResponse extends NetData {
      * is_need_verification : null
      * is_allforbiden_words : 1
      * adminCount : 1
+     * isAdmin:1
      */
 
     @SerializedName("id")
@@ -50,11 +51,13 @@ public class GetGroupDetailResponse extends NetData {
     @SerializedName("other_id")
     public String otherId;
     @SerializedName("is_protected")
-    public Object isProtected;
+    public Object isProtected;// 1开启保护，其它不是
     @SerializedName("is_need_verification")
-    public Object isNeedVerification;
+    public Object isNeedVerification;// 1开启认证，其它不是
     @SerializedName("is_allforbiden_words")
     public String isAllforbidenWords;
     @SerializedName("adminCount")
     public int adminCount;
+    @SerializedName("isAdmin")
+    public String isAdmin;//1是管理员，其它不是
 }
