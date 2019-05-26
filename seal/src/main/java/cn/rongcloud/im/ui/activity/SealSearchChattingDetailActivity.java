@@ -33,6 +33,8 @@ import cn.rongcloud.im.SealUserInfoManager;
 import cn.rongcloud.im.model.SealSearchConversationResult;
 import cn.rongcloud.im.server.pinyin.CharacterParser;
 import cn.rongcloud.im.server.widget.SelectableRoundedImageView;
+import cn.rongcloud.im.ui.activity.groupmanage.PickFriendActivity;
+import cn.rongcloud.im.ui.activity.records.DateActivity;
 import cn.rongcloud.im.ui.activity.records.FileCategoryActivity;
 import io.rong.imageloader.core.ImageLoader;
 import io.rong.imkit.RongIM;
@@ -300,16 +302,26 @@ public class SealSearchChattingDetailActivity extends BaseActivity implements Vi
             case R.id.tv_file:
                 intent = new Intent(this, FileCategoryActivity.class);
                 intent.putExtra("type", 0);
+                intent.putExtra("searchConversationResult", mResult);
                 startActivity(intent);
                 break;
             case R.id.tv_date:
+                intent = new Intent(this, DateActivity.class);
+                intent.putExtra("searchConversationResult", mResult);
+                startActivity(intent);
                 break;
             case R.id.tv_pic:
                 intent = new Intent(this, FileCategoryActivity.class);
                 intent.putExtra("type", 1);
+                intent.putExtra("searchConversationResult", mResult);
                 startActivity(intent);
                 break;
             case R.id.tv_member:
+                intent = new Intent(this, PickFriendActivity.class);
+                intent.putExtra("searchConversationResult", mResult);
+                intent.putExtra("isSearchHistory", true);
+                intent.putExtra("GroupId", mResult.getId());
+                startActivity(intent);
                 break;
         }
     }

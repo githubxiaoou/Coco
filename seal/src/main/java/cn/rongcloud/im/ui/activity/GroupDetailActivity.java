@@ -166,7 +166,9 @@ public class GroupDetailActivity extends BaseActivity implements View.OnClickLis
     }
 
     private void initData() {
+        getGroupDetail();
     }
+
 
     // 判断角色，判断是否开启认证等都需要用到。
     private void getGroupDetail() {
@@ -193,7 +195,6 @@ public class GroupDetailActivity extends BaseActivity implements View.OnClickLis
                             mLlGroupName.setVisibility(View.VISIBLE);
                         }
                         isAdmin = null != mGetGroupDetailResponse && "1".equals(mGetGroupDetailResponse.isAdmin);
-                        mAdapter = new GridAdapter(mContext, mGroupMember);
                         mGridView.setAdapter(mAdapter);
                     }
 
@@ -312,7 +313,8 @@ public class GroupDetailActivity extends BaseActivity implements View.OnClickLis
         if (mGroupMember != null && mGroupMember.size() > 0) {
             setTitle(getString(R.string.group_info) + "(" + mGroupMember.size() + ")");
             mTextViewMemberSize.setText(getString(R.string.group_member_size) + "(" + mGroupMember.size() + ")");
-            getGroupDetail();
+            mAdapter = new GridAdapter(mContext, mGroupMember);
+            mGridView.setAdapter(mAdapter);
         } else {
             return;
         }
@@ -752,6 +754,7 @@ public class GroupDetailActivity extends BaseActivity implements View.OnClickLis
 
             // 最后一个item，减人按钮；如果是管理员，也可以删除操作
             if (position == getCount() - 1 && (isCreated || isAdmin)) {
+//            if (position == getCount() - 1 && (isCreated)) {
                 tv_username.setText("");
                 badge_delete.setVisibility(View.GONE);
                 iv_avatar.setBackground(getResources().getDrawable(R.drawable.icon_btn_deleteperson));
@@ -768,7 +771,8 @@ public class GroupDetailActivity extends BaseActivity implements View.OnClickLis
                     }
 
                 });
-            } else if ((isCreated || isAdmin && position == getCount() - 2) || (!isCreated && !isAdmin && position == getCount() - 1)) {
+            } else if (((isCreated || isAdmin) && position == getCount() - 2) || (!(isCreated || isAdmin)&& position == getCount() - 1)) {
+//            } else if ((isCreated && position == getCount() - 2) || (!isCreated && position == getCount() - 1)) {
                 // 加人按钮
                 tv_username.setText("");
                 badge_delete.setVisibility(View.GONE);
@@ -826,6 +830,7 @@ public class GroupDetailActivity extends BaseActivity implements View.OnClickLis
         @Override
         public int getCount() {
             if (isCreated || isAdmin) {
+//            if (isCreated) {
                 return list.size() + 2;
             } else {
                 return list.size() + 1;

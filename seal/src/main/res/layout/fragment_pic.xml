@@ -5,10 +5,13 @@
              android:layout_height="match_parent"
              tools:context=".ui.activity.records.PicFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <GridView
+        android:id="@+id/gv_pic"
+        android:horizontalSpacing="5dp"
+        android:verticalSpacing="5dp"
+        android:numColumns="3"
+        android:gravity="center"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="图片"/>
+        android:layout_height="match_parent"/>
 
 </FrameLayout>

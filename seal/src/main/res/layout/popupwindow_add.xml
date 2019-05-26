@@ -13,7 +13,7 @@
         android:orientation="vertical">
 
         <RelativeLayout
-            android:id="@+id/re_chatroom"
+            android:id="@+id/re_sao"
             android:layout_width="match_parent"
             android:layout_height="49dp"
             android:layout_marginLeft="14dp"
@@ -27,7 +27,7 @@
                 android:drawableLeft="@drawable/pop_chat"
                 android:drawablePadding="10dp"
                 android:gravity="center_vertical"
-                android:text="@string/private_chat"
+                android:text="扫一扫"
                 android:textColor="@color/text_color"
                 android:textSize="16sp" />
 

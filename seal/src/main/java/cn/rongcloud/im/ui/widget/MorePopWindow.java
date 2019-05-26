@@ -14,6 +14,7 @@ import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 
 import cn.rongcloud.im.R;
+import cn.rongcloud.im.ui.activity.ScanActivity;
 import cn.rongcloud.im.ui.activity.SearchFriendActivity;
 import cn.rongcloud.im.ui.activity.SelectFriendsActivity;
 
@@ -24,7 +25,7 @@ public class MorePopWindow extends PopupWindow {
     public MorePopWindow(final Activity context) {
         LayoutInflater inflater = (LayoutInflater) context
                                   .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View content = inflater.inflate(R.layout.popupwindow_add, null);
+        final View content = inflater.inflate(R.layout.popupwindow_add, null);
 
         // 设置SelectPicPopupWindow的View
         this.setContentView(content);
@@ -47,7 +48,7 @@ public class MorePopWindow extends PopupWindow {
 
 
         RelativeLayout re_addfriends = (RelativeLayout) content.findViewById(R.id.re_addfriends);
-        RelativeLayout re_chatroom = (RelativeLayout) content.findViewById(R.id.re_chatroom);
+        RelativeLayout re_sao = (RelativeLayout) content.findViewById(R.id.re_sao);
         RelativeLayout re_scanner = (RelativeLayout) content.findViewById(R.id.re_scanner);
         re_addfriends.setOnClickListener(new OnClickListener() {
 
@@ -61,11 +62,11 @@ public class MorePopWindow extends PopupWindow {
             }
 
         });
-        re_chatroom.setOnClickListener(new OnClickListener() {
+        re_sao.setOnClickListener(new OnClickListener() {
 
             @Override
             public void onClick(View v) {
-                context.startActivity(new Intent(context, SelectFriendsActivity.class));
+                context.startActivity(new Intent(context, ScanActivity.class));
                 MorePopWindow.this.dismiss();
 
             }

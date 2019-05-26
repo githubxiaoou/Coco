@@ -2,6 +2,7 @@ package cn.rongcloud.im.ui.activity.groupmanage;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
@@ -27,6 +28,7 @@ import cn.rongcloud.im.SealUserInfoManager;
 import cn.rongcloud.im.db.Friend;
 import cn.rongcloud.im.db.GroupMember;
 import cn.rongcloud.im.model.NetData;
+import cn.rongcloud.im.model.SealSearchConversationResult;
 import cn.rongcloud.im.net.HttpUtil;
 import cn.rongcloud.im.net.NetObserver;
 import cn.rongcloud.im.server.pinyin.CharacterParser;
@@ -35,6 +37,7 @@ import cn.rongcloud.im.server.pinyin.SideBar;
 import cn.rongcloud.im.server.utils.NToast;
 import cn.rongcloud.im.server.widget.SelectableRoundedImageView;
 import cn.rongcloud.im.ui.activity.BaseActivity;
+import cn.rongcloud.im.ui.activity.records.MemberActivity;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 import io.rong.imageloader.core.ImageLoader;
@@ -53,6 +56,8 @@ public class PickFriendActivity extends BaseActivity implements AdapterView.OnIt
     public TextView dialog;//中部展示的字母提示
     private PinyinComparator pinyinComparator;//根据拼音来排列ListView里面的数据类
     private CharacterParser mCharacterParser;//汉字转换成拼音的类
+    private boolean isSearchHistory;// 根据群成员查找聊天记录
+    private SealSearchConversationResult mResult;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +67,8 @@ public class PickFriendActivity extends BaseActivity implements AdapterView.OnIt
         rightButton.setVisibility(View.GONE);
         isSetMaster = getIntent().getBooleanExtra("isSetMaster", false);
         groupId = getIntent().getStringExtra("GroupId");
+        isSearchHistory = getIntent().getBooleanExtra("isSearchHistory", false);
+        mResult = getIntent().getParcelableExtra("searchConversationResult");
         initGroupMemberList();
         initView();
     }
@@ -69,6 +76,9 @@ public class PickFriendActivity extends BaseActivity implements AdapterView.OnIt
     private void initView() {
         if (isSetMaster) {
             setTitle("选择新群主");
+        }
+        if (isSearchHistory) {
+            setTitle("按成员查找");
         }
         //实例化汉字转拼音类
         mCharacterParser = CharacterParser.getInstance();
@@ -114,7 +124,8 @@ public class PickFriendActivity extends BaseActivity implements AdapterView.OnIt
     private void fillSourceDataListForDeleteGroupMember() {
         if (deleteGroupMemberList != null && deleteGroupMemberList.size() > 0) {
             for (GroupMember deleteMember : deleteGroupMemberList) {
-                if (deleteMember.getUserId().contains(getSharedPreferences("config", MODE_PRIVATE).getString(SealConst.SEALTALK_LOGIN_ID, ""))) {
+                if (isSetMaster
+                        && deleteMember.getUserId().contains(getSharedPreferences("config", MODE_PRIVATE).getString(SealConst.SEALTALK_LOGIN_ID, ""))) {
                     continue;
                 }
                 data_list.add(new Friend(deleteMember.getUserId(),
@@ -191,8 +202,19 @@ public class PickFriendActivity extends BaseActivity implements AdapterView.OnIt
     }
 
     @Override
-    public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
-//        NToast.shortToast(mContext, sourceDataList.get(position).getName());
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        if (isSetMaster) {
+            showSetMasterDialog(position);
+        } else if (isSearchHistory) {
+            Intent intent = new Intent(mContext, MemberActivity.class);
+            intent.putExtra("searchConversationResult", mResult);
+            intent.putExtra("memberId", sourceDataList.get(position).getUserId());
+            startActivity(intent);
+        }
+    }
+
+    private void showSetMasterDialog(final int position) {
+        //        NToast.shortToast(mContext, sourceDataList.get(position).getName());
         new AlertDialog.Builder(mContext)
                 .setMessage("确定选择" + sourceDataList.get(position).getName() + "为新群主，你将自动放弃群主身份。")
                 .setNegativeButton("取消", new DialogInterface.OnClickListener() {
@@ -205,6 +227,7 @@ public class PickFriendActivity extends BaseActivity implements AdapterView.OnIt
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         setMaster();
+
                     }
 
                     private void setMaster() {

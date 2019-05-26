@@ -7,7 +7,9 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import cn.rongcloud.im.R;
+import cn.rongcloud.im.model.SealSearchConversationResult;
 import cn.rongcloud.im.ui.activity.BaseActivity;
+import io.rong.imlib.model.Conversation;
 
 /**
  * 图片/视频：   PicFragment
@@ -24,6 +26,7 @@ public class FileCategoryActivity extends BaseActivity implements View.OnClickLi
     private int mType;// 0file，1pic
     private TextView mTvIndexPic;
     private TextView mTvIndexFile;
+    private SealSearchConversationResult mResult;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,14 +38,15 @@ public class FileCategoryActivity extends BaseActivity implements View.OnClickLi
     }
 
     private void initData() {
-        mFileFragment = FileFragment.newInstance();
-        mPicFragment = PicFragment.newInstance();
+        mFileFragment = FileFragment.newInstance(mResult);
+        mPicFragment = PicFragment.newInstance(mResult);
         mFm = getSupportFragmentManager();
         mFm.beginTransaction()
                 .add(R.id.fl_container, mFileFragment)
                 .add(R.id.fl_container, mPicFragment)
                 .hide(mType == 1 ? mFileFragment : mPicFragment)
                 .commit();
+        onClick(mType == 1 ? mTvIndexPic : mTvIndexFile);
     }
 
     private void initView() {
@@ -54,6 +58,7 @@ public class FileCategoryActivity extends BaseActivity implements View.OnClickLi
         mTvIndexFile.setOnClickListener(this);
         mFlContainer = (FrameLayout) findViewById(R.id.fl_container);
         mType = getIntent().getIntExtra("type", 0);
+        mResult = getIntent().getParcelableExtra("searchConversationResult");
     }
 
     @Override

@@ -1756,7 +1756,7 @@ public class SealUserInfoManager implements OnDataListener {
      * 获取用户头像,头像为空时会生成默认的头像,此默认头像可能已经存在数据库中,不重新生成
      * 先从缓存读,再从数据库读
      */
-    private String getPortrait(Friend friend) {
+    public String getPortrait(Friend friend) {
         if (friend != null) {
             if (friend.getPortraitUri() == null || TextUtils.isEmpty(friend.getPortraitUri().toString())) {
                 if (TextUtils.isEmpty(friend.getUserId())) {

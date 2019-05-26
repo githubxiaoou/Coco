@@ -388,7 +388,7 @@ public class GroupManageActivity extends BaseActivity implements View.OnClickLis
 
                     @Override
                     public void Failure(Throwable t) {
-                        NToast.shortToast(mContext, "网络错误");
+                        NToast.shortToast(mContext, "改成员已在群组中");
                     }
                 });
     }

@@ -38,6 +38,7 @@ import cn.rongcloud.im.server.widget.SelectableRoundedImageView;
 import cn.rongcloud.im.ui.activity.GroupListActivity;
 import cn.rongcloud.im.ui.activity.NewFriendListActivity;
 import cn.rongcloud.im.ui.activity.PublicServiceActivity;
+import cn.rongcloud.im.ui.activity.SearchFriendActivity;
 import cn.rongcloud.im.ui.activity.UserDetailActivity;
 import cn.rongcloud.im.ui.adapter.FriendListAdapter;
 import io.rong.imageloader.core.ImageLoader;
@@ -112,7 +113,7 @@ public class ContactsFragment extends Fragment implements View.OnClickListener {
                                             null);
         mUnreadTextView = (TextView) mHeadView.findViewById(R.id.tv_unread);
         RelativeLayout newFriendsLayout = (RelativeLayout) mHeadView.findViewById(R.id.re_newfriends);
-        RelativeLayout groupLayout = (RelativeLayout) mHeadView.findViewById(R.id.re_chatroom);
+        RelativeLayout groupLayout = (RelativeLayout) mHeadView.findViewById(R.id.re_sao);
         RelativeLayout publicServiceLayout = (RelativeLayout) mHeadView.findViewById(R.id.publicservice);
         RelativeLayout selfLayout = (RelativeLayout) mHeadView.findViewById(R.id.contact_me_item);
         RelativeLayout addFriendLayout = (RelativeLayout) mHeadView.findViewById(R.id.re_addfriend);
@@ -211,7 +212,7 @@ public class ContactsFragment extends Fragment implements View.OnClickListener {
                 Intent intent = new Intent(getActivity(), NewFriendListActivity.class);
                 startActivityForResult(intent, 20);
                 break;
-            case R.id.re_chatroom:
+            case R.id.re_sao:
                 startActivity(new Intent(getActivity(), GroupListActivity.class));
                 break;
             case R.id.publicservice:
@@ -222,7 +223,7 @@ public class ContactsFragment extends Fragment implements View.OnClickListener {
                 RongIM.getInstance().startPrivateChat(getActivity(), mId, mCacheName);
                 break;
             case R.id.re_addfriend:
-                NToast.shortToast(getActivity(), "添加朋友");
+                startActivity(new Intent(getActivity(), SearchFriendActivity.class));
                 break;
             case R.id.re_matching:
                 NToast.shortToast(getActivity(), "匹配通讯录");

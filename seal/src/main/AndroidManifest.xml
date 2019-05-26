@@ -61,6 +61,10 @@
         android:networkSecurityConfig="@xml/network_security_config"
         android:theme="@style/MyTheme"
         tools:replace="android:icon, android:theme">
+        <activity android:name=".ui.activity.records.MemberActivity">
+        </activity>
+        <activity android:name=".ui.activity.records.DateActivity">
+        </activity>
         <activity android:name=".ui.activity.records.FileCategoryActivity">
         </activity>
         <activity android:name=".ui.activity.groupmanage.QuitListActivity"/>
