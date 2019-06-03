@@ -3,6 +3,7 @@ package cn.rongcloud.im.ui.widget;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,6 +27,8 @@ import cn.rongcloud.im.server.network.http.HttpException;
 import cn.rongcloud.im.server.utils.NToast;
 import cn.rongcloud.im.server.widget.LoadDialog;
 import cn.rongcloud.im.ui.activity.BaseActivity;
+import cn.rongcloud.im.ui.activity.LoginActivity;
+import cn.rongcloud.im.ui.activity.MainActivity;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.Action;
 import io.reactivex.schedulers.Schedulers;
@@ -187,12 +190,13 @@ public class SinglePopWindow extends PopupWindow {
                 .subscribe(new NetObserver<NetData>() {
                     @Override
                     public void Successful(NetData netData) {
-                        NToast.shortToast(mContext, "刪除成功");
+                        mContext.startActivity(new Intent(mContext, MainActivity.class));
+                        SinglePopWindow.this.dismiss();
                     }
 
                     @Override
                     public void Failure(Throwable t) {
-
+                        NToast.shortToast(mContext, "删除失败，请重试");
                     }
                 });
     }

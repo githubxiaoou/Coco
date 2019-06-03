@@ -130,5 +130,9 @@
     <orderEntry type="library" name="Gradle: com.android.support:exifinterface:26.0.0@aar" level="project" />
     <orderEntry type="module" module-name="IMKit" />
     <orderEntry type="module" module-name="IMLib" />
+<<<<<<< Updated upstream
+=======
+    <orderEntry type="module" module-name="IMKit" />
+>>>>>>> Stashed changes
   </component>
 </module>

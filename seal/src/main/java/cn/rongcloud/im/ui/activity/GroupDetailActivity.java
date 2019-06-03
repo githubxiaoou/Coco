@@ -672,6 +672,12 @@ public class GroupDetailActivity extends BaseActivity implements View.OnClickLis
             case R.id.group_code:
                 GroupCodeActivity.actionStart(this, mGroup.getGroupsId(), mUserId, "1".equals(mGetGroupDetailResponse.isNeedVerification));
                 break;
+            case R.id.ll_set_chat_bg:
+
+                break;
+            case R.id.ll_complain:
+
+                break;
         }
     }
 
@@ -1132,6 +1138,10 @@ public class GroupDetailActivity extends BaseActivity implements View.OnClickLis
         mLlGroupName.setOnClickListener(this);
         mGroupCode = ((LinearLayout) findViewById(R.id.group_code));
         mGroupCode.setOnClickListener(this);
+        LinearLayout llSetChatBg = (LinearLayout) findViewById(R.id.ll_set_chat_bg);
+        llSetChatBg.setOnClickListener(this);
+        LinearLayout llComplain = (LinearLayout) findViewById(R.id.ll_complain);
+        llComplain.setOnClickListener(this);
     }
 
     @Override

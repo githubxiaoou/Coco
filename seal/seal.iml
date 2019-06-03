@@ -298,8 +298,18 @@
     <orderEntry type="module" module-name="RCSticker" />
     <orderEntry type="module" module-name="Sight" />
     <orderEntry type="module" module-name="IMKit" />
+<<<<<<< Updated upstream
     <orderEntry type="module" module-name="IMLib" />
     <orderEntry type="module" module-name="recognizer" />
     <orderEntry type="module" module-name="contactcard" />
+=======
+    <orderEntry type="module" module-name="recognizer" />
+    <orderEntry type="module" module-name="contactcard" />
+    <orderEntry type="module" module-name="Sight" />
+    <orderEntry type="module" module-name="RCSticker" />
+    <orderEntry type="module" module-name="RedPacket" />
+    <orderEntry type="module" module-name="IMLib" />
+    <orderEntry type="module" module-name="IMKit" />
+>>>>>>> Stashed changes
   </component>
 </module>
