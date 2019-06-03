@@ -132,6 +132,7 @@ public class GroupDetailActivity extends BaseActivity implements View.OnClickLis
     private LinearLayout mLlGroupName;
     private GridAdapter mAdapter;
     private boolean isAdmin;
+    private LinearLayout mGroupCode;
 
 
     @Override
@@ -668,6 +669,9 @@ public class GroupDetailActivity extends BaseActivity implements View.OnClickLis
                 manageIntent.putExtra("CreatorId", mCreatorId);
                 startActivity(manageIntent);
                 break;
+            case R.id.group_code:
+                GroupCodeActivity.actionStart(this, mGroup.getGroupsId(), mUserId, "1".equals(mGetGroupDetailResponse.isNeedVerification));
+                break;
         }
     }
 
@@ -785,11 +789,13 @@ public class GroupDetailActivity extends BaseActivity implements View.OnClickLis
                         intent.putExtra("isAddGroupMember", true);
                         intent.putExtra("GroupId", mGroup.getGroupsId());
                         intent.putExtra("userId", mUserId);
-                        // 加入认证，普通群成员需要认证
-                        if (null != mGetGroupDetailResponse && "1".equals(mGetGroupDetailResponse.isNeedVerification)
-                                            && !"1".equals(mGetGroupDetailResponse.isAdmin)
-                                            && !mUserId.equals(mGetGroupDetailResponse.creatorId)) {
-                            intent.putExtra("openAuth", true);
+                        if (null != mGetGroupDetailResponse) {
+                            // 加入认证，普通群成员需要认证
+                            if ("1".equals(mGetGroupDetailResponse.isNeedVerification)
+                                    && !"1".equals(mGetGroupDetailResponse.isAdmin)
+                                    && !mUserId.equals(mGetGroupDetailResponse.creatorId)) {
+                                intent.putExtra("openAuth", true);
+                            }
                         }
                         startActivityForResult(intent, 100);
 
@@ -817,6 +823,7 @@ public class GroupDetailActivity extends BaseActivity implements View.OnClickLis
                         //Groups not Serializable,just need group name
                         intent.putExtra("groupName", mGroup.getName());
                         intent.putExtra("type", CLICK_CONVERSATION_USER_PORTRAIT);
+                        intent.putExtra("openProtect", "1".equals(mGetGroupDetailResponse.isProtected));
                         context.startActivity(intent);
                     }
 
@@ -1123,6 +1130,8 @@ public class GroupDetailActivity extends BaseActivity implements View.OnClickLis
         mSearchMessagesLinearLayout.setOnClickListener(this);
         mLlGroupName = (LinearLayout) findViewById(R.id.group_manage);
         mLlGroupName.setOnClickListener(this);
+        mGroupCode = ((LinearLayout) findViewById(R.id.group_code));
+        mGroupCode.setOnClickListener(this);
     }
 
     @Override

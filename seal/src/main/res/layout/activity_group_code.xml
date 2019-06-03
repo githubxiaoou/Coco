@@ -60,7 +60,25 @@
             android:layout_height="0dp" />
 
         <TextView
-            android:text="使用密聊扫描上面的二维码，加我"
+            android:id="@+id/tv_cover"
+            android:text="管理员已开启群认证，只能通过邀请方式进群"
+            android:textSize="24sp"
+            android:textColor="@color/black"
+            android:gravity="center"
+            android:padding="20dp"
+            android:background="#aaffffff"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/iv_portrait"
+            android:layout_marginTop="25dp"
+            android:layout_marginStart="60dp"
+            android:layout_marginEnd="60dp"
+            app:layout_constraintDimensionRatio="1:1"
+            android:layout_width="0dp"
+            android:layout_height="0dp" />
+
+        <TextView
+            android:text="使用密聊扫描上面的二维码，加群"
             android:textColor="@color/gray"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"

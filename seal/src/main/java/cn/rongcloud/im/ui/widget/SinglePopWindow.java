@@ -12,14 +12,23 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import cn.rongcloud.im.R;
+import cn.rongcloud.im.SealConst;
 import cn.rongcloud.im.SealUserInfoManager;
 import cn.rongcloud.im.db.BlackList;
 import cn.rongcloud.im.db.Friend;
+import cn.rongcloud.im.model.NetData;
+import cn.rongcloud.im.net.HttpUtil;
+import cn.rongcloud.im.net.NetObserver;
 import cn.rongcloud.im.server.SealAction;
 import cn.rongcloud.im.server.network.async.AsyncTaskManager;
 import cn.rongcloud.im.server.network.async.OnDataListener;
 import cn.rongcloud.im.server.network.http.HttpException;
 import cn.rongcloud.im.server.utils.NToast;
+import cn.rongcloud.im.server.widget.LoadDialog;
+import cn.rongcloud.im.ui.activity.BaseActivity;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Action;
+import io.reactivex.schedulers.Schedulers;
 import io.rong.imkit.RongIM;
 import io.rong.imkit.utilities.PromptPopupDialog;
 import io.rong.imlib.RongIMClient;
@@ -31,12 +40,14 @@ import io.rong.imlib.RongIMClient;
 public class SinglePopWindow extends PopupWindow {
     private static final int ADDBLACKLIST = 167;
     private static final int REMOVEBLACKLIST = 168;
+    private final BaseActivity mContext;
     private View conentView;
     private AsyncTaskManager asyncTaskManager;
 
 
     @SuppressLint("InflateParams")
-    public SinglePopWindow(final Activity context, final Friend friend, final RongIMClient.BlacklistStatus blacklistStatus) {
+    public SinglePopWindow(final Activity context, final String userId, final Friend friend, final RongIMClient.BlacklistStatus blacklistStatus) {
+        mContext = ((BaseActivity) context);
         LayoutInflater inflater = (LayoutInflater) context
                                   .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         conentView = inflater.inflate(R.layout.popupwindow_more, null);
@@ -60,6 +71,8 @@ public class SinglePopWindow extends PopupWindow {
         this.setAnimationStyle(R.style.AnimationPreview);
         asyncTaskManager = AsyncTaskManager.getInstance(context);
         RelativeLayout blacklistStatusRL = (RelativeLayout) conentView.findViewById(R.id.blacklist_status);
+        RelativeLayout rlDelete = (RelativeLayout) conentView.findViewById(R.id.rl_delete);
+        RelativeLayout rlSend = (RelativeLayout) conentView.findViewById(R.id.rl_send);
         final TextView blacklistText = (TextView) conentView.findViewById(R.id.blacklist_text_status);
 
         if (blacklistStatus == RongIMClient.BlacklistStatus.IN_BLACK_LIST) {
@@ -68,6 +81,19 @@ public class SinglePopWindow extends PopupWindow {
             blacklistText.setText(R.string.join_the_blacklist);
         }
 
+        rlSend.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                NToast.shortToast(context, "发送名片");
+            }
+        });
+
+        rlDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                deleteFriend(userId, friend.getUserId());
+            }
+        });
 
         blacklistStatusRL.setOnClickListener(new View.OnClickListener() {
 
@@ -145,7 +171,30 @@ public class SinglePopWindow extends PopupWindow {
             }
 
         });
+    }
 
+    private void deleteFriend(String userId, String friendId) {
+        LoadDialog.show(mContext);
+        HttpUtil.apiS().deleteFriend(userId, friendId)
+                .subscribeOn(Schedulers.io())
+                .doOnTerminate(new Action() {
+                    @Override
+                    public void run() throws Exception {
+                        LoadDialog.dismiss(mContext);
+                    }
+                })
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new NetObserver<NetData>() {
+                    @Override
+                    public void Successful(NetData netData) {
+                        NToast.shortToast(mContext, "刪除成功");
+                    }
+
+                    @Override
+                    public void Failure(Throwable t) {
+
+                    }
+                });
     }
 
     /**

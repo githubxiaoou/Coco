@@ -13,9 +13,47 @@
         android:orientation="vertical">
 
         <RelativeLayout
+            android:id="@+id/rl_send"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:layout_marginLeft="14dp"
+            android:layout_marginRight="18dp"
+            android:layout_marginTop="15dp"
+            android:background="@color/white">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawablePadding="10dp"
+                android:gravity="center_vertical"
+                android:text="发送名片"
+                android:textColor="@color/black"
+                android:textSize="16sp" />
+
+        </RelativeLayout>
+        <RelativeLayout
+            android:id="@+id/rl_delete"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:layout_marginLeft="14dp"
+            android:layout_marginRight="18dp"
+            android:layout_marginTop="15dp"
+            android:background="@color/white">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawablePadding="10dp"
+                android:gravity="center_vertical"
+                android:text="删除好友"
+                android:textColor="@color/black"
+                android:textSize="16sp" />
+
+        </RelativeLayout>
+        <RelativeLayout
             android:id="@+id/blacklist_status"
             android:layout_width="match_parent"
-            android:layout_height="49dp"
+            android:layout_height="30dp"
             android:layout_marginLeft="14dp"
             android:layout_marginRight="18dp"
             android:layout_marginTop="15dp"
@@ -25,10 +63,10 @@
                 android:id="@+id/blacklist_text_status"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:drawableLeft="@drawable/blacklist_icon"
                 android:drawablePadding="10dp"
                 android:gravity="center_vertical"
                 android:text="@string/black_state"
+                android:textColor="@color/black"
                 android:textSize="16sp" />
 
         </RelativeLayout>

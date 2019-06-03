@@ -47,12 +47,12 @@ public interface ServiceS {
     /*设置群聊号*/
     @GET("group/set-group-number")
     Observable<NetData<List<String>>> groupSetGroupNumber(@Query("group_id") String groupId,
-                                                    @Query("group_number") String groupNumber);
+                                                          @Query("group_number") String groupNumber);
 
     /*禁言用户*/
     @GET("group/jinyan")
     Observable<NetData<List<String>>> groupJinyan(@Query("group_id") String groupId,
-                                            @Query("user_id") String userId,
+                                                  @Query("user_id") String userId,
                                                   @Query("minute") String minute);// 禁言时间；解禁传空
 
     /*全体禁言/解禁*/
@@ -65,19 +65,15 @@ public interface ServiceS {
     @GET("group/jinyan-list")
     Observable<NetData<List<JinyanResponse>>> groupJinyanList(@Query("group_id") String groupId);
 
-    /*最后使用时间*/
-    @GET("group/last-use-time")
-    Observable<NetData<String>> groupLastUseTime(@Query("user_id") String userId);
-
     /*不活跃用户列表*/
     @GET("group/inactive-group-member")
     Observable<NetData<List<JinyanResponse>>> groupInactiveMember(@Query("group_id") String groupId,
-                                                    @Query("type") String type);// 1:3天 2:1周 3:1个月
+                                                                  @Query("type") String type);// 1:3天 2:1周 3:1个月
 
     /*设置新群主*/
     @GET("group/set-group-master")
     Observable<NetData<List<String>>> groupSetGroupMaster(@Query("group_id") String groupId,
-                                                    @Query("user_id") String userId);
+                                                          @Query("user_id") String userId);
 
     /*获取管理员列表*/
     @GET("group/admin-list")
@@ -86,8 +82,8 @@ public interface ServiceS {
     /*设置/取消管理员*/
     @GET("group/set-admins")
     Observable<NetData<List<String>>> groupSetAdmins(@Query("group_id") String groupId,
-                                               @Query("user_id") String userId,
-                                               @Query("status") String status);// 2:设置管理员 1:取消管理员
+                                                     @Query("user_id") String userId,
+                                                     @Query("status") String status);// 2:设置管理员 1:取消管理员
 
     /*获取群组设置详情*/
     @GET("group/get-group-detail")
@@ -97,9 +93,9 @@ public interface ServiceS {
     /*群成员保护/是否开启群认证*/
     @GET("group/set-group-params")
     Observable<NetData<GetGroupDetailResponse>> setGroupParams(@Query("group_id") String groupId,
-                                                     @Query("user_id") String userId,
-                                                     @Query("is_protected") String protect,// 1:开启 0 关闭
-                                                     @Query("is_need_verification") String auth);// 1:开启 0 关闭
+                                                               @Query("user_id") String userId,
+                                                               @Query("is_protected") String protect,// 1:开启 0 关闭
+                                                               @Query("is_need_verification") String auth);// 1:开启 0 关闭
 
     /*最后使用时间
      * 在app启动时候如果已经登录的时候调用
@@ -132,4 +128,9 @@ public interface ServiceS {
     /*群主管理员同意他人加入群组*/
     @GET("group/agree-user-into-group")
     Observable<NetData> agreeUserIntoGroup(@Query("id") String id);// 审批列表id
+
+    /*删除好友*/
+    @GET("friend-ship/delete-friend")
+    Observable<NetData> deleteFriend(@Query("user_id") String userId,
+                                     @Query("friend_id") String friendId);
 }

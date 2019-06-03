@@ -1,6 +1,7 @@
 package cn.rongcloud.im.ui.activity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
@@ -67,8 +68,10 @@ public class UserDetailActivity extends BaseActivity implements View.OnClickList
     private String mGroupName;
     private String mPhoneString;
     private boolean mIsFriendsRelationship;
-
+    private boolean openProtect;
     private int mType;
+    private SharedPreferences sp;
+    private String mUserId;
     private static final int CLICK_CONVERSATION_USER_PORTRAIT = 1;
     private static final int CLICK_CONTACT_FRAGMENT_FRIEND = 2;
 
@@ -101,7 +104,10 @@ public class UserDetailActivity extends BaseActivity implements View.OnClickList
     }
 
     private void initData() {
+        sp = getSharedPreferences("config", MODE_PRIVATE);
+        mUserId = sp.getString(SealConst.SEALTALK_LOGIN_ID, "");
         mType = getIntent().getIntExtra("type", 0);
+        openProtect = getIntent().getBooleanExtra("openProtect", false);
         if (mType == CLICK_CONVERSATION_USER_PORTRAIT) {
             SealAppContext.getInstance().pushActivity(this);
         }
@@ -194,7 +200,7 @@ public class UserDetailActivity extends BaseActivity implements View.OnClickList
                     RongIM.getInstance().getBlacklistStatus(mFriend.getUserId(), new RongIMClient.ResultCallback<RongIMClient.BlacklistStatus>() {
                         @Override
                         public void onSuccess(RongIMClient.BlacklistStatus blacklistStatus) {
-                            SinglePopWindow morePopWindow = new SinglePopWindow(UserDetailActivity.this, mFriend, blacklistStatus);
+                            SinglePopWindow morePopWindow = new SinglePopWindow(UserDetailActivity.this, mUserId, mFriend, blacklistStatus);
                             morePopWindow.showPopupWindow(v);
                         }
 
@@ -220,6 +226,7 @@ public class UserDetailActivity extends BaseActivity implements View.OnClickList
 
     //CallKit start 2
     public void startVoice(View view) {
+        NToast.shortToast(mContext, "敬请期待");
 //        RongCallSession profile = RongCallClient.getInstance().getCallSession();
 //        if (profile != null && profile.getActiveTime() > 0) {
 //            Toast.makeText(mContext,
@@ -247,6 +254,7 @@ public class UserDetailActivity extends BaseActivity implements View.OnClickList
     }
 
     public void startVideo(View view) {
+        NToast.shortToast(mContext, "敬请期待");
 //        RongCallSession profile = RongCallClient.getInstance().getCallSession();
 //        if (profile != null && profile.getActiveTime() > 0) {
 //            Toast.makeText(mContext,
@@ -287,6 +295,10 @@ public class UserDetailActivity extends BaseActivity implements View.OnClickList
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.ac_bt_add_friend:
+                if (openProtect) {
+                    NToast.shortToast(mContext, "本群已开启群成员保护，不能通过本群添加好友");
+                    return;
+                }
                 DialogWithYesOrNoUtils.getInstance().showEditDialog(mContext, getString(R.string.add_text), getString(R.string.confirm), new DialogWithYesOrNoUtils.DialogCallBack() {
                     @Override
                     public void executeEvent() {

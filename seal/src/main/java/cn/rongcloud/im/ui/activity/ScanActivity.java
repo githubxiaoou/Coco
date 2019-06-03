@@ -64,7 +64,7 @@ public class ScanActivity extends BaseActivity implements QRCodeView.Delegate ,E
         activity.startActivityForResult(intent, REQUEST_CODE);
     }
 
-    public static void actionStartFagment(Fragment activity) {
+    public static void actionStartFragment(Fragment activity) {
         Intent intent = new Intent(activity.getContext(), ScanActivity.class);
         activity.startActivityForResult(intent, REQUEST_CODE);
     }
@@ -186,16 +186,25 @@ public class ScanActivity extends BaseActivity implements QRCodeView.Delegate ,E
         }
 //        vibrate();
         LoadDialog.dismiss(mContext);
-        Intent data = new Intent();
-        data.putExtra(SCAN_RESULT, result);
+//        Intent data = new Intent();
+//        data.putExtra(SCAN_RESULT, result);
 //        setResult(RESULT_OK, data);
 //        result = "z2mlAvb0c";// 测试用
-        Intent intent = new Intent(this, UserDetailActivity.class);
-//        UserInfo userInfo = new UserInfo(result,
-//                "Sync111",
-//                Uri.parse(RongGenerate.generateDefaultAvatar("Sync111", result)));
+        if (result.contains(",")) {
+            toGroupApply(result);
+        } else {
+            toUserApply(result);
+        }
+    }
 
-        // TODO: 2019/5/16 不确定是不是这样就可以了,还是需要手动调用网络接口
+    private void toGroupApply(String result) {
+        String[] split = result.split(",");
+        GroupApplyActivity.actionStart(this, split[0], split[1]);
+        finish();
+    }
+
+    private void toUserApply(String result) {
+        Intent intent = new Intent(this, UserDetailActivity.class);
         UserInfo userInfo = RongUserInfoManager.getInstance().getUserInfo(result);
         if (userInfo == null) {
             if (BuildConfig.DEBUG) {

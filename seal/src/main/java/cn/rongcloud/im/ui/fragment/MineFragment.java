@@ -204,7 +204,7 @@ public class MineFragment extends Fragment implements View.OnClickListener {
                 JrmfClient.intentWallet(getActivity());
                 break;
             case R.id.mine_sao:
-                ScanActivity.actionStartFagment(this);
+                ScanActivity.actionStartFragment(this);
                 break;
         }
     }
