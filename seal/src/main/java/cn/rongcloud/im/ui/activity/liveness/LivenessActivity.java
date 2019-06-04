@@ -31,7 +31,7 @@ public class LivenessActivity extends BaseActivity implements View.OnClickListen
         mClThree.setOnClickListener(this);
         mClWeek = (ConstraintLayout) findViewById(R.id.cl_two);
         mClWeek.setOnClickListener(this);
-        mClMonth = (ConstraintLayout) findViewById(R.id.cl_three);
+        mClMonth = (ConstraintLayout) findViewById(R.id.cl_month);
         mClMonth.setOnClickListener(this);
         groupId = getIntent().getStringExtra("GroupId");
     }
@@ -54,7 +54,7 @@ public class LivenessActivity extends BaseActivity implements View.OnClickListen
                 intent.putExtra("GroupId", groupId);
                 startActivity(intent);
                 break;
-            case R.id.cl_three:
+            case R.id.cl_month:
                 intent = new Intent(mContext, LivenessListActivity.class);
                 intent.putExtra("type", "3");
                 intent.putExtra("GroupId", groupId);
