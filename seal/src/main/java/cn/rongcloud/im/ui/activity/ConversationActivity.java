@@ -25,6 +25,7 @@ import java.util.Locale;
 
 import cn.rongcloud.im.R;
 import cn.rongcloud.im.SealAppContext;
+import cn.rongcloud.im.SealConst;
 import cn.rongcloud.im.server.utils.NLog;
 import cn.rongcloud.im.server.utils.NToast;
 import cn.rongcloud.im.ui.fragment.ConversationFragmentEx;
@@ -75,6 +76,7 @@ public class ConversationActivity extends BaseActivity implements View.OnClickLi
     private LoadingDialog mDialog;
 
     private SharedPreferences sp;
+    private String mUserId;
 
     private String TextTypingTitle;
     private String VoiceTypingTitle;
@@ -100,6 +102,7 @@ public class ConversationActivity extends BaseActivity implements View.OnClickLi
         VoiceTypingTitle = getString(R.string.the_other_side_is__speaking);
 
         sp = getSharedPreferences("config", MODE_PRIVATE);
+        mUserId = sp.getString(SealConst.SEALTALK_LOGIN_ID, "");
         mDialog = new LoadingDialog(this);
         layout_announce = (RelativeLayout) findViewById(R.id.ll_annouce);
         iv_arrow = (ImageView) findViewById(R.id.iv_announce_arrow);
@@ -373,6 +376,9 @@ public class ConversationActivity extends BaseActivity implements View.OnClickLi
     private void enterFragment(Conversation.ConversationType mConversationType, String mTargetId) {
 
         fragment = new ConversationFragmentEx();
+        Bundle bundle = new Bundle();
+        bundle.putString("userId", mUserId);
+        fragment.setArguments(bundle);
 
         Uri uri = Uri.parse("rong://" + getApplicationInfo().packageName).buildUpon()
                 .appendPath("conversation").appendPath(mConversationType.getName().toLowerCase())

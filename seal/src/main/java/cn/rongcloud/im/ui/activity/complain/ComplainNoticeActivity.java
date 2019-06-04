@@ -11,5 +11,6 @@ public class ComplainNoticeActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_complain_notice);
+        setTitle("投诉须知");
     }
 }

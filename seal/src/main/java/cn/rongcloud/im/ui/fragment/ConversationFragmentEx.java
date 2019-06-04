@@ -3,6 +3,7 @@ package cn.rongcloud.im.ui.fragment;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,16 +13,24 @@ import org.json.JSONObject;
 
 import java.util.List;
 
+import cn.rongcloud.im.R;
 import cn.rongcloud.im.SealCSEvaluateInfo;
+import cn.rongcloud.im.model.NetData;
 import cn.rongcloud.im.model.SealCSEvaluateItem;
+import cn.rongcloud.im.net.HttpUtil;
+import cn.rongcloud.im.net.NetObserver;
 import cn.rongcloud.im.ui.activity.ReadReceiptDetailActivity;
 import cn.rongcloud.im.ui.widget.BottomEvaluateDialog;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 import io.rong.imkit.RongExtension;
 import io.rong.imkit.fragment.ConversationFragment;
 import io.rong.imlib.CustomServiceConfig;
 import io.rong.imlib.RongIMClient;
 import io.rong.imlib.cs.CustomServiceManager;
 import io.rong.imlib.model.Conversation;
+
+import static cn.rongcloud.im.server.BaseAction.DOMAIN_APP;
 
 /**
  * 会话 Fragment 继承自ConversationFragment
@@ -36,6 +45,7 @@ public class ConversationFragmentEx extends ConversationFragment {
     private String mTargetId = "";
     private RongExtension rongExtension;
     private ListView listView;
+    private String mUserId;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -60,10 +70,50 @@ public class ConversationFragmentEx extends ConversationFragment {
     }
 
     @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        getBgImage();
+    }
+
+    public final String LOCAL_BG_DEFAULT = DOMAIN_APP + "/avatar/chatbg/local_background_default.png";
+    public final String LOCAL_BG_ONE = DOMAIN_APP + "/avatar/chatbg/local_background_one.jpg";
+    public final String LOCAL_BG_TWO = DOMAIN_APP + "/avatar/chatbg/local_background_two.jpg";
+    public final String LOCAL_BG_THREE = DOMAIN_APP + "/avatar/chatbg/local_background_three.jpg";
+    public final String LOCAL_BG_FOUR = DOMAIN_APP + "/avatar/chatbg/local_background_four.jpg";
+    public final String LOCAL_BG_FIVE = DOMAIN_APP + "/avatar/chatbg/local_background_five.jpg";
+    private String[] bgs = new String[]{LOCAL_BG_DEFAULT, LOCAL_BG_ONE, LOCAL_BG_TWO, LOCAL_BG_THREE, LOCAL_BG_FOUR, LOCAL_BG_FIVE};
+    private int[] resIds = new int[]{R.drawable.local_background_default,R.drawable.local_background_one,R.drawable.local_background_two,R.drawable.local_background_three,R.drawable.local_background_four,R.drawable.local_background_five};
+    private void getBgImage() {
+        HttpUtil.apiS()
+                .getChatBackgroundImage(mUserId, mTargetId)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new NetObserver<NetData>() {
+                    @Override
+                    public void Successful(NetData netData) {
+                        if (!TextUtils.isEmpty(((String) netData.result))) {
+                            for (int i = 0; i < bgs.length; i++) {
+                                if (((String) netData.result).equals(bgs[i])) {
+                                    listView.setBackgroundResource(resIds[i]);
+                                    break;
+                                }
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void Failure(Throwable t) {
+
+                    }
+                });
+    }
+
+    @Override
     protected void initFragment(Uri uri) {
         super.initFragment(uri);
         if (uri != null) {
             mTargetId = uri.getQueryParameter("targetId");
+            mUserId = getArguments().getString("userId");
         }
     }
 

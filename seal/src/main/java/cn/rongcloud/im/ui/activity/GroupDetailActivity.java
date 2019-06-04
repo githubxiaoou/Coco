@@ -60,6 +60,7 @@ import cn.rongcloud.im.server.widget.BottomMenuDialog;
 import cn.rongcloud.im.server.widget.DialogWithYesOrNoUtils;
 import cn.rongcloud.im.server.widget.LoadDialog;
 import cn.rongcloud.im.server.widget.SelectableRoundedImageView;
+import cn.rongcloud.im.ui.activity.complain.ComplainActivity;
 import cn.rongcloud.im.ui.activity.groupmanage.GroupManageActivity;
 import cn.rongcloud.im.ui.widget.DemoGridView;
 import cn.rongcloud.im.ui.widget.switchbutton.SwitchButton;
@@ -673,10 +674,15 @@ public class GroupDetailActivity extends BaseActivity implements View.OnClickLis
                 GroupCodeActivity.actionStart(this, mGroup.getGroupsId(), mUserId, "1".equals(mGetGroupDetailResponse.isNeedVerification));
                 break;
             case R.id.ll_set_chat_bg:
-
+                Intent bgIntent = new Intent(mContext, ChatBackgroundActivity.class);
+                bgIntent.putExtra("chatId", mGroup.getGroupsId());
+                bgIntent.putExtra("type", "2");
+                startActivity(bgIntent);
                 break;
             case R.id.ll_complain:
-
+                Intent complainIntent = new Intent(mContext, ComplainActivity.class);
+                complainIntent.putExtra("chatId", mGroup.getGroupsId());
+                startActivity(complainIntent);
                 break;
         }
     }

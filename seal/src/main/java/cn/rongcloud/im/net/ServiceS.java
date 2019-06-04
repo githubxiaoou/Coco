@@ -133,4 +133,23 @@ public interface ServiceS {
     @GET("friend-ship/delete-friend")
     Observable<NetData> deleteFriend(@Query("user_id") String userId,
                                      @Query("friend_id") String friendId);
+
+    /*投诉单人或者群组*/
+    @GET("friend-ship/complaint")
+    Observable<NetData> complaint(@Query("user_id") String userId,
+                                  @Query("chat_id") String chatId,
+                                  @Query("reason") String reason,
+                                  @Query("type") String type);// 123，对应上个页面的三个item
+
+    /*获取用户聊天背景*/
+    @GET("user/get-chat-background-image")
+    Observable<NetData> getChatBackgroundImage(@Query("user_id") String userId,
+                                               @Query("chat_id") String chatId);
+
+    /*用户聊天背景修改*/
+    @GET("user/set-chat-background-image")
+    Observable<NetData> setChatBackgroundImage(@Query("user_id") String userId,
+                                               @Query("chat_id") String chatId,
+                                               @Query("img_url") String imgUrl,
+                                               @Query("type") String type);// 1:群组聊天 2:单人聊天 3:全局聊天
 }

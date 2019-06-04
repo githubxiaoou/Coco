@@ -1,6 +1,7 @@
-package cn.rongcloud.im.ui.activity;
+package cn.rongcloud.im.ui.activity.complain;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -9,31 +10,34 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import cn.rongcloud.im.R;
+import cn.rongcloud.im.SealConst;
+import cn.rongcloud.im.model.NetData;
+import cn.rongcloud.im.net.HttpUtil;
+import cn.rongcloud.im.net.NetObserver;
+import cn.rongcloud.im.server.utils.NToast;
 import cn.rongcloud.im.server.widget.DialogWithYesOrNoUtils;
-import io.rong.imkit.RongContext;
-import io.rong.imkit.RongIM;
+import cn.rongcloud.im.server.widget.LoadDialog;
+import cn.rongcloud.im.ui.activity.BaseActivity;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Action;
+import io.reactivex.schedulers.Schedulers;
 import io.rong.imkit.emoticon.AndroidEmoji;
-import io.rong.imlib.IRongCallback;
-import io.rong.imlib.RongIMClient;
-import io.rong.imlib.model.Conversation;
-import io.rong.imlib.model.MentionedInfo;
-import io.rong.imlib.model.Message;
-import io.rong.message.TextMessage;
 
-@SuppressWarnings("deprecation")
-public class GroupNoticeActivity extends BaseActivity implements View.OnClickListener, TextWatcher {
+public class ComplainConfirmActivity extends BaseActivity implements View.OnClickListener, TextWatcher {
     EditText mEdit;
-    Conversation.ConversationType mConversationType;
-    String mTargetId;
+    String mChatId;
+    private String mType;
+    private SharedPreferences sp;
+    private String mUserId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_group_notice);
+        setContentView(R.layout.activity_complain_confirm);
         mEdit = (EditText) findViewById(R.id.edit_area);
         Intent intent = getIntent();
-        mConversationType = Conversation.ConversationType.setValue(intent.getIntExtra("conversationType", 0));
-        mTargetId = getIntent().getStringExtra("targetId");
+        mChatId = getIntent().getStringExtra("chatId");
+        mType = getIntent().getStringExtra("type");
         setTitle(R.string.group_announcement);
         Button rightButton = getHeadRightButton();
         rightButton.setVisibility(View.GONE);
@@ -43,6 +47,8 @@ public class GroupNoticeActivity extends BaseActivity implements View.OnClickLis
         mHeadRightText.setClickable(false);
         mHeadRightText.setOnClickListener(this);
         mEdit.addTextChangedListener(this);
+        sp = getSharedPreferences("config", MODE_PRIVATE);
+        mUserId = sp.getString(SealConst.SEALTALK_LOGIN_ID, "");
     }
 
     @Override
@@ -69,43 +75,29 @@ public class GroupNoticeActivity extends BaseActivity implements View.OnClickLis
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.text_right:
-                DialogWithYesOrNoUtils.getInstance().showDialog(this, getString(R.string.group_notice_post_confirm), new DialogWithYesOrNoUtils.DialogCallBack() {
-                    @Override
-                    public void executeEvent() {
-                        TextMessage textMessage = TextMessage.obtain(RongContext.getInstance().getString(R.string.group_notice_prefix) + mEdit.getText().toString());
-                        MentionedInfo mentionedInfo = new MentionedInfo(MentionedInfo.MentionedType.ALL, null, null);
-                        textMessage.setMentionedInfo(mentionedInfo);
-
-                        RongIM.getInstance().sendMessage(Message.obtain(mTargetId, mConversationType, textMessage), null, null, new IRongCallback.ISendMessageCallback() {
+                LoadDialog.show(mContext);
+                HttpUtil.apiS()
+                        .complaint(mUserId, mChatId, mEdit.getText().toString().trim(), mType)
+                        .subscribeOn(Schedulers.io())
+                        .doOnTerminate(new Action() {
                             @Override
-                            public void onAttached(Message message) {
-
+                            public void run() throws Exception {
+                                LoadDialog.dismiss(mContext);
+                            }
+                        })
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(new NetObserver<NetData>() {
+                            @Override
+                            public void Successful(NetData netData) {
+                                NToast.shortToast(mContext, "提交成功");
+                                finish();
                             }
 
                             @Override
-                            public void onSuccess(Message message) {
-
-                            }
-
-                            @Override
-                            public void onError(Message message, RongIMClient.ErrorCode errorCode) {
-
+                            public void Failure(Throwable t) {
+                                NToast.shortToast(mContext, "网络错误，请重试");
                             }
                         });
-
-                        finish();
-                    }
-
-                    @Override
-                    public void executeEditEvent(String editText) {
-
-                    }
-
-                    @Override
-                    public void updatePassword(String oldPassword, String newPassword) {
-
-                    }
-                });
                 break;
         }
     }

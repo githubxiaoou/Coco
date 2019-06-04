@@ -26,6 +26,7 @@ import cn.rongcloud.im.server.pinyin.CharacterParser;
 import cn.rongcloud.im.server.utils.NToast;
 import cn.rongcloud.im.server.utils.OperationRong;
 import cn.rongcloud.im.server.widget.SelectableRoundedImageView;
+import cn.rongcloud.im.ui.activity.complain.ComplainActivity;
 import cn.rongcloud.im.ui.widget.switchbutton.SwitchButton;
 import io.rong.eventbus.EventBus;
 import io.rong.imageloader.core.ImageLoader;
@@ -117,6 +118,10 @@ public class PrivateChatDetailActivity extends BaseActivity implements View.OnCl
         messageNotification.setOnCheckedChangeListener(this);
         messageTop.setOnCheckedChangeListener(this);
         mSearchChattingRecordsLinearLayout.setOnClickListener(this);
+        LinearLayout llSetChatBg = (LinearLayout) findViewById(R.id.ll_set_chat_bg);
+        llSetChatBg.setOnClickListener(this);
+        LinearLayout llComplain = (LinearLayout) findViewById(R.id.ll_complain);
+        llComplain.setOnClickListener(this);
     }
 
     @Override
@@ -215,6 +220,17 @@ public class PrivateChatDetailActivity extends BaseActivity implements View.OnCl
                                 }
                             }
                         }).show();
+                break;
+            case R.id.ll_set_chat_bg:
+                Intent bgIntent = new Intent(mContext, ChatBackgroundActivity.class);
+                bgIntent.putExtra("chatId", mUserInfo.getUserId());
+                bgIntent.putExtra("type", "1");
+                startActivity(bgIntent);
+                break;
+            case R.id.ll_complain:
+                Intent complainIntent = new Intent(mContext, ComplainActivity.class);
+                complainIntent.putExtra("chatId", mUserInfo.getUserId());
+                startActivity(complainIntent);
                 break;
         }
     }

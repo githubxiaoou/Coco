@@ -190,11 +190,14 @@ public class ScanActivity extends BaseActivity implements QRCodeView.Delegate ,E
 //        data.putExtra(SCAN_RESULT, result);
 //        setResult(RESULT_OK, data);
 //        result = "z2mlAvb0c";// 测试用
-        if (result.contains(",")) {
-            toGroupApply(result);
-        } else {
-            toUserApply(result);
+        if (!TextUtils.isEmpty(result)) {
+            if (result.contains(",")) {
+                toGroupApply(result);
+            } else {
+                toUserApply(result);
+            }
         }
+
     }
 
     private void toGroupApply(String result) {
