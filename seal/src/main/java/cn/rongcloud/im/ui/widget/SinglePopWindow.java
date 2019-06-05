@@ -87,7 +87,7 @@ public class SinglePopWindow extends PopupWindow {
         rlSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                NToast.shortToast(context, "发送名片");
+                sendCard();
             }
         });
 
@@ -176,6 +176,18 @@ public class SinglePopWindow extends PopupWindow {
         });
     }
 
+    /**
+     * 发送名片
+     */
+    private void sendCard() {
+
+    }
+
+    /**
+     * 删除好友
+     * @param userId
+     * @param friendId
+     */
     private void deleteFriend(String userId, String friendId) {
         LoadDialog.show(mContext);
         HttpUtil.apiS().deleteFriend(userId, friendId)

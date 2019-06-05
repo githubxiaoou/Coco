@@ -246,6 +246,7 @@
     <string name="rc_dialog_button_clear">清空</string>
 
     <string name="rc_user_recalled_message">%s撤回了一条消息</string>
+    <string name="rc_admin_recalled_message">%s撤回了"%s"的一条消息</string>
     <string name="rc_recall_failed_for_network_unavailable">撤回不成功，请检查网络连接</string>
 
     <string name="rc_cs_evaluate">评价</string>

@@ -1,5 +1,6 @@
 package cn.rongcloud.im.ui.fragment;
 
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -19,16 +20,28 @@ import cn.rongcloud.im.model.NetData;
 import cn.rongcloud.im.model.SealCSEvaluateItem;
 import cn.rongcloud.im.net.HttpUtil;
 import cn.rongcloud.im.net.NetObserver;
+import cn.rongcloud.im.server.response.GetGroupDetailResponse;
+import cn.rongcloud.im.server.utils.NToast;
+import cn.rongcloud.im.server.widget.LoadDialog;
 import cn.rongcloud.im.ui.activity.ReadReceiptDetailActivity;
 import cn.rongcloud.im.ui.widget.BottomEvaluateDialog;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Action;
 import io.reactivex.schedulers.Schedulers;
+import io.rong.contactcard.activities.ContactDetailActivity;
+import io.rong.contactcard.activities.ContactListActivity;
 import io.rong.imkit.RongExtension;
+import io.rong.imkit.RongIM;
+import io.rong.imkit.RongMessageItemLongClickActionManager;
 import io.rong.imkit.fragment.ConversationFragment;
+import io.rong.imkit.model.UIMessage;
+import io.rong.imkit.userInfoCache.RongUserInfoManager;
+import io.rong.imkit.widget.provider.MessageItemLongClickAction;
 import io.rong.imlib.CustomServiceConfig;
 import io.rong.imlib.RongIMClient;
 import io.rong.imlib.cs.CustomServiceManager;
 import io.rong.imlib.model.Conversation;
+import io.rong.imlib.model.UserInfo;
 
 import static cn.rongcloud.im.server.BaseAction.DOMAIN_APP;
 
@@ -46,6 +59,9 @@ public class ConversationFragmentEx extends ConversationFragment {
     private RongExtension rongExtension;
     private ListView listView;
     private String mUserId;
+    private MessageItemLongClickAction clickAction;
+    private boolean isAdmin;
+    private boolean isCreator;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -73,6 +89,88 @@ public class ConversationFragmentEx extends ConversationFragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         getBgImage();
+        getGroupDetail();
+        addForward();
+    }
+
+    /**
+     * 获取群详情，如果是群主或管理员，可以撤销消息
+     */
+    private void getGroupDetail() {
+        LoadDialog.show(getActivity());
+        HttpUtil.apiS()
+                .getGroupDetail(mTargetId, mUserId)
+                .subscribeOn(Schedulers.io())
+                .doOnTerminate(new Action() {
+                    @Override
+                    public void run() throws Exception {
+                        LoadDialog.dismiss(getActivity());
+                    }
+                })
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new NetObserver<NetData<GetGroupDetailResponse>>() {
+                    @Override
+                    public void Successful(NetData<GetGroupDetailResponse> response) {
+                        GetGroupDetailResponse result = response.result;
+                        isAdmin = null != result && "1".equals(result.isAdmin);
+                        isCreator = null != result && mUserId.equals(result.creatorId);
+                        if (isAdmin || isCreator) {
+                            addCallBack();
+                        }
+                    }
+
+                    @Override
+                    public void Failure(Throwable t) {
+
+                    }
+                });
+    }
+
+    /**
+     * 添加撤销按钮
+     * 与原有撤销功能独立，这里允许管理员撤销所有人发的消息
+     */
+    private void addCallBack() {
+        // 如果原来有撤回按钮，先移除。统一添加
+        List<MessageItemLongClickAction> actions = RongMessageItemLongClickActionManager.getInstance().getMessageItemLongClickActions();
+        for (int i = 0; i < actions.size(); i++) {
+            if (actions.get(i).getTitle(getActivity()).contains("撤回")) {
+                RongMessageItemLongClickActionManager.getInstance().removeMessageItemLongClickAction(actions.get(i));
+            }
+        }
+
+        this.clickAction = (new MessageItemLongClickAction.Builder()).title("撤回消息").actionListener(new MessageItemLongClickAction.MessageItemLongClickListener() {
+            public boolean onMessageItemLongClick(Context context, UIMessage message) {
+                RongIM.getInstance().recallMessage(message.getMessage(), getPushContent(getActivity(), message));
+                return true;
+            }
+        }).build();
+        RongMessageItemLongClickActionManager.getInstance().addMessageItemLongClickAction(this.clickAction, 3);
+    }
+
+    public String getPushContent(Context context, UIMessage message) {
+        String userName = "";
+        UserInfo userInfo = RongUserInfoManager.getInstance().getUserInfo(message.getSenderUserId());
+        if (userInfo != null) {
+            userName = userInfo.getName();
+        }
+
+        return context.getString(io.rong.imkit.R.string.rc_admin_recalled_message, new Object[]{"管理员", userName});
+    }
+
+    /**
+     * 添加转发按钮
+     */
+    private void addForward() {
+        this.clickAction = (new MessageItemLongClickAction.Builder()).title("转发").actionListener(new MessageItemLongClickAction.MessageItemLongClickListener() {
+            public boolean onMessageItemLongClick(Context context, UIMessage message) {
+                Intent intent = new Intent(context, ContactListActivity.class);
+                startActivityForResult(intent, 100);
+                intent.putExtra("isFromCard",true);
+                return true;
+            }
+        }).build();
+        RongMessageItemLongClickActionManager.getInstance().addMessageItemLongClickAction(this.clickAction, 0);
     }
 
     public final String LOCAL_BG_DEFAULT = DOMAIN_APP + "/avatar/chatbg/local_background_default.png";
@@ -226,5 +324,19 @@ public class ConversationFragmentEx extends ConversationFragment {
     @Override
     public boolean showMoreClickItem() {
         return true;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (data != null) {
+            if (requestCode == 100) {
+                Intent intent = new Intent(getActivity(), ContactDetailActivity.class);
+                intent.putExtra("contact", data.getParcelableExtra("contact"));
+//                intent.putExtra("conversationType", mcon);
+                intent.putExtra("targetId", mTargetId);
+                startActivity(intent);
+            }
+        }
     }
 }

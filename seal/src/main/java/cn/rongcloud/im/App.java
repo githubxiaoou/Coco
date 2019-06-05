@@ -194,6 +194,7 @@ public class App extends MultiDexApplication {
                     view.getContext().startActivity(intent);
                 }
             }));
+            // 语音输入
             RongExtensionManager.getInstance().registerExtensionModule(new RecognizeExtensionModule());
             //小视频
             RongExtensionManager.getInstance().registerExtensionModule(new SightExtensionModule());
