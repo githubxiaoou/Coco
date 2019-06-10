@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#f0f0f6"
+    android:background="@color/seal_bg"
     android:orientation="vertical">
 
     <LinearLayout
@@ -38,7 +38,6 @@
         android:id="@+id/search_search_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#fff"
         android:orientation="vertical"
 
         >
@@ -87,9 +86,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
             android:layout_marginTop="20dp"
+            android:background="@color/white"
             android:gravity="center_vertical"
             >
             <TextView
@@ -107,36 +105,38 @@
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
+                android:layout_gravity="center"
                 android:drawablePadding="5dip"
                 android:hint="@string/phone_number"
                 android:maxLength="20"
                 android:inputType="phone"
                 android:paddingLeft="10dip"
                 android:paddingRight="10dip"
+                android:background="@null"
                 android:maxLines="1"
                 android:textColor="@color/text_black_color"
                 android:textColorHint="@color/text_tips_color" />
 
+            <TextView
+                android:id="@+id/search_search"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right|center_vertical"
+                android:layout_marginRight="20dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginStart="5dp"
+                android:background="@drawable/rs_select_btn_blue"
+                android:clickable="false"
+                android:paddingLeft="24dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
+                android:paddingRight="24dp"
+                android:text="@string/Search"
+                android:textColor="#FFF"
+                android:layout_marginLeft="5dp" />
         </LinearLayout>
-
-        <TextView
-            android:id="@+id/search_search"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="right"
-            android:layout_marginRight="20dp"
-            android:layout_marginTop="20dp"
-            android:layout_marginBottom="20dp"
-            android:background="@drawable/rs_select_btn_blue"
-            android:clickable="false"
-            android:paddingLeft="24dp"
-            android:paddingTop="8dp"
-            android:paddingBottom="8dp"
-            android:paddingRight="24dp"
-            android:text="@string/Search"
-            android:textColor="#FFF"
-            />
 
     </LinearLayout>
 
@@ -180,6 +180,40 @@
             android:layout_gravity="center_vertical"
             android:background="@drawable/rp_arrow" />
 
+    </LinearLayout>
 
+    <TextView
+        android:id="@+id/tv_my_code"
+        android:text="我的二维码"
+        android:textColor="@color/black"
+        android:textSize="14sp"
+        android:layout_gravity="center"
+        android:paddingTop="10dp"
+        android:paddingBottom="5dp"
+        android:drawableEnd="@drawable/ic_my_qrcode"
+        android:layout_width="wrap_content"
+        android:drawablePadding="5dp"
+        android:layout_height="wrap_content"
+        android:drawableRight="@drawable/ic_my_qrcode" />
+
+    <LinearLayout
+        android:id="@+id/ll_sao"
+        android:layout_width="match_parent"
+        android:layout_height="45.5dp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/btn_list_item_bg"
+        android:clickable="true">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="14dp"
+            android:drawableLeft="@drawable/icon_settings_scan"
+            android:drawablePadding="14sp"
+            android:text="扫一扫"
+            android:textColor="@color/text_color"
+            android:textSize="16sp" />
     </LinearLayout>
 </LinearLayout>

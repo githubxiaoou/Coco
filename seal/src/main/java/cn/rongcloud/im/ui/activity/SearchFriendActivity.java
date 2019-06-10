@@ -57,6 +57,7 @@ public class SearchFriendActivity extends BaseActivity implements View.OnClickLi
     private String mFriendId;
     private Friend mFriend;
     private SharedPreferences sp;
+    private String mUserId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +65,7 @@ public class SearchFriendActivity extends BaseActivity implements View.OnClickLi
         setContentView(R.layout.activity_search);
         setTitle((R.string.search_friend));
         sp = getSharedPreferences("config", MODE_PRIVATE);
+        mUserId = sp.getString(SealConst.SEALTALK_LOGIN_ID, "");
 
         mHeadRightText.setVisibility(View.GONE);
         mHeadRightText.setText(getString(R.string.cancel));
@@ -109,6 +111,9 @@ public class SearchFriendActivity extends BaseActivity implements View.OnClickLi
         selectCountryView.setOnClickListener(this);
         searchTv.setOnClickListener(this);
         initRegion();
+
+        findViewById(R.id.ll_sao).setOnClickListener(this);
+        findViewById(R.id.tv_my_code).setOnClickListener(this);
     }
 
     @Override
@@ -286,6 +291,12 @@ public class SearchFriendActivity extends BaseActivity implements View.OnClickLi
                 break;
             case R.id.search_country_select:
                 startActivityForResult(new Intent(this, SelectCountryActivity.class), REQUEST_CODE_SELECT_COUNTRY);
+                break;
+            case R.id.ll_sao:
+                ScanActivity.actionStart(this);
+                break;
+            case R.id.tv_my_code:
+                MyCodeActivity.actionStart(this, mUserId);
                 break;
         }
     }

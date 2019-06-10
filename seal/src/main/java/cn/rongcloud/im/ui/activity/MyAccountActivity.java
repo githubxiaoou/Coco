@@ -59,7 +59,9 @@ import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import top.zibin.luban.Luban;
 
-
+/**
+ * 个人账号
+ */
 public class MyAccountActivity extends BaseActivity implements View.OnClickListener {
 
     private static final int UP_LOAD_PORTRAIT = 8;
@@ -153,6 +155,7 @@ public class MyAccountActivity extends BaseActivity implements View.OnClickListe
         initOptionPicker();
         mUserId = sp.getString(SealConst.SEALTALK_USER_ID, "");
         mLoginId = sp.getString(SealConst.SEALTALK_LOGIN_ID, "");
+        mTvAccount.setText(mLoginId);
     }
 
     private void setPortraitChangeListener() {

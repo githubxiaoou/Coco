@@ -67,7 +67,7 @@ public class ForgetPasswordActivity extends BaseActivity implements View.OnClick
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_forget);
-        setHeadVisibility(View.GONE);
+        setTitle("忘记密码");
         initView();
     }
 

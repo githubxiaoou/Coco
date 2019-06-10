@@ -95,6 +95,7 @@
         android:layout_width="match_parent"
         android:layout_height="0.1dp"
         android:layout_marginLeft="12dp"
+        android:visibility="gone"
         android:layout_marginRight="12dp"
         android:background="#d9d9d9" />
 
@@ -102,6 +103,7 @@
         android:id="@+id/re_matching"
         android:layout_width="match_parent"
         android:layout_height="52dp"
+        android:visibility="gone"
         android:background="@drawable/btn_list_item_bg"
         android:clickable="true">
 

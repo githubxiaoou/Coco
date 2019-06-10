@@ -1,44 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#ffffff"
-    android:orientation="vertical">
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:background="#373233" >
-
-        <TextView
-            android:id="@id/rc_btn_cancel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/rc_cancel"
-            android:layout_alignParentLeft="true"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="14dp"
-            android:clickable="true"
-            android:textColor="@android:color/white"
-            android:textSize="18sp"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/rc_choose_members"
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"
-            android:textColor="@android:color/white"
-            android:textSize="20sp"/>
-
-    </RelativeLayout>
-
+    tools:context=".ui.activity.forward.ForwardListActivity">
     <LinearLayout
         android:focusable="true" android:focusableInTouchMode="true"
         android:layout_width="0px" android:layout_height="0px"/>
 
     <EditText
-        android:id="@id/rc_edit_text"
+        android:id="@+id/et_search"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="12dp"
@@ -51,6 +24,7 @@
         android:hint="@string/rc_search"
         android:maxLines="1"
         android:textSize="16sp"
+        android:background="@null"
         android:imeOptions="actionSearch"
         android:visibility="visible"/>
 
@@ -60,12 +34,43 @@
         android:background="#dfdfdd"
         android:visibility="visible"/>
 
+    <LinearLayout
+        android:id="@+id/ll_create_chat"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:background="@drawable/btn_list_item_bg"
+        android:clickable="true"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="10dp"
+            android:layout_weight="1"
+            android:text="创建新的聊天"
+            android:textColor="@color/text_color"
+            android:textSize="16sp" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tv_recently"
+        android:text="最近聊天"
+        android:textSize="14sp"
+        android:textColor="#535353"
+        android:gravity="center_vertical"
+        android:paddingLeft="16dp"
+        android:background="@color/seal_bg"
+        android:layout_width="match_parent"
+        android:layout_height="25dp" />
+
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <ListView
-            android:id="@id/rc_list"
+            android:id="@+id/lv_chat"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="center"
@@ -82,11 +87,5 @@
             android:textColor="#ffffffff"
             android:textSize="30.0dip"
             android:visibility="invisible" />
-
-        <io.rong.imkit.mention.SideBar
-            android:id="@+id/rc_sidebar"
-            android:layout_width="20.0dip"
-            android:layout_height="fill_parent"
-            android:layout_gravity="right|center" />
     </FrameLayout>
 </LinearLayout>

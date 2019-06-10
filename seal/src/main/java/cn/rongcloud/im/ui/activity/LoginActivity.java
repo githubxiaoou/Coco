@@ -71,7 +71,8 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        setHeadVisibility(View.GONE);
+        setHeadLeftButtonVisibility(View.GONE);
+        setTitle("密聊");
         sp = getSharedPreferences("config", MODE_PRIVATE);
         editor = sp.edit();
         initView();

@@ -10,6 +10,7 @@
         android:id="@+id/group_info"
         android:layout_width="match_parent"
         android:layout_height="80dp"
+        android:layout_marginTop="20dp"
         android:background="#ffffff"
         android:orientation="horizontal">
 
@@ -126,6 +127,7 @@
             android:layout_marginTop="20dp"
             android:background="@drawable/contact_start_video"
             android:onClick="startVoice"
+            android:visibility="gone"
             android:text="@string/start_voice"
             android:textColor="#363636"
             android:textSize="16sp" />
@@ -139,6 +141,7 @@
             android:background="@drawable/contact_start_video"
             android:onClick="startVideo"
             android:text="@string/start_video"
+            android:visibility="gone"
             android:textColor="#363636"
             android:textSize="16sp" />
         <!--CallKit end-->

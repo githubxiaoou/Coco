@@ -11,19 +11,20 @@
         android:layout_gravity="center_horizontal"
         android:layout_marginBottom="14dp"
         android:layout_marginTop="24dp"
-        android:src="@drawable/ic_launcher" />
+        android:src="@drawable/logo" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="240dp"
+        android:layout_gravity="center"
         android:layout_marginTop="5dp"
-        android:text="@string/version_number"
+        android:text="密聊 V1.0"
         android:textColor="#999999"
         android:textSize="14sp"
-        android:visibility="gone" />
+        android:visibility="visible" />
 
     <RelativeLayout
+        android:visibility="gone"
         android:id="@+id/rl_update_log"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
@@ -41,15 +42,9 @@
 
     </RelativeLayout>
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="0.25dp"
-        android:layout_marginLeft="14dp"
-        android:layout_marginRight="14dp"
-        android:background="#dfdfdd" />
-
     <RelativeLayout
         android:id="@+id/rl_function_introduce"
+        android:visibility="gone"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="17dp"
@@ -66,15 +61,10 @@
 
     </RelativeLayout>
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="0.25dp"
-        android:layout_marginLeft="14dp"
-        android:layout_marginRight="14dp"
-        android:background="#dfdfdd" />
 
 
     <RelativeLayout
+        android:visibility="gone"
         android:id="@+id/rl_rongcloud_web"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
@@ -92,14 +82,8 @@
 
     </RelativeLayout>
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="0.25dp"
-        android:layout_marginLeft="14dp"
-        android:layout_marginRight="14dp"
-        android:background="#dfdfdd" />
-
     <RelativeLayout
+        android:layout_marginTop="35dp"
         android:id="@+id/rl_version"
         android:layout_width="match_parent"
         android:layout_height="47.5dp">
@@ -110,7 +94,7 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_marginLeft="25dp"
-            android:text="XX版本"
+            android:text="密聊版本"
             android:textColor="#353535"
             android:textSize="16sp" />
 
@@ -131,6 +115,7 @@
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:layout_marginRight="18dp"
+            android:text="1.0"
             android:textColor="#999"
             android:textSize="14sp" />
 
@@ -166,7 +151,7 @@
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:layout_marginRight="18dp"
-            android:text="XXXXXXXXXX"
+            android:text="28"
             android:textColor="#999"
             android:textSize="14sp" />
 
@@ -229,7 +214,7 @@
         android:layout_gravity="center_horizontal"
         android:layout_marginBottom="14dp"
         android:gravity="bottom"
-        android:text="Powered by XXXXXXX"
+        android:text="Copyright @ 2018-2019"
         android:textColor="#999"
         android:textSize="14sp" />
 

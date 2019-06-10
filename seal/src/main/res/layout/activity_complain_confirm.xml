@@ -9,7 +9,7 @@
         android:id="@+id/edit_area"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/empty_group_notice"
+        android:hint="请编辑投诉内容"
         android:textColorHint="#e6e6e6"
         android:layout_marginLeft="15dp"
         android:layout_marginTop="5dp"

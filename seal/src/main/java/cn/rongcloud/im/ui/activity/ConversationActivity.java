@@ -378,6 +378,7 @@ public class ConversationActivity extends BaseActivity implements View.OnClickLi
         fragment = new ConversationFragmentEx();
         Bundle bundle = new Bundle();
         bundle.putString("userId", mUserId);
+        bundle.putSerializable("conversationType", mConversationType);
         fragment.setArguments(bundle);
 
         Uri uri = Uri.parse("rong://" + getApplicationInfo().packageName).buildUpon()

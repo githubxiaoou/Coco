@@ -148,6 +148,8 @@ public class MineFragment extends Fragment implements View.OnClickListener {
         LinearLayout mMineXN = (LinearLayout) mView.findViewById(R.id.mine_xiaoneng);
         LinearLayout mMineAbout = (LinearLayout) mView.findViewById(R.id.mine_about);
         LinearLayout mMineSao = (LinearLayout) mView.findViewById(R.id.mine_sao);
+        LinearLayout minePc = (LinearLayout) mView.findViewById(R.id.mine_pc);
+        minePc.setOnClickListener(this);
         mCurrentLanguageTv = (TextView) mView.findViewById(R.id.tv_mine_current_language);
         mCurrentLanguageTv.setText(getLanguageStr());
 
@@ -205,6 +207,9 @@ public class MineFragment extends Fragment implements View.OnClickListener {
                 break;
             case R.id.mine_sao:
                 ScanActivity.actionStartFragment(this);
+                break;
+            case R.id.mine_pc:
+                NToast.shortToast(getActivity(), "敬请期待");
                 break;
         }
     }

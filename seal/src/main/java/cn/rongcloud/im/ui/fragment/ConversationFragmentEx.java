@@ -21,14 +21,13 @@ import cn.rongcloud.im.model.SealCSEvaluateItem;
 import cn.rongcloud.im.net.HttpUtil;
 import cn.rongcloud.im.net.NetObserver;
 import cn.rongcloud.im.server.response.GetGroupDetailResponse;
-import cn.rongcloud.im.server.utils.NToast;
 import cn.rongcloud.im.server.widget.LoadDialog;
 import cn.rongcloud.im.ui.activity.ReadReceiptDetailActivity;
+import cn.rongcloud.im.ui.activity.forward.ForwardDetailActivity;
 import cn.rongcloud.im.ui.widget.BottomEvaluateDialog;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.Action;
 import io.reactivex.schedulers.Schedulers;
-import io.rong.contactcard.activities.ContactDetailActivity;
 import io.rong.contactcard.activities.ContactListActivity;
 import io.rong.imkit.RongExtension;
 import io.rong.imkit.RongIM;
@@ -41,6 +40,7 @@ import io.rong.imlib.CustomServiceConfig;
 import io.rong.imlib.RongIMClient;
 import io.rong.imlib.cs.CustomServiceManager;
 import io.rong.imlib.model.Conversation;
+import io.rong.imlib.model.Message;
 import io.rong.imlib.model.UserInfo;
 
 import static cn.rongcloud.im.server.BaseAction.DOMAIN_APP;
@@ -62,6 +62,8 @@ public class ConversationFragmentEx extends ConversationFragment {
     private MessageItemLongClickAction clickAction;
     private boolean isAdmin;
     private boolean isCreator;
+    private Conversation.ConversationType mConversationType;
+    private Message mForwardMessage;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -164,9 +166,9 @@ public class ConversationFragmentEx extends ConversationFragment {
     private void addForward() {
         this.clickAction = (new MessageItemLongClickAction.Builder()).title("转发").actionListener(new MessageItemLongClickAction.MessageItemLongClickListener() {
             public boolean onMessageItemLongClick(Context context, UIMessage message) {
-                Intent intent = new Intent(context, ContactListActivity.class);
-                startActivityForResult(intent, 100);
-                intent.putExtra("isFromCard",true);
+//                Intent intent = new Intent(context, ContactListActivity.class);
+//                mForwardMessage = message.mMessage;
+//                startActivityForResult(intent, 100);
                 return true;
             }
         }).build();
@@ -212,6 +214,7 @@ public class ConversationFragmentEx extends ConversationFragment {
         if (uri != null) {
             mTargetId = uri.getQueryParameter("targetId");
             mUserId = getArguments().getString("userId");
+            mConversationType = (Conversation.ConversationType) getArguments().getSerializable("conversationType");
         }
     }
 
@@ -331,9 +334,9 @@ public class ConversationFragmentEx extends ConversationFragment {
         super.onActivityResult(requestCode, resultCode, data);
         if (data != null) {
             if (requestCode == 100) {
-                Intent intent = new Intent(getActivity(), ContactDetailActivity.class);
-                intent.putExtra("contact", data.getParcelableExtra("contact"));
-//                intent.putExtra("conversationType", mcon);
+                Intent intent = new Intent(getActivity(), ForwardDetailActivity.class);
+                intent.putExtra("message", mForwardMessage);
+                intent.putExtra("conversationType", mConversationType);
                 intent.putExtra("targetId", mTargetId);
                 startActivity(intent);
             }

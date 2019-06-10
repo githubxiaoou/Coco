@@ -38,7 +38,7 @@ public class ComplainConfirmActivity extends BaseActivity implements View.OnClic
         Intent intent = getIntent();
         mChatId = getIntent().getStringExtra("chatId");
         mType = getIntent().getStringExtra("type");
-        setTitle(R.string.group_announcement);
+        setTitle("投诉");
         Button rightButton = getHeadRightButton();
         rightButton.setVisibility(View.GONE);
         mHeadRightText.setVisibility(View.VISIBLE);

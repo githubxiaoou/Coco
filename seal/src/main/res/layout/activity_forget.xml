@@ -15,7 +15,7 @@
             android:layout_marginLeft="-50dp"
             android:layout_marginRight="-300dp"
             android:scaleType="centerCrop"
-            android:src="@color/gray" />
+            android:src="@color/seal_bg" />
 
     </FrameLayout>
 
@@ -30,7 +30,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="61dip"
-            android:src="@drawable/ic_launcher" />
+            android:src="@drawable/logo" />
 
         <LinearLayout
             android:id="@+id/reg_country_select"
@@ -90,7 +90,7 @@
                 android:paddingRight="10dip"
                 android:text="+86"
                 android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium.Inverse"
-                android:textColor="#FFF" />
+                android:textColor="@color/black" />
 
             <cn.rongcloud.im.server.widget.ClearWriteEditText
                 android:id="@+id/forget_phone"
@@ -103,8 +103,7 @@
                 android:maxLines="1"
                 android:paddingLeft="10dip"
                 android:paddingRight="10dip"
-                android:textColor="#FFFFFF"
-                android:textColorHint="#FFFFFF"
+                android:textColor="@color/black"
                 />
         </LinearLayout>
 
@@ -129,8 +128,7 @@
                 android:inputType="number"
                 android:maxLength="6"
                 android:maxLines="1"
-                android:textColor="#FFFFFF"
-                android:textColorHint="#FFFFFF"
+                android:textColor="@color/black"
                 />
 
 
@@ -168,8 +166,7 @@
             android:maxLines="1"
             android:paddingLeft="10dip"
             android:paddingRight="10dip"
-            android:textColor="#FFFFFF"
-            android:textColorHint="#FFFFFF"
+            android:textColor="@color/black"
             />
 
         <cn.rongcloud.im.server.widget.ClearWriteEditText
@@ -187,8 +184,7 @@
             android:maxLines="1"
             android:paddingLeft="10dip"
             android:paddingRight="10dip"
-            android:textColor="#FFFFFF"
-            android:textColorHint="#FFFFFF"
+            android:textColor="@color/black"
             />
 
         <Button
@@ -208,7 +204,7 @@
     <TextView
         android:id="@+id/de_login_register"
         android:textSize="14sp"
-        android:textColor="#999999"
+        android:textColor="@color/black"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="15dp"
@@ -219,7 +215,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Powered by xxxx"
+        android:text="Powered by 密聊"
         android:visibility="gone"
         android:textSize="12sp"
         android:layout_alignParentBottom="true"
@@ -237,7 +233,7 @@
         android:layout_alignParentRight="true"
         android:padding="15dp"
         android:text="@string/Login"
-        android:textColor="#999999"
+        android:textColor="@color/black"
         android:textSize="14sp" />
 
     <TextView

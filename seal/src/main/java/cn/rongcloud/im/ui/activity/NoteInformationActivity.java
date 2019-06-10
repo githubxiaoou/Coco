@@ -40,9 +40,12 @@ public class NoteInformationActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_noteinfo);
-        setHeadVisibility(View.GONE);
-        mNoteEdit = (EditText) findViewById(R.id.notetext);
-        mNoteSave = (TextView) findViewById(R.id.notesave);
+        setTitle("备注");
+        mNoteEdit = (EditText) findViewById(R.id.et_note);
+        mNoteSave = (TextView) findViewById(R.id.text_right);
+        mNoteSave.setVisibility(View.VISIBLE);
+        mNoteSave.setText("完成");
+        mNoteSave.setTextColor(Color.parseColor("#5b6a91"));
         mFriend = getIntent().getParcelableExtra("friend");
         if (mFriend != null) {
             mNoteSave.setOnClickListener(new View.OnClickListener() {
@@ -69,13 +72,13 @@ public class NoteInformationActivity extends BaseActivity {
                     } else {
                         if (TextUtils.isEmpty(s.toString())) {
                             mNoteSave.setClickable(false);
-                            mNoteSave.setTextColor(Color.parseColor("#9fcdfd"));
+                            mNoteSave.setTextColor(Color.parseColor("#5b6a91"));
                         } else if (s.toString().equals(mFriend.getDisplayName())) {
                             mNoteSave.setClickable(false);
-                            mNoteSave.setTextColor(Color.parseColor("#9fcdfd"));
+                            mNoteSave.setTextColor(Color.parseColor("#5b6a91"));
                         } else {
                             mNoteSave.setClickable(true);
-                            mNoteSave.setTextColor(getResources().getColor(R.color.white));
+                            mNoteSave.setTextColor(getResources().getColor(R.color.blue));
                         }
                     }
 

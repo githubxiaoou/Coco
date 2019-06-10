@@ -36,7 +36,7 @@ public class AboutRongCloudActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_about);
-        setTitle("关于XX");
+        setTitle("关于密聊");
 
         RelativeLayout mUpdateLog = (RelativeLayout) findViewById(R.id.rl_update_log);
         RelativeLayout mFunctionIntroduce = (RelativeLayout) findViewById(R.id.rl_function_introduce);
@@ -70,6 +70,7 @@ public class AboutRongCloudActivity extends BaseActivity {
         });
         url = getIntent().getStringExtra("url");
         isHasNewVersion = getIntent().getBooleanExtra("isHasNewVersion", false);
+        isHasNewVersion = false;// TODO: 2019/6/6 去掉新版本显示
         if (isHasNewVersion) {
             mNewVersionView.setVisibility(View.VISIBLE);
             mVersionItem.setOnClickListener(new View.OnClickListener() {
