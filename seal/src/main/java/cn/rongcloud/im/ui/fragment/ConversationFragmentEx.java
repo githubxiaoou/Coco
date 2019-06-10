@@ -368,8 +368,8 @@ public class ConversationFragmentEx extends ConversationFragment {
             if (requestCode == 100) {
                 Intent intent = new Intent(getActivity(), ForwardDetailActivity.class);
                 intent.putExtra("message", mForwardMessage);
-                intent.putExtra("conversationType", mConversationType);
-                intent.putExtra("targetId", mTargetId);
+                intent.putExtra("conversationType", data.getSerializableExtra("conversationType"));
+                intent.putExtra("targetId", data.getStringExtra("targetId"));
                 startActivity(intent);
             }
         }

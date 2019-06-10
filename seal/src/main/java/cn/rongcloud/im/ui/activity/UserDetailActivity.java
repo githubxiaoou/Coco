@@ -14,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import java.io.Serializable;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
@@ -33,6 +34,7 @@ import cn.rongcloud.im.server.utils.NToast;
 import cn.rongcloud.im.server.utils.RongGenerate;
 import cn.rongcloud.im.server.widget.DialogWithYesOrNoUtils;
 import cn.rongcloud.im.server.widget.LoadDialog;
+import cn.rongcloud.im.ui.activity.forward.ForwardDetailActivity;
 import cn.rongcloud.im.ui.widget.SinglePopWindow;
 import io.rong.imageloader.core.ImageLoader;
 import io.rong.imkit.RongIM;
@@ -72,6 +74,7 @@ public class UserDetailActivity extends BaseActivity implements View.OnClickList
     private int mType;
     private SharedPreferences sp;
     private String mUserId;
+    public static io.rong.imlib.model.Message mForwardMessage;
     private static final int CLICK_CONVERSATION_USER_PORTRAIT = 1;
     private static final int CLICK_CONTACT_FRAGMENT_FRIEND = 2;
 
@@ -353,6 +356,16 @@ public class UserDetailActivity extends BaseActivity implements View.OnClickList
                 mUserDisplayName.setVisibility(View.VISIBLE);
                 mFriend.setDisplayName("");
             }
+        }
+        if (requestCode == 100 && data != null) {
+            // 是SinglePopWindow拿着ac的引用启动的
+            Intent intent = new Intent(this, ForwardDetailActivity.class);
+            intent.putExtra("message", mForwardMessage);
+            Serializable conversationType = data.getSerializableExtra("conversationType");
+            intent.putExtra("conversationType", conversationType);
+            String targetId = data.getStringExtra("targetId");
+            intent.putExtra("targetId", targetId);
+            startActivity(intent);
         }
     }
 

@@ -14,7 +14,6 @@ import android.widget.TextView;
 
 import cn.rongcloud.im.R;
 import cn.rongcloud.im.SealAppContext;
-import cn.rongcloud.im.SealConst;
 import cn.rongcloud.im.SealUserInfoManager;
 import cn.rongcloud.im.db.BlackList;
 import cn.rongcloud.im.db.Friend;
@@ -29,14 +28,17 @@ import cn.rongcloud.im.server.network.http.HttpException;
 import cn.rongcloud.im.server.utils.NToast;
 import cn.rongcloud.im.server.widget.LoadDialog;
 import cn.rongcloud.im.ui.activity.BaseActivity;
-import cn.rongcloud.im.ui.activity.LoginActivity;
 import cn.rongcloud.im.ui.activity.MainActivity;
+import cn.rongcloud.im.ui.activity.UserDetailActivity;
+import cn.rongcloud.im.ui.activity.forward.ForwardListActivity;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.Action;
 import io.reactivex.schedulers.Schedulers;
+import io.rong.contactcard.message.ContactMessage;
 import io.rong.imkit.RongIM;
 import io.rong.imkit.utilities.PromptPopupDialog;
 import io.rong.imlib.RongIMClient;
+import io.rong.imlib.model.Message;
 
 /**
  * Created by AMing on 16/8/1.
@@ -54,7 +56,7 @@ public class SinglePopWindow extends PopupWindow {
     public SinglePopWindow(final Activity context, final String userId, final Friend friend, final RongIMClient.BlacklistStatus blacklistStatus) {
         mContext = ((BaseActivity) context);
         LayoutInflater inflater = (LayoutInflater) context
-                                  .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         conentView = inflater.inflate(R.layout.popupwindow_more, null);
         // 设置SelectPicPopupWindow的View
         this.setContentView(conentView);
@@ -89,7 +91,7 @@ public class SinglePopWindow extends PopupWindow {
         rlSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sendCard();
+                sendCard(friend);
             }
         });
 
@@ -134,7 +136,7 @@ public class SinglePopWindow extends PopupWindow {
                     });
                 } else {
                     PromptPopupDialog.newInstance(context, context.getString(R.string.join_the_blacklist),
-                    context.getString(R.string.des_add_friend_to_black_list)).setPromptButtonClickedListener(new PromptPopupDialog.OnPromptButtonClickedListener() {
+                            context.getString(R.string.des_add_friend_to_black_list)).setPromptButtonClickedListener(new PromptPopupDialog.OnPromptButtonClickedListener() {
                         @Override
                         public void onPositiveButtonClicked() {
                             RongIM.getInstance().addToBlacklist(friend.getUserId(), new RongIMClient.OperationCallback() {
@@ -150,10 +152,10 @@ public class SinglePopWindow extends PopupWindow {
                                         @Override
                                         public void onSuccess(int requestCode, Object result) {
                                             SealUserInfoManager.getInstance().addBlackList(new BlackList(
-                                                        friend.getUserId(),
-                                                        null,
-                                                        null
-                                                    ));
+                                                    friend.getUserId(),
+                                                    null,
+                                                    null
+                                            ));
                                             NToast.shortToast(context, context.getString(R.string.join_success));
                                         }
 
@@ -180,13 +182,19 @@ public class SinglePopWindow extends PopupWindow {
 
     /**
      * 发送名片
+     *
+     * @param friend
      */
-    private void sendCard() {
-
+    private void sendCard(Friend friend) {
+        Intent intent = new Intent(mContext, ForwardListActivity.class);
+        Message obtain = Message.obtain("", null, ContactMessage.obtain(friend.getUserId(), friend.getName(), friend.getPortraitUri().toString(), "", "", ""));
+        ((UserDetailActivity) mContext).mForwardMessage = obtain;
+        mContext.startActivityForResult(intent, 100);
     }
 
     /**
      * 删除好友
+     *
      * @param userId
      * @param friendId
      */
