@@ -33,6 +33,9 @@ import io.rong.imlib.model.Conversation;
 import io.rong.imlib.model.Message;
 import io.rong.imlib.model.UserInfo;
 
+/**
+ * 按群成员查找的历史消息列表页面
+ */
 public class MemberActivity extends BaseActivity {
     private SealSearchConversationResult mResult;
     private String mMemberId;

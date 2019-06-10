@@ -61,7 +61,8 @@
         android:networkSecurityConfig="@xml/network_security_config"
         android:theme="@style/MyTheme"
         tools:replace="android:icon, android:theme">
-        <activity android:name=".ui.activity.forward.ForwardListActivity"></activity>
+        <activity android:name=".ui.activity.collection.CollectionActivity"></activity>
+        <activity android:name=".ui.activity.forward.ForwardListActivity" />
         <activity android:name=".ui.activity.ChatBackgroundPreviewActivity" />
         <activity android:name=".ui.activity.ChatBackgroundActivity" />
         <activity android:name=".ui.activity.complain.ComplainConfirmActivity" />

@@ -2,6 +2,7 @@ package cn.rongcloud.im.ui.fragment;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -21,14 +22,15 @@ import cn.rongcloud.im.model.SealCSEvaluateItem;
 import cn.rongcloud.im.net.HttpUtil;
 import cn.rongcloud.im.net.NetObserver;
 import cn.rongcloud.im.server.response.GetGroupDetailResponse;
+import cn.rongcloud.im.server.utils.NToast;
 import cn.rongcloud.im.server.widget.LoadDialog;
 import cn.rongcloud.im.ui.activity.ReadReceiptDetailActivity;
 import cn.rongcloud.im.ui.activity.forward.ForwardDetailActivity;
+import cn.rongcloud.im.ui.activity.forward.ForwardListActivity;
 import cn.rongcloud.im.ui.widget.BottomEvaluateDialog;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.Action;
 import io.reactivex.schedulers.Schedulers;
-import io.rong.contactcard.activities.ContactListActivity;
 import io.rong.imkit.RongExtension;
 import io.rong.imkit.RongIM;
 import io.rong.imkit.RongMessageItemLongClickActionManager;
@@ -64,6 +66,7 @@ public class ConversationFragmentEx extends ConversationFragment {
     private boolean isCreator;
     private Conversation.ConversationType mConversationType;
     private Message mForwardMessage;
+    private SharedPreferences sp;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -90,10 +93,16 @@ public class ConversationFragmentEx extends ConversationFragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        sp = getActivity().getSharedPreferences("config", 0x0000);
         getBgImage();
-        getGroupDetail();
+        if (mConversationType != Conversation.ConversationType.PRIVATE) {
+            // 群聊为管理员和群主添加撤回按钮
+            getGroupDetail();
+        }
         addForward();
+        addCollection();
     }
+
 
     /**
      * 获取群详情，如果是群主或管理员，可以撤销消息
@@ -161,14 +170,37 @@ public class ConversationFragmentEx extends ConversationFragment {
     }
 
     /**
+     * 添加收藏按钮
+     */
+    private void addCollection() {
+        this.clickAction = (new MessageItemLongClickAction.Builder()).title("收藏").actionListener(new MessageItemLongClickAction.MessageItemLongClickListener() {
+            @Override
+            public boolean onMessageItemLongClick(Context context, UIMessage uiMessage) {
+                SharedPreferences.Editor edit = sp.edit();
+                String oldIds = sp.getString(mUserId, "");
+                String newId = uiMessage.getUId();
+                if (TextUtils.isEmpty(oldIds)) {
+                    edit.putString(mUserId, newId);
+                } else {
+                    edit.putString(mUserId, oldIds + "," + newId);
+                }
+                edit.apply();
+                NToast.shortToast(getActivity(), "已收藏");
+                return true;
+            }
+        }).build();
+        RongMessageItemLongClickActionManager.getInstance().addMessageItemLongClickAction(this.clickAction, 4);
+    }
+
+    /**
      * 添加转发按钮
      */
     private void addForward() {
         this.clickAction = (new MessageItemLongClickAction.Builder()).title("转发").actionListener(new MessageItemLongClickAction.MessageItemLongClickListener() {
             public boolean onMessageItemLongClick(Context context, UIMessage message) {
-//                Intent intent = new Intent(context, ContactListActivity.class);
-//                mForwardMessage = message.mMessage;
-//                startActivityForResult(intent, 100);
+                Intent intent = new Intent(context, ForwardListActivity.class);
+                mForwardMessage = message.mMessage;
+                startActivityForResult(intent, 100);
                 return true;
             }
         }).build();

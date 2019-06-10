@@ -949,11 +949,23 @@ public class SealUserInfoManager implements OnDataListener {
     }
 
     /**
+     * added by swo
+     * 加了一个参数，强制从网络更新通讯录好友列表
+     * @param callback
+     */
+    public void getFriends(final ResultCallback<List<Friend>> callback) {
+        getFriends(callback, false);
+    }
+
+    /**
      * 异步接口,获取全部好友信息
      *
      * @param callback 获取好友信息的回调
      */
-    public void getFriends(final ResultCallback<List<Friend>> callback) {
+    public void getFriends(final ResultCallback<List<Friend>> callback, boolean forceFromNet) {
+        if (forceFromNet) {
+            mGetAllUserInfoState = NONE;
+        }
         mWorkHandler.post(new Runnable() {
             @Override
             public void run() {

@@ -247,7 +247,7 @@ public class ContactsFragment extends Fragment implements View.OnClickListener {
             public void onReceive(Context context, Intent intent) {
                 String command = intent.getAction();
                 if (!TextUtils.isEmpty(command)) {
-                    mUnreadTextView.setVisibility(View.INVISIBLE);
+                    mUnreadTextView.setVisibility(View.VISIBLE);
                 }
             }
         });
@@ -282,7 +282,7 @@ public class ContactsFragment extends Fragment implements View.OnClickListener {
             public void onError(String errString) {
                 updateFriendsList(null);
             }
-        });
+        }, true);
     }
 
     private void updateFriendsList(List<Friend> friendsList) {

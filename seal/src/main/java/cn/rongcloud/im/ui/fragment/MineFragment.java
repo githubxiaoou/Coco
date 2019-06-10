@@ -40,6 +40,7 @@ import cn.rongcloud.im.ui.activity.AccountSettingActivity;
 import cn.rongcloud.im.ui.activity.MyAccountActivity;
 import cn.rongcloud.im.ui.activity.ScanActivity;
 import cn.rongcloud.im.ui.activity.SetLanguageActivity;
+import cn.rongcloud.im.ui.activity.collection.CollectionActivity;
 import io.rong.imageloader.core.ImageLoader;
 import io.rong.imkit.RongConfigurationManager;
 import io.rong.imkit.RongIM;
@@ -149,6 +150,8 @@ public class MineFragment extends Fragment implements View.OnClickListener {
         LinearLayout mMineAbout = (LinearLayout) mView.findViewById(R.id.mine_about);
         LinearLayout mMineSao = (LinearLayout) mView.findViewById(R.id.mine_sao);
         LinearLayout minePc = (LinearLayout) mView.findViewById(R.id.mine_pc);
+        LinearLayout mineCollect = (LinearLayout) mView.findViewById(R.id.mine_collect);
+        mineCollect.setOnClickListener(this);
         minePc.setOnClickListener(this);
         mCurrentLanguageTv = (TextView) mView.findViewById(R.id.tv_mine_current_language);
         mCurrentLanguageTv.setText(getLanguageStr());
@@ -210,6 +213,9 @@ public class MineFragment extends Fragment implements View.OnClickListener {
                 break;
             case R.id.mine_pc:
                 NToast.shortToast(getActivity(), "敬请期待");
+                break;
+            case R.id.mine_collect:
+                startActivity(new Intent(getActivity(), CollectionActivity.class));
                 break;
         }
     }

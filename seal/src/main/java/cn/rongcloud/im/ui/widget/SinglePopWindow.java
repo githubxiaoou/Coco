@@ -13,6 +13,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import cn.rongcloud.im.R;
+import cn.rongcloud.im.SealAppContext;
 import cn.rongcloud.im.SealConst;
 import cn.rongcloud.im.SealUserInfoManager;
 import cn.rongcloud.im.db.BlackList;
@@ -21,6 +22,7 @@ import cn.rongcloud.im.model.NetData;
 import cn.rongcloud.im.net.HttpUtil;
 import cn.rongcloud.im.net.NetObserver;
 import cn.rongcloud.im.server.SealAction;
+import cn.rongcloud.im.server.broadcast.BroadcastManager;
 import cn.rongcloud.im.server.network.async.AsyncTaskManager;
 import cn.rongcloud.im.server.network.async.OnDataListener;
 import cn.rongcloud.im.server.network.http.HttpException;
@@ -203,6 +205,7 @@ public class SinglePopWindow extends PopupWindow {
                     @Override
                     public void Successful(NetData netData) {
                         mContext.startActivity(new Intent(mContext, MainActivity.class));
+                        BroadcastManager.getInstance(mContext).sendBroadcast(SealAppContext.UPDATE_FRIEND);
                         SinglePopWindow.this.dismiss();
                     }
 
