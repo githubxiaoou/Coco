@@ -193,8 +193,10 @@ public class GroupDetailActivity extends BaseActivity implements View.OnClickLis
                         if (!"1".equals(mGetGroupDetailResponse.isAdmin) && !mUserId.equals(mGetGroupDetailResponse.creatorId)) {
                             // 不是管理员，且不是群主，说明他是普通群成员
                             mLlGroupName.setVisibility(View.GONE);
+                            mGroupNotice.setVisibility(View.GONE);
                         } else {
                             mLlGroupName.setVisibility(View.VISIBLE);
+                            mGroupNotice.setVisibility(View.VISIBLE);
                         }
                         isAdmin = null != mGetGroupDetailResponse && "1".equals(mGetGroupDetailResponse.isAdmin);
                         mGridView.setAdapter(mAdapter);
@@ -612,6 +614,7 @@ public class GroupDetailActivity extends BaseActivity implements View.OnClickLis
             case R.id.group_member_size_item:
                 Intent intent = new Intent(mContext, TotalGroupMemberActivity.class);
                 intent.putExtra("targetId", fromConversationId);
+                intent.putExtra("openProtect", "1".equals(mGetGroupDetailResponse.isProtected));
                 startActivity(intent);
                 break;
             case R.id.group_member_online_status:
@@ -783,13 +786,14 @@ public class GroupDetailActivity extends BaseActivity implements View.OnClickLis
                         intent.putExtra("isDeleteGroupMember", true);
                         intent.putExtra("GroupId", mGroup.getGroupsId());
                         intent.putExtra("userId", mUserId);
+                        intent.putExtra("creatorId", mGetGroupDetailResponse.creatorId);
                         startActivityForResult(intent, 101);
                     }
 
                 });
             } else if (((isCreated || isAdmin) && position == getCount() - 2) || (!(isCreated || isAdmin)&& position == getCount() - 1)) {
 //            } else if ((isCreated && position == getCount() - 2) || (!isCreated && position == getCount() - 1)) {
-                // 加人按钮
+                // 加入按钮
                 tv_username.setText("");
                 badge_delete.setVisibility(View.GONE);
                 iv_avatar.setBackground(getResources().getDrawable(R.drawable.jy_drltsz_btn_addperson));

@@ -18,12 +18,14 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ViewAnimator;
 
 import java.util.List;
 
 import cn.rongcloud.im.db.GroupMember;
 import cn.rongcloud.im.server.pinyin.CharacterParser;
+import cn.rongcloud.im.server.utils.NToast;
 import io.rong.contactcard.R;
 import io.rong.contactcard.message.ContactMessage;
 import io.rong.eventbus.EventBus;
@@ -232,7 +234,7 @@ public class ForwardDetailActivity extends RongBaseNoActionbarActivity {
 
                                 @Override
                                 public void onSuccess(Message message) {
-
+                                    Toast.makeText(ForwardDetailActivity.this, "已发送", Toast.LENGTH_SHORT).show();
                                 }
 
                                 @Override
@@ -241,7 +243,7 @@ public class ForwardDetailActivity extends RongBaseNoActionbarActivity {
                                 }
                             });
                 } else if (objectName.contains("Img")) {
-                    ImageMessage imageMessage = ImageMessage.obtain();
+                    ImageMessage imageMessage = ((ImageMessage) mMessage.getContent());
                     String pushContent = "[图片]";
                     RongIM.getInstance().sendMessage(Message.obtain(mTargetId, mConversationType, imageMessage),
                             pushContent, null, new IRongCallback.ISendMessageCallback() {
@@ -252,7 +254,7 @@ public class ForwardDetailActivity extends RongBaseNoActionbarActivity {
 
                                 @Override
                                 public void onSuccess(Message message) {
-
+                                    Toast.makeText(ForwardDetailActivity.this, "已发送", Toast.LENGTH_SHORT).show();
                                 }
 
                                 @Override
@@ -272,7 +274,7 @@ public class ForwardDetailActivity extends RongBaseNoActionbarActivity {
 
                                 @Override
                                 public void onSuccess(Message message) {
-
+                                    Toast.makeText(ForwardDetailActivity.this, "已发送", Toast.LENGTH_SHORT).show();
                                 }
 
                                 @Override
@@ -292,7 +294,7 @@ public class ForwardDetailActivity extends RongBaseNoActionbarActivity {
 
                                 @Override
                                 public void onSuccess(Message message) {
-
+                                    Toast.makeText(ForwardDetailActivity.this, "已发送", Toast.LENGTH_SHORT).show();
                                 }
 
                                 @Override
@@ -311,7 +313,7 @@ public class ForwardDetailActivity extends RongBaseNoActionbarActivity {
 
                                 @Override
                                 public void onSuccess(Message message) {
-                                    Log.e("swo onSuccess", message.toString());
+                                    Toast.makeText(ForwardDetailActivity.this, "已发送", Toast.LENGTH_SHORT).show();
                                 }
 
                                 @Override
@@ -334,7 +336,7 @@ public class ForwardDetailActivity extends RongBaseNoActionbarActivity {
 
                                 @Override
                                 public void onSuccess(Message message) {
-
+//                                    Toast.makeText(ForwardDetailActivity.this, "已发送", Toast.LENGTH_SHORT).show();
                                 }
 
                                 @Override

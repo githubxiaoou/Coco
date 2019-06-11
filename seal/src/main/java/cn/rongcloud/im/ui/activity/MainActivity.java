@@ -34,6 +34,7 @@ import cn.rongcloud.im.server.utils.NToast;
 import cn.rongcloud.im.server.widget.LoadDialog;
 import cn.rongcloud.im.ui.adapter.ConversationListAdapterEx;
 import cn.rongcloud.im.ui.fragment.ContactsFragment;
+import cn.rongcloud.im.ui.fragment.ConversationListFragmentEx;
 import cn.rongcloud.im.ui.fragment.MineFragment;
 import cn.rongcloud.im.ui.widget.DragPointView;
 import cn.rongcloud.im.ui.widget.MorePopWindow;
@@ -173,7 +174,7 @@ public class MainActivity extends BaseActivity implements
 
     private Fragment initConversationList() {
         if (mConversationListFragment == null) {
-            ConversationListFragment listFragment = new ConversationListFragment();
+            ConversationListFragmentEx listFragment = new ConversationListFragmentEx();
             listFragment.setAdapter(new ConversationListAdapterEx(RongContext.getInstance()));
             Uri uri;
             if (isDebug) {

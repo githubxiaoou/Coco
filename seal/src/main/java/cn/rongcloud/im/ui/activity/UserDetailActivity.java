@@ -357,16 +357,6 @@ public class UserDetailActivity extends BaseActivity implements View.OnClickList
                 mFriend.setDisplayName("");
             }
         }
-        if (requestCode == 100 && data != null) {
-            // 是SinglePopWindow拿着ac的引用启动的
-            Intent intent = new Intent(this, ForwardDetailActivity.class);
-            intent.putExtra("message", mForwardMessage);
-            Serializable conversationType = data.getSerializableExtra("conversationType");
-            intent.putExtra("conversationType", conversationType);
-            String targetId = data.getStringExtra("targetId");
-            intent.putExtra("targetId", targetId);
-            startActivity(intent);
-        }
     }
 
     @Override

@@ -44,6 +44,7 @@ public class TotalGroupMemberActivity extends BaseActivity {
     private TotalGroupMember adapter;
     private EditText mSearch;
     private String mGroupID;
+    private boolean openProtect;
 
     @Override
     @SuppressWarnings("unchecked")
@@ -53,6 +54,7 @@ public class TotalGroupMemberActivity extends BaseActivity {
         setTitle(R.string.total_member);
         initViews();
         mGroupID = getIntent().getStringExtra("targetId");
+        openProtect = getIntent().getBooleanExtra("openProtect", false);
         SealUserInfoManager.getInstance().getGroupMembers(mGroupID, new SealUserInfoManager.ResultCallback<List<GroupMember>>() {
             @Override
             public void onSuccess(List<GroupMember> groupMembers) {
@@ -73,6 +75,7 @@ public class TotalGroupMemberActivity extends BaseActivity {
                             intent.putExtra("friend", friend);
                             intent.putExtra("type", CLICK_CONVERSATION_USER_PORTRAIT);
                             intent.putExtra("conversationType", Conversation.ConversationType.GROUP.getValue());
+                            intent.putExtra("openProtect", openProtect);
                             startActivity(intent);
                         }
                     });

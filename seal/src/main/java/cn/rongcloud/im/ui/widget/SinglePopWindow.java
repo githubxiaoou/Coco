@@ -38,6 +38,7 @@ import io.rong.contactcard.message.ContactMessage;
 import io.rong.imkit.RongIM;
 import io.rong.imkit.utilities.PromptPopupDialog;
 import io.rong.imlib.RongIMClient;
+import io.rong.imlib.model.Conversation;
 import io.rong.imlib.model.Message;
 
 /**
@@ -187,9 +188,12 @@ public class SinglePopWindow extends PopupWindow {
      */
     private void sendCard(Friend friend) {
         Intent intent = new Intent(mContext, ForwardListActivity.class);
-        Message obtain = Message.obtain("", null, ContactMessage.obtain(friend.getUserId(), friend.getName(), friend.getPortraitUri().toString(), "", "", ""));
-        ((UserDetailActivity) mContext).mForwardMessage = obtain;
-        mContext.startActivityForResult(intent, 100);
+        ContactMessage contactMessage = ContactMessage.obtain(friend.getUserId(), friend.getName(), friend.getPortraitUri().toString(), "", "", "");
+        Message obtain = Message.obtain("", null, contactMessage);
+        obtain.setConversationType(Conversation.ConversationType.PRIVATE);
+        obtain.setObjectName("RC:CardMsg");
+        intent.putExtra("message", obtain);
+        mContext.startActivity(intent);
     }
 
     /**

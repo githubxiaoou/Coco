@@ -200,7 +200,8 @@ public class ConversationFragmentEx extends ConversationFragment {
             public boolean onMessageItemLongClick(Context context, UIMessage message) {
                 Intent intent = new Intent(context, ForwardListActivity.class);
                 mForwardMessage = message.mMessage;
-                startActivityForResult(intent, 100);
+                intent.putExtra("message", mForwardMessage);
+                startActivity(intent);
                 return true;
             }
         }).build();
@@ -366,11 +367,12 @@ public class ConversationFragmentEx extends ConversationFragment {
         super.onActivityResult(requestCode, resultCode, data);
         if (data != null) {
             if (requestCode == 100) {
-                Intent intent = new Intent(getActivity(), ForwardDetailActivity.class);
-                intent.putExtra("message", mForwardMessage);
-                intent.putExtra("conversationType", data.getSerializableExtra("conversationType"));
-                intent.putExtra("targetId", data.getStringExtra("targetId"));
-                startActivity(intent);
+//                Intent intent = new Intent(getActivity(), ForwardDetailActivity.class);
+                data.setClass(getActivity(), ForwardDetailActivity.class);
+                data.putExtra("message", mForwardMessage);
+//                intent.putExtra("conversationType", data.getSerializableExtra("conversationType"));
+//                intent.putExtra("targetId", data.getStringExtra("targetId"));
+                startActivity(data);
             }
         }
     }

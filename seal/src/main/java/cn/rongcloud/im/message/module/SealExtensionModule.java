@@ -9,6 +9,7 @@ import java.util.List;
 import io.rong.imkit.DefaultExtensionModule;
 import io.rong.imkit.RongExtension;
 import io.rong.imkit.emoticon.IEmoticonTab;
+import io.rong.imkit.plugin.CombineLocationPlugin;
 import io.rong.imkit.plugin.DefaultLocationPlugin;
 import io.rong.imkit.plugin.IPluginModule;
 import io.rong.imkit.plugin.ImagePlugin;
@@ -88,7 +89,21 @@ public class SealExtensionModule extends DefaultExtensionModule {
             }
             return pluginModules;
         } else {
-            return super.getPluginModules(conversationType);
+            // 去除位置和文件模块
+            List<IPluginModule> pluginModules = super.getPluginModules(conversationType);
+            for (int i = 0; i < pluginModules.size(); i++) {
+                IPluginModule module = pluginModules.get(i);
+                if (module instanceof CombineLocationPlugin || module instanceof DefaultLocationPlugin) {
+                    pluginModules.remove(module);
+                }
+            }
+            for (int i = 0; i < pluginModules.size(); i++) {
+                IPluginModule module = pluginModules.get(i);
+                if (module instanceof FilePlugin) {
+                    pluginModules.remove(module);
+                }
+            }
+            return pluginModules;
         }
     }
 

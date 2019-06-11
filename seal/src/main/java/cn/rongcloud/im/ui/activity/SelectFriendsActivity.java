@@ -2,7 +2,6 @@ package cn.rongcloud.im.ui.activity;
 
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -57,6 +56,7 @@ import io.rong.imageloader.core.ImageLoader;
 import io.rong.imkit.RongIM;
 import io.rong.imkit.userInfoCache.RongUserInfoManager;
 import io.rong.imlib.RongIMClient;
+import io.rong.imlib.model.Conversation;
 import io.rong.imlib.model.UserInfo;
 
 /**
@@ -111,10 +111,12 @@ public class SelectFriendsActivity extends BaseActivity implements View.OnClickL
     private boolean isAddGroupMember;
     private boolean openAuth;
     private boolean isDeleteGroupMember;
+    private String creatorId;
     private boolean isSetManager;
     private ArrayList<String> managerIdList = new ArrayList<>();
     private boolean isSetJinyan;
     private ArrayList<String> jinyanIdList = new ArrayList<>();
+    private boolean isForward;// 转发
 
     @Override
     @SuppressWarnings("unchecked")
@@ -136,8 +138,10 @@ public class SelectFriendsActivity extends BaseActivity implements View.OnClickL
         isAddGroupMember = getIntent().getBooleanExtra("isAddGroupMember", false);
         openAuth = getIntent().getBooleanExtra("openAuth", false);
         isDeleteGroupMember = getIntent().getBooleanExtra("isDeleteGroupMember", false);
+        creatorId = getIntent().getStringExtra("creatorId");
         isSetManager = getIntent().getBooleanExtra("isSetManager", false);
         isSetJinyan = getIntent().getBooleanExtra("isSetJinyan", false);
+        isForward = getIntent().getBooleanExtra("isForward", false);
         if (isAddGroupMember || isDeleteGroupMember || isSetManager || isSetJinyan) {
             if (isSetManager) {
                 managerIdList = getIntent().getStringArrayListExtra("managerIdList");
@@ -214,6 +218,12 @@ public class SelectFriendsActivity extends BaseActivity implements View.OnClickL
             setTitle("设置管理员");
         } else if (isSetJinyan) {
             setTitle("添加禁言");
+        } else if (isForward) {
+            // TODO: 2019/6/11 转发也暂时只能转发给一个联系人
+            setTitle("选择联系人");
+            if (!getSharedPreferences("config", MODE_PRIVATE).getBoolean("isDebug", false)) {
+                isStartPrivateChat = true;
+            }
         } else {
             setTitle(getString(R.string.select_contact));
             if (!getSharedPreferences("config", MODE_PRIVATE).getBoolean("isDebug", false)) {
@@ -371,6 +381,11 @@ public class SelectFriendsActivity extends BaseActivity implements View.OnClickL
         if (deleteGroupMemberList != null && deleteGroupMemberList.size() > 0) {
             for (GroupMember deleteMember : deleteGroupMemberList) {
                 if (deleteMember.getUserId().contains(getSharedPreferences("config", MODE_PRIVATE).getString(SealConst.SEALTALK_LOGIN_ID, ""))) {
+                    // 去掉本人
+                    continue;
+                }
+                if (deleteMember.getUserId().contains(creatorId)) {
+                    // 去掉群主
                     continue;
                 }
                 data_list.add(new Friend(deleteMember.getUserId(),
@@ -397,7 +412,7 @@ public class SelectFriendsActivity extends BaseActivity implements View.OnClickL
         if (setManagerList != null && setManagerList.size() > 0) {
             for (GroupMember deleteMember : setManagerList) {
                 if (deleteMember.getUserId().contains(getSharedPreferences("config", MODE_PRIVATE).getString(SealConst.SEALTALK_LOGIN_ID, ""))) {
-                    // 去掉群主
+                    // 去掉本人（群主）
                     continue;
                 }
                 if (idStr.contains(deleteMember.getUserId())) {
@@ -428,7 +443,7 @@ public class SelectFriendsActivity extends BaseActivity implements View.OnClickL
         if (setJinyanList != null && setJinyanList.size() > 0) {
             for (GroupMember deleteMember : setJinyanList) {
                 if (deleteMember.getUserId().contains(getSharedPreferences("config", MODE_PRIVATE).getString(SealConst.SEALTALK_LOGIN_ID, ""))) {
-                    // 去掉群主
+                    // 去掉本人
                     continue;
                 }
                 if (idStr.contains(deleteMember.getUserId())) {
@@ -877,6 +892,18 @@ public class SelectFriendsActivity extends BaseActivity implements View.OnClickL
                             finish();
                         } else {
                             NToast.shortToast(mContext, getString(R.string.at_least_one_friend_to_create_group));
+                            mHeadRightText.setClickable(true);
+                        }
+                    } else if (isForward) {
+                        if (createGroupList.size() > 0) {
+                            mHeadRightText.setClickable(true);
+                            Intent intent = new Intent();
+                            intent.putExtra("conversationType", Conversation.ConversationType.PRIVATE);
+                            intent.putExtra("targetId", createGroupList.get(0).getUserId());
+                            setResult(RESULT_OK, intent);
+                            finish();
+                        } else {
+                            NToast.shortToast(mContext, "请至少选择一位联系人");
                             mHeadRightText.setClickable(true);
                         }
                     } else {

@@ -2,10 +2,14 @@ package cn.rongcloud.im.ui.activity.forward;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -18,18 +22,16 @@ import java.util.Locale;
 
 import cn.rongcloud.im.App;
 import cn.rongcloud.im.R;
-import cn.rongcloud.im.server.pinyin.CharacterParser;
 import cn.rongcloud.im.server.widget.LoadDialog;
 import cn.rongcloud.im.server.widget.SelectableRoundedImageView;
 import cn.rongcloud.im.ui.activity.BaseActivity;
 import cn.rongcloud.im.ui.activity.SelectFriendsActivity;
-import cn.rongcloud.im.ui.activity.records.MemberActivity;
 import io.rong.imageloader.core.ImageLoader;
+import io.rong.imkit.tools.CharacterParser;
 import io.rong.imkit.userInfoCache.RongUserInfoManager;
 import io.rong.imlib.RongIMClient;
 import io.rong.imlib.model.Conversation;
 import io.rong.imlib.model.Group;
-import io.rong.imlib.model.Message;
 import io.rong.imlib.model.UserInfo;
 
 /**
@@ -40,6 +42,7 @@ public class ForwardListActivity extends BaseActivity implements View.OnClickLis
     private List<Conversation> mSourceDataList = new ArrayList<>();
     private ListView mLvChat;
     private ForwardListAdapter mAdapter;
+    private EditText mEtSearch;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +65,7 @@ public class ForwardListActivity extends BaseActivity implements View.OnClickLis
                 LoadDialog.dismiss(mContext);
                 mSourceDataList.clear();
                 mSourceDataList.addAll(conversations);
+                mAdapter.setList(mSourceDataList);
                 mAdapter.notifyDataSetChanged();
             }
 
@@ -73,6 +77,54 @@ public class ForwardListActivity extends BaseActivity implements View.OnClickLis
     }
 
     private void initView() {
+        mEtSearch = ((EditText) findViewById(R.id.et_search));
+        mEtSearch.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                //当输入框里面的值为空，更新为原来的列表，否则为过滤数据列表
+                List<Conversation> filterDataList = new ArrayList<>();
+
+                if (TextUtils.isEmpty(s.toString())) {
+                    filterDataList = mSourceDataList;
+                } else {
+                    filterDataList.clear();
+                    for (Conversation conversation : mSourceDataList) {
+                        Conversation.ConversationType conversationType = conversation.getConversationType();
+                        String targetId = conversation.getTargetId();
+                        String name = null;
+                        if (conversationType == Conversation.ConversationType.PRIVATE) {
+                            UserInfo userInfo = RongUserInfoManager.getInstance().getUserInfo(targetId);
+                            if (userInfo != null) {
+                                name = userInfo.getName();
+                            }
+                        } else if (conversationType == Conversation.ConversationType.GROUP) {
+                            Group groupInfo = RongUserInfoManager.getInstance().getGroupInfo(targetId);
+                            if (groupInfo != null) {
+                                name = groupInfo.getName();
+                            }
+                        }
+
+                        if (name != null) {
+                            if (name.contains(s) || CharacterParser.getInstance().getSelling(name).startsWith(s.toString())) {
+                                filterDataList.add(conversation);
+                            }
+                        }
+                    }
+                }
+                mAdapter.setList(filterDataList);
+                mAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
         findViewById(R.id.ll_create_chat).setOnClickListener(this);
         mLvChat = ((ListView) findViewById(R.id.lv_chat));
         mAdapter = new ForwardListAdapter();
@@ -83,7 +135,8 @@ public class ForwardListActivity extends BaseActivity implements View.OnClickLis
                 Intent intent = getIntent();
                 intent.putExtra("conversationType", mSourceDataList.get(position).getConversationType());
                 intent.putExtra("targetId", mSourceDataList.get(position).getTargetId());
-                setResult(RESULT_OK, intent);
+                intent.setClass(ForwardListActivity.this, ForwardDetailActivity.class);
+                startActivity(intent);
                 finish();
             }
         });
@@ -94,30 +147,51 @@ public class ForwardListActivity extends BaseActivity implements View.OnClickLis
         switch (v.getId()) {
             case R.id.ll_create_chat:
                 Intent intent = new Intent(new Intent(mContext, SelectFriendsActivity.class));
-                intent.putExtra("createGroup", true);
-                mContext.startActivity(intent);
+                intent.putExtra("isForward", true);
+                startActivityForResult(intent, 100);
                 break;
         }
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (data != null) {
+            switch (requestCode) {
+                default:
+                    break;
+                case 100:
+                    Intent intent = getIntent();
+                    intent.putExtra("conversationType", data.getSerializableExtra("conversationType"));
+                    intent.putExtra("targetId", data.getStringExtra("targetId"));
+                    intent.setClass(ForwardListActivity.this, ForwardDetailActivity.class);
+                    startActivity(intent);
+                    finish();
+                    break;
+            }
+        }
+    }
+
     private class ForwardListAdapter extends BaseAdapter {
+        private List<Conversation> mList = new ArrayList<>();
+
         @Override
         public int getCount() {
-            if (mSourceDataList != null) {
-                return mSourceDataList.size();
+            if (mList != null) {
+                return mList.size();
             }
             return 0;
         }
 
         @Override
         public Object getItem(int position) {
-            if (mSourceDataList == null)
+            if (mList == null)
                 return null;
 
-            if (position >= mSourceDataList.size())
+            if (position >= mList.size())
                 return null;
 
-            return mSourceDataList.get(position);
+            return mList.get(position);
         }
 
         @Override
@@ -146,12 +220,16 @@ public class ForwardListActivity extends BaseActivity implements View.OnClickLis
             Conversation.ConversationType conversationType = conversation.getConversationType();
             if (conversationType == Conversation.ConversationType.PRIVATE) {
                 UserInfo userInfo = RongUserInfoManager.getInstance().getUserInfo(targetId);
-                ImageLoader.getInstance().displayImage(userInfo.getPortraitUri().toString(), viewHolder.portraitImageView, App.getOptions());
-                viewHolder.nameTextView.setText(userInfo.getName());
+                if (userInfo != null) {
+                    ImageLoader.getInstance().displayImage(userInfo.getPortraitUri().toString(), viewHolder.portraitImageView, App.getOptions());
+                    viewHolder.nameTextView.setText(userInfo.getName());
+                }
             } else {
                 Group groupInfo = RongUserInfoManager.getInstance().getGroupInfo(targetId);
-                ImageLoader.getInstance().displayImage(groupInfo.getPortraitUri().toString(), viewHolder.portraitImageView, App.getOptions());
-                viewHolder.nameTextView.setText(groupInfo.getName());
+                if (groupInfo != null) {
+                    ImageLoader.getInstance().displayImage(groupInfo.getPortraitUri().toString(), viewHolder.portraitImageView, App.getOptions());
+                    viewHolder.nameTextView.setText(groupInfo.getName());
+                }
             }
 //            viewHolder.chatRecordsDetailTextView.setText(CharacterParser.getInstance().getColoredChattingRecord("", conversation.getLatestMessage()));
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.CHINA);
@@ -159,6 +237,10 @@ public class ForwardListActivity extends BaseActivity implements View.OnClickLis
             String formatDate = date.replace("-", "/");
             viewHolder.chatRecordsDateTextView.setText(formatDate);
             return convertView;
+        }
+
+        public void setList(List<Conversation> list) {
+            mList = list;
         }
     }
 
