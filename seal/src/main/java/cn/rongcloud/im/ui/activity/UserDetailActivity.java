@@ -24,11 +24,15 @@ import cn.rongcloud.im.SealAppContext;
 import cn.rongcloud.im.SealConst;
 import cn.rongcloud.im.SealUserInfoManager;
 import cn.rongcloud.im.db.Friend;
+import cn.rongcloud.im.model.NetData;
+import cn.rongcloud.im.net.HttpUtil;
+import cn.rongcloud.im.net.NetObserver;
 import cn.rongcloud.im.server.broadcast.BroadcastManager;
 import cn.rongcloud.im.server.network.http.HttpException;
 import cn.rongcloud.im.server.pinyin.CharacterParser;
 import cn.rongcloud.im.server.response.FriendInvitationResponse;
 import cn.rongcloud.im.server.response.GetFriendInfoByIDResponse;
+import cn.rongcloud.im.server.response.GetGroupDetailResponse;
 import cn.rongcloud.im.server.response.GetUserInfoByIdResponse;
 import cn.rongcloud.im.server.utils.NToast;
 import cn.rongcloud.im.server.utils.RongGenerate;
@@ -36,6 +40,9 @@ import cn.rongcloud.im.server.widget.DialogWithYesOrNoUtils;
 import cn.rongcloud.im.server.widget.LoadDialog;
 import cn.rongcloud.im.ui.activity.forward.ForwardDetailActivity;
 import cn.rongcloud.im.ui.widget.SinglePopWindow;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Action;
+import io.reactivex.schedulers.Schedulers;
 import io.rong.imageloader.core.ImageLoader;
 import io.rong.imkit.RongIM;
 import io.rong.imlib.IRongCallback;
@@ -74,12 +81,12 @@ public class UserDetailActivity extends BaseActivity implements View.OnClickList
     private int mType;
     private SharedPreferences sp;
     private String mUserId;
-    public static io.rong.imlib.model.Message mForwardMessage;
     private static final int CLICK_CONVERSATION_USER_PORTRAIT = 1;
     private static final int CLICK_CONTACT_FRAGMENT_FRIEND = 2;
 
 
     private UserDetailActivityHandler mHandler = new UserDetailActivityHandler(this);
+    private String mTargetId;// 只有在聊天头像点进来的用户详情会有这个id
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -111,6 +118,7 @@ public class UserDetailActivity extends BaseActivity implements View.OnClickList
         mUserId = sp.getString(SealConst.SEALTALK_LOGIN_ID, "");
         mType = getIntent().getIntExtra("type", 0);
         openProtect = getIntent().getBooleanExtra("openProtect", false);
+        mTargetId = getIntent().getStringExtra("targetId");
         if (mType == CLICK_CONVERSATION_USER_PORTRAIT) {
             SealAppContext.getInstance().pushActivity(this);
         }
@@ -179,6 +187,36 @@ public class UserDetailActivity extends BaseActivity implements View.OnClickList
                 mNoteNameLinearLayout.setVisibility(View.GONE);
             }
         }
+
+        if (!TextUtils.isEmpty(mTargetId)) {
+            getGroupDetail();
+        }
+    }
+
+    // 判断是否开启保护认证
+    private void getGroupDetail() {
+        LoadDialog.show(mContext);
+        HttpUtil.apiS()
+                .getGroupDetail(mTargetId, mUserId)
+                .subscribeOn(Schedulers.io())
+                .doOnTerminate(new Action() {
+                    @Override
+                    public void run() throws Exception {
+                        LoadDialog.dismiss(mContext);
+                    }
+                })
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new NetObserver<NetData<GetGroupDetailResponse>>() {
+                    @Override
+                    public void Successful(NetData<GetGroupDetailResponse> response) {
+                        openProtect = "1".equals(response.result.isProtected);
+                    }
+
+                    @Override
+                    public void Failure(Throwable t) {
+
+                    }
+                });
     }
 
 

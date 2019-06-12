@@ -26,10 +26,18 @@ import java.util.Locale;
 import cn.rongcloud.im.R;
 import cn.rongcloud.im.SealAppContext;
 import cn.rongcloud.im.SealConst;
+import cn.rongcloud.im.model.NetData;
+import cn.rongcloud.im.net.HttpUtil;
+import cn.rongcloud.im.net.NetObserver;
+import cn.rongcloud.im.server.response.GetGroupDetailResponse;
 import cn.rongcloud.im.server.utils.NLog;
 import cn.rongcloud.im.server.utils.NToast;
+import cn.rongcloud.im.server.widget.LoadDialog;
 import cn.rongcloud.im.ui.fragment.ConversationFragmentEx;
 import cn.rongcloud.im.ui.widget.LoadingDialog;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Action;
+import io.reactivex.schedulers.Schedulers;
 import io.rong.imkit.RongIM;
 import io.rong.imkit.RongKitIntent;
 import io.rong.imkit.fragment.UriFragment;
@@ -210,6 +218,7 @@ public class ConversationActivity extends BaseActivity implements View.OnClickLi
 
 
         //CallKit end 2
+
     }
 
     /**
@@ -678,4 +687,6 @@ public class ConversationActivity extends BaseActivity implements View.OnClickLi
             }
         }
     }
+
+
 }

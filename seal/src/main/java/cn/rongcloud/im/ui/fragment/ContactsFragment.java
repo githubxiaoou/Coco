@@ -89,7 +89,7 @@ public class ContactsFragment extends Fragment implements View.OnClickListener {
         View view = inflater.inflate(R.layout.activity_address, container, false);
         initView(view);
         initData();
-        updateUI();
+        updateUI(false);
         refreshUIListener();
         return view;
     }
@@ -237,7 +237,7 @@ public class ContactsFragment extends Fragment implements View.OnClickListener {
             public void onReceive(Context context, Intent intent) {
                 String command = intent.getAction();
                 if (!TextUtils.isEmpty(command)) {
-                    updateUI();
+                    updateUI(true);
                 }
             }
         });
@@ -271,7 +271,7 @@ public class ContactsFragment extends Fragment implements View.OnClickListener {
         }
     }
 
-    private void updateUI() {
+    private void updateUI(boolean forceForNet) {
         SealUserInfoManager.getInstance().getFriends(new SealUserInfoManager.ResultCallback<List<Friend>>() {
             @Override
             public void onSuccess(List<Friend> friendsList) {
@@ -282,7 +282,7 @@ public class ContactsFragment extends Fragment implements View.OnClickListener {
             public void onError(String errString) {
                 updateFriendsList(null);
             }
-        }, true);
+        }, forceForNet);
     }
 
     private void updateFriendsList(List<Friend> friendsList) {

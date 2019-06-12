@@ -64,7 +64,7 @@ public class SealAppContext implements RongIM.ConversationListBehaviorListener,
         RongIM.GroupUserInfoProvider,
         RongIM.LocationProvider,
         RongIMClient.ConnectionStatusListener,
-        RongIM.ConversationBehaviorListener,
+        RongIM.ConversationClickListener,
         RongIM.IGroupMembersProvider {
 
     private static final int CLICK_CONVERSATION_USER_PORTRAIT = 1;
@@ -129,7 +129,7 @@ public class SealAppContext implements RongIM.ConversationListBehaviorListener,
      */
     private void initListener() {
         RongIM.getInstance().setSamplingRate(RongIM.SamplingRate.RC_SAMPLE_RATE_16000);
-        RongIM.setConversationBehaviorListener(this);//设置会话界面操作的监听器。
+        RongIM.setConversationClickListener(this);//设置会话界面操作的监听器。
         RongIM.setConversationListBehaviorListener(this);
         RongIM.setConnectionStatusListener(this);
         RongIM.setUserInfoProvider(this, true);
@@ -432,7 +432,7 @@ public class SealAppContext implements RongIM.ConversationListBehaviorListener,
     }
 
     @Override
-    public boolean onUserPortraitClick(Context context, Conversation.ConversationType conversationType, UserInfo userInfo) {
+    public boolean onUserPortraitClick(Context context, Conversation.ConversationType conversationType, UserInfo userInfo, String targetId) {
         if (conversationType == Conversation.ConversationType.CUSTOMER_SERVICE || conversationType == Conversation.ConversationType.PUBLIC_SERVICE || conversationType == Conversation.ConversationType.APP_PUBLIC_SERVICE) {
             return false;
         }
@@ -443,13 +443,14 @@ public class SealAppContext implements RongIM.ConversationListBehaviorListener,
             Friend friend = CharacterParser.getInstance().generateFriendFromUserInfo(userInfo);
             intent.putExtra("friend", friend);
             intent.putExtra("type", CLICK_CONVERSATION_USER_PORTRAIT);
+            intent.putExtra("targetId", targetId);
             context.startActivity(intent);
         }
         return true;
     }
 
     @Override
-    public boolean onUserPortraitLongClick(Context context, Conversation.ConversationType conversationType, UserInfo userInfo) {
+    public boolean onUserPortraitLongClick(Context context, Conversation.ConversationType conversationType, UserInfo userInfo, String targetId) {
         return false;
     }
 
@@ -478,7 +479,7 @@ public class SealAppContext implements RongIM.ConversationListBehaviorListener,
     }
 
     @Override
-    public boolean onMessageLinkClick(Context context, String s) {
+    public boolean onMessageLinkClick(Context context, String s, io.rong.imlib.model.Message message) {
         return false;
     }
 
