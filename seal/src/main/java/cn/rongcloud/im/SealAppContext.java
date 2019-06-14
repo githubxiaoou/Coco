@@ -51,6 +51,7 @@ import io.rong.imlib.model.UserInfo;
 import io.rong.message.ContactNotificationMessage;
 import io.rong.message.GroupNotificationMessage;
 import io.rong.message.ImageMessage;
+import io.rong.message.InformationNotificationMessage;
 
 /**
  * 融云相关监听 事件集合类
@@ -76,6 +77,7 @@ public class SealAppContext implements RongIM.ConversationListBehaviorListener,
     public static final String UPDATE_GROUP_NAME = "update_group_name";
     public static final String UPDATE_GROUP_MEMBER = "update_group_member";
     public static final String GROUP_DISMISS = "group_dismiss";
+    public static final String CHANGE_CREATOR = "change_creator";
 
     private Context mContext;
 
@@ -365,8 +367,11 @@ public class SealAppContext implements RongIM.ConversationListBehaviorListener,
                 e.printStackTrace();
             }
             return true;
-        } else if (messageContent instanceof ImageMessage) {
-            //ImageMessage imageMessage = (ImageMessage) messageContent;
+        } else if (messageContent instanceof InformationNotificationMessage) {
+            InformationNotificationMessage informationNotificationMessage = (InformationNotificationMessage) messageContent;
+            if (informationNotificationMessage.getMessage().contains("已成为新群主")) {
+//                BroadcastManager.getInstance(mContext).sendBroadcast(CHANGE_CREATOR);
+            }
         }
         return false;
     }

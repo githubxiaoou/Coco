@@ -19,6 +19,7 @@ public class GroupMember extends UserInfo {
     private String groupName;
     private String groupNameSpelling;
     private String groupPortraitUri;
+    public int power;// 0普通，1管理员，2群主
 
     public GroupMember(String userId, String name, Uri portraitUri) {
         super(userId, name, portraitUri);

@@ -33,6 +33,32 @@
             android:visibility="gone" />
 
         <TextView
+            android:id="@+id/tv_master"
+            android:text="群主"
+            android:textSize="10sp"
+            android:textColor="@color/white"
+            android:padding="2dp"
+            android:background="@color/color_fed55a"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignRight="@id/iv_avatar"
+            android:layout_alignTop="@id/iv_avatar"
+            android:visibility="gone"/>
+
+        <TextView
+            android:id="@+id/tv_admin"
+            android:text="管理员"
+            android:textSize="10sp"
+            android:textColor="@color/white"
+            android:padding="2dp"
+            android:background="@color/color_46a2fa"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignRight="@id/iv_avatar"
+            android:layout_alignTop="@id/iv_avatar"
+            android:visibility="gone"/>
+
+        <TextView
             android:id="@+id/tv_username"
             android:layout_width="56dp"
             android:layout_height="wrap_content"

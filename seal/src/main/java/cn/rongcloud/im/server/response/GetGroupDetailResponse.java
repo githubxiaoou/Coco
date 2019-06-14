@@ -60,4 +60,6 @@ public class GetGroupDetailResponse extends NetData {
     public int adminCount;
     @SerializedName("isAdmin")
     public String isAdmin;//1是管理员，其它不是
+    @SerializedName("adminIds")
+    public String adminIds;// 管理员id合集，以逗号拼接
 }

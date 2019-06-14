@@ -202,7 +202,7 @@ public class GroupManageActivity extends BaseActivity implements View.OnClickLis
                 intent = new Intent(mContext, PickFriendActivity.class);
                 intent.putExtra("isSetMaster", true);
                 intent.putExtra("GroupId", groupId);
-                startActivity(intent);
+                startActivityForResult(intent, 300);
                 break;
         }
     }
@@ -216,6 +216,9 @@ public class GroupManageActivity extends BaseActivity implements View.OnClickLis
                     break;
                 case 200:
                     mTvGroupId.setText(data.getStringExtra("newName"));
+                    break;
+                case 300:
+                    finish();
                     break;
             }
         }

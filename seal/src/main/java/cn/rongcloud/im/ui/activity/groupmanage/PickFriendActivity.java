@@ -238,6 +238,7 @@ public class PickFriendActivity extends BaseActivity implements AdapterView.OnIt
                                     @Override
                                     public void Successful(NetData<List<String>> stringNetData) {
                                         NToast.shortToast(mContext, "设置成功");
+                                        setResult(RESULT_OK, getIntent());
                                         finish();
                                     }
 

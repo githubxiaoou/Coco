@@ -23,6 +23,8 @@ import com.qiniu.android.storage.UploadManager;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import cn.rongcloud.im.App;
@@ -70,6 +72,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.Action;
 import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
+import io.rong.contactcard.activities.ContactListActivity;
 import io.rong.imageloader.core.ImageLoader;
 import io.rong.imkit.RongIM;
 import io.rong.imkit.emoticon.AndroidEmoji;
@@ -97,10 +100,11 @@ public class GroupDetailActivity extends BaseActivity implements View.OnClickLis
     private static final int SET_GROUP_NAME = 29;
     private static final int GET_GROUP_INFO = 30;
     private static final int UPDATE_GROUP_NAME = 32;
-//    private static final int GET_QI_NIU_TOKEN = 133;
+    //    private static final int GET_QI_NIU_TOKEN = 133;
     private static final int UPDATE_GROUP_HEADER = 25;
     private static final int SEARCH_TYPE_FLAG = 1;
     private static final int CHECKGROUPURL = 39;
+    private static final String CHANGE_CREATOR = "change_creator";
 
 
     private boolean isCreated = false;
@@ -163,12 +167,24 @@ public class GroupDetailActivity extends BaseActivity implements View.OnClickLis
         setGroupsInfoChangeListener();
         sp = getSharedPreferences("config", MODE_PRIVATE);
         mUserId = sp.getString(SealConst.SEALTALK_LOGIN_ID, "");
-
         initData();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (mGroupMember != null) {
+            getGroupDetail();
+        }
+    }
+
     private void initData() {
-        getGroupDetail();
+        BroadcastManager.getInstance(mContext).addAction(CHANGE_CREATOR, new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                getGroupDetail();
+            }
+        });
     }
 
 
@@ -199,6 +215,18 @@ public class GroupDetailActivity extends BaseActivity implements View.OnClickLis
                             mGroupNotice.setVisibility(View.VISIBLE);
                         }
                         isAdmin = null != mGetGroupDetailResponse && "1".equals(mGetGroupDetailResponse.isAdmin);
+                        isCreated = null != mGetGroupDetailResponse && mGetGroupDetailResponse.creatorId.equals(mUserId);
+                        // 排个序
+                        for (int i = 0; i < mGroupMember.size(); i++) {
+                            GroupMember member = mGroupMember.get(i);
+                            if (member.getUserId().equals(mGetGroupDetailResponse.creatorId)) {
+                                member.power = 2;
+                            }
+                            if (mGetGroupDetailResponse.adminIds.contains(member.getUserId())) {
+                                member.power = 1;
+                            }
+                        }
+                        Collections.sort(mGroupMember, PowerComparator.getInstance());
                         mGridView.setAdapter(mAdapter);
                     }
 
@@ -235,6 +263,7 @@ public class GroupDetailActivity extends BaseActivity implements View.OnClickLis
                 if (groupMembers != null && groupMembers.size() > 0) {
                     mGroupMember = groupMembers;
                     initGroupMemberData();
+                    getGroupDetail();
                 }
             }
 
@@ -641,7 +670,7 @@ public class GroupDetailActivity extends BaseActivity implements View.OnClickLis
                                 return;
                             }
                             if (editText.length() < 2 && editText.length() > 10) {
-                                NToast.shortToast(mContext, mContext.getString(R.string.group_name_word_limit_format,2,10));
+                                NToast.shortToast(mContext, mContext.getString(R.string.group_name_word_limit_format, 2, 10));
                                 return;
                             }
 
@@ -770,6 +799,8 @@ public class GroupDetailActivity extends BaseActivity implements View.OnClickLis
             SelectableRoundedImageView iv_avatar = (SelectableRoundedImageView) convertView.findViewById(R.id.iv_avatar);
             TextView tv_username = (TextView) convertView.findViewById(R.id.tv_username);
             ImageView badge_delete = (ImageView) convertView.findViewById(R.id.badge_delete);
+            TextView tvMaster = (TextView) convertView.findViewById(R.id.tv_master);
+            TextView tvAdmin = (TextView) convertView.findViewById(R.id.tv_admin);
 
             // 最后一个item，减人按钮；如果是管理员，也可以删除操作
             if (position == getCount() - 1 && (isCreated || isAdmin)) {
@@ -791,7 +822,7 @@ public class GroupDetailActivity extends BaseActivity implements View.OnClickLis
                     }
 
                 });
-            } else if (((isCreated || isAdmin) && position == getCount() - 2) || (!(isCreated || isAdmin)&& position == getCount() - 1)) {
+            } else if (((isCreated || isAdmin) && position == getCount() - 2) || (!(isCreated || isAdmin) && position == getCount() - 1)) {
 //            } else if ((isCreated && position == getCount() - 2) || (!isCreated && position == getCount() - 1)) {
                 // 加入按钮
                 tv_username.setText("");
@@ -824,6 +855,11 @@ public class GroupDetailActivity extends BaseActivity implements View.OnClickLis
                     tv_username.setText(friend.getDisplayName());
                 } else {
                     tv_username.setText(bean.getName());
+                }
+
+                if (mGetGroupDetailResponse != null) {
+                    tvMaster.setVisibility(mGetGroupDetailResponse.creatorId.equals(bean.getUserId()) ? View.VISIBLE : View.GONE);
+                    tvAdmin.setVisibility(mGetGroupDetailResponse.adminIds.contains(bean.getUserId()) ? View.VISIBLE : View.GONE);
                 }
 
                 String portraitUri = SealUserInfoManager.getInstance().getPortraitUri(bean);
@@ -1158,5 +1194,22 @@ public class GroupDetailActivity extends BaseActivity implements View.OnClickLis
     public void onBackPressed() {
         SealAppContext.getInstance().popActivity(this);
         super.onBackPressed();
+    }
+
+    public static class PowerComparator implements Comparator<GroupMember> {
+
+        public static PowerComparator instance = null;
+
+        public static PowerComparator getInstance() {
+            if (instance == null) {
+                instance = new PowerComparator();
+            }
+            return instance;
+        }
+
+        public int compare(GroupMember o1, GroupMember o2) {
+            return o2.power - o1.power;
+        }
+
     }
 }
