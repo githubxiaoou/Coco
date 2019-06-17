@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import org.json.JSONObject;
 
@@ -95,14 +96,18 @@ public class ConversationFragmentEx extends ConversationFragment {
         super.onViewCreated(view, savedInstanceState);
         sp = getActivity().getSharedPreferences("config", 0x0000);
         getBgImage();
-        if (mConversationType != Conversation.ConversationType.PRIVATE) {
-            // 群聊为管理员和群主添加撤回按钮
-            getGroupDetail();
-        }
         addForward();
         addCollection();
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (mConversationType != Conversation.ConversationType.PRIVATE) {
+            // 群聊为管理员和群主添加撤回按钮
+            getGroupDetail();
+        }
+    }
 
     /**
      * 获取群详情，如果是群主或管理员，可以撤销消息
@@ -152,7 +157,11 @@ public class ConversationFragmentEx extends ConversationFragment {
 
         this.clickAction = (new MessageItemLongClickAction.Builder()).title("撤回消息").actionListener(new MessageItemLongClickAction.MessageItemLongClickListener() {
             public boolean onMessageItemLongClick(Context context, UIMessage message) {
-                RongIM.getInstance().recallMessage(message.getMessage(), getPushContent(getActivity(), message));
+                try {
+                    RongIM.getInstance().recallMessage(message.getMessage(), getPushContent(getActivity(), message));
+                } catch (Exception e) {
+                    NToast.shortToast(getActivity(), "您已经不是管理员，请刷新重试");
+                }
                 return true;
             }
         }).build();
