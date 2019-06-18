@@ -1,7 +1,9 @@
 package cn.rongcloud.im.ui.activity.collection;
 
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.FragmentTransaction;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +13,10 @@ import android.widget.BaseAdapter;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.lang.reflect.Array;
 import java.text.SimpleDateFormat;
@@ -30,6 +36,7 @@ import cn.rongcloud.im.server.utils.NToast;
 import cn.rongcloud.im.server.widget.LoadDialog;
 import cn.rongcloud.im.server.widget.SelectableRoundedImageView;
 import cn.rongcloud.im.ui.activity.BaseActivity;
+import cn.rongcloud.im.ui.fragment.ConversationFragmentEx;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
@@ -41,13 +48,19 @@ import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 import io.rong.imageloader.core.ImageLoader;
+import io.rong.imkit.RongContext;
 import io.rong.imkit.RongIM;
+import io.rong.imkit.model.UIMessage;
 import io.rong.imkit.userInfoCache.RongUserInfoManager;
+import io.rong.imkit.widget.adapter.MessageListAdapter;
+import io.rong.imkit.widget.provider.IContainerItemProvider;
+import io.rong.imkit.widget.provider.IContainerItemProvider.MessageProvider;
 import io.rong.imlib.RongIMClient;
 import io.rong.imlib.model.Conversation;
 import io.rong.imlib.model.Group;
 import io.rong.imlib.model.Message;
 import io.rong.imlib.model.UserInfo;
+import io.rong.message.TextMessage;
 import io.rong.push.RongPushClient;
 
 /**
@@ -56,7 +69,7 @@ import io.rong.push.RongPushClient;
  */
 public class CollectionActivity extends BaseActivity {
     private boolean mCompleteFlag;
-    private List<Message> mSourceDataList = new ArrayList<>();
+    private List<UIMessage> mSourceDataList = new ArrayList<>();
     private ListView mLvCollection;
     private ChattingRecordsAdapter mAdapter;
     private boolean mayHaveMoreMsg;// 可以加载更多
@@ -108,20 +121,66 @@ public class CollectionActivity extends BaseActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Object object = parent.getItemAtPosition(position);
-                if (object instanceof Message) {
-                    Message message = (Message)object;
-                    String title;
-                    if (message.getConversationType() == Conversation.ConversationType.GROUP) {
-                        Group groupInfo = RongUserInfoManager.getInstance().getGroupInfo(message.getTargetId());
-                        title = groupInfo.getName();
+                if (object instanceof UIMessage) {
+                    UIMessage message = (UIMessage)object;
+//                    String title;
+//                    if (message.getConversationType() == Conversation.ConversationType.GROUP) {
+//                        Group groupInfo = RongUserInfoManager.getInstance().getGroupInfo(message.getTargetId());
+//                        title = groupInfo.getName();
+//                    } else {
+//                        UserInfo userInfo = RongUserInfoManager.getInstance().getUserInfo(message.getSenderUserId());
+//                        title = userInfo.getName();
+//                    }
+//                    RongIM.getInstance().startConversation(mContext, message.getConversationType(), message.getTargetId(), title, mSourceDataList.get(position).getSentTime());
+
+                    // 消息点击事件
+                    Object provider;
+                    if (getNeedEvaluate(message)) {
+                        provider = RongContext.getInstance().getEvaluateProvider();
                     } else {
-                        UserInfo userInfo = RongUserInfoManager.getInstance().getUserInfo(message.getSenderUserId());
-                        title = userInfo.getName();
+                        provider = RongContext.getInstance().getMessageTemplate(message.getContent().getClass());
                     }
-                    RongIM.getInstance().startConversation(mContext, message.getConversationType(), message.getTargetId(), title, mSourceDataList.get(position).getSentTime());
+
+                    if (provider != null) {
+                        // TODO: 2019/6/18 这里存在转化错误
+                        try {
+                            ((MessageProvider) provider).onItemClick(view, position, message.getContent(), message);
+                        } catch (Exception e) {
+
+                        }
+                    }
                 }
             }
         });
+    }
+
+    boolean evaForRobot = false;
+    boolean robotMode = true;
+    protected boolean getNeedEvaluate(UIMessage data) {
+        String extra = "";
+        String robotEva = "";
+        String sid = "";
+        if (data != null && data.getConversationType() != null && data.getConversationType().equals(Conversation.ConversationType.CUSTOMER_SERVICE)) {
+            if (data.getContent() instanceof TextMessage) {
+                extra = ((TextMessage)data.getContent()).getExtra();
+                if (TextUtils.isEmpty(extra)) {
+                    return false;
+                }
+
+                try {
+                    JSONObject jsonObj = new JSONObject(extra);
+                    robotEva = jsonObj.optString("robotEva");
+                    sid = jsonObj.optString("sid");
+                } catch (JSONException var6) {
+                }
+            }
+
+            if (data.getMessageDirection() == Message.MessageDirection.RECEIVE && data.getContent() instanceof TextMessage && this.evaForRobot && this.robotMode && !TextUtils.isEmpty(robotEva) && !TextUtils.isEmpty(sid) && !data.getIsHistoryMessage()) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private int mFuck;
@@ -135,7 +194,7 @@ public class CollectionActivity extends BaseActivity {
                         @Override
                         public void onSuccess(Message message) {
                             mFuck++;
-                            mSourceDataList.add(message);
+                            mSourceDataList.add(UIMessage.obtain(message));
                             if (mFuck == mMessageIds.size()) {
                                 emitter.onComplete();
                             }
@@ -210,7 +269,7 @@ public class CollectionActivity extends BaseActivity {
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             final ChattingRecordsViewHolder viewHolder;
-            Message message = (Message) getItem(position);
+            UIMessage message = (UIMessage) getItem(position);
             if (convertView == null) {
                 viewHolder = new ChattingRecordsViewHolder();
                 convertView = View.inflate(getBaseContext(), R.layout.item_filter_chatting_records_list, null);

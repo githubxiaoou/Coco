@@ -185,6 +185,12 @@ public class ConversationFragmentEx extends ConversationFragment {
         this.clickAction = (new MessageItemLongClickAction.Builder()).title("收藏").actionListener(new MessageItemLongClickAction.MessageItemLongClickListener() {
             @Override
             public boolean onMessageItemLongClick(Context context, UIMessage uiMessage) {
+                // 暂不支持收藏语音
+                if (uiMessage.mMessage.getObjectName().contains("Vc")) {
+                    NToast.shortToast(getActivity(), "暂不支持语音收藏");
+                    return true;
+                }
+
                 SharedPreferences.Editor edit = sp.edit();
                 String oldIds = sp.getString(mUserId, "");
                 String newId = uiMessage.getUId();
