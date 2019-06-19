@@ -22,11 +22,15 @@ import cn.rongcloud.im.db.Friend;
 import cn.rongcloud.im.db.GroupMember;
 import cn.rongcloud.im.db.Groups;
 import cn.rongcloud.im.message.module.SealExtensionModule;
+import cn.rongcloud.im.server.SealAction;
 import cn.rongcloud.im.server.broadcast.BroadcastManager;
+import cn.rongcloud.im.server.network.async.AsyncTaskManager;
+import cn.rongcloud.im.server.network.async.OnDataListener;
 import cn.rongcloud.im.server.network.http.HttpException;
 import cn.rongcloud.im.server.pinyin.CharacterParser;
 import cn.rongcloud.im.server.response.ContactNotificationMessageData;
 import cn.rongcloud.im.server.utils.NLog;
+import cn.rongcloud.im.server.utils.NToast;
 import cn.rongcloud.im.server.utils.json.JsonMananger;
 import cn.rongcloud.im.ui.activity.LoginActivity;
 import cn.rongcloud.im.ui.activity.MainActivity;
@@ -202,7 +206,7 @@ public class SealAppContext implements RongIM.ConversationListBehaviorListener,
 
     @Override
     public boolean onConversationPortraitClick(Context context, Conversation.ConversationType conversationType, String s) {
-        return false;
+        return true;
     }
 
     @Override
@@ -250,7 +254,7 @@ public class SealAppContext implements RongIM.ConversationListBehaviorListener,
         Log.e("swo onReceived", message.toString());
         MessageContent messageContent = message.getContent();
         if (messageContent instanceof ContactNotificationMessage) {
-            ContactNotificationMessage contactNotificationMessage = (ContactNotificationMessage) messageContent;
+            final ContactNotificationMessage contactNotificationMessage = (ContactNotificationMessage) messageContent;
             if (contactNotificationMessage.getOperation().equals("Request")) {
                 //对方发来好友邀请
                 BroadcastManager.getInstance(mContext).sendBroadcast(UPDATE_RED_DOT);
@@ -277,6 +281,34 @@ public class SealAppContext implements RongIM.ConversationListBehaviorListener,
                                     null, null,
                                     CharacterParser.getInstance().getSpelling(contactNotificationMessageData.getSourceUserNickname()),
                                     null));
+
+                    // 重新添加好友后，把对方重新移出黑名单
+                    RongIM.getInstance().removeFromBlacklist(contactNotificationMessage.getSourceUserId(), new RongIMClient.OperationCallback() {
+                        @Override
+                        public void onSuccess() {
+                            AsyncTaskManager.getInstance(mContext).request(111, new OnDataListener() {
+                                @Override
+                                public Object doInBackground(int requestCode, String parameter) throws HttpException {
+                                    return new SealAction(mContext).removeFromBlackList(contactNotificationMessage.getSourceUserId());
+                                }
+
+                                @Override
+                                public void onSuccess(int requestCode, Object result) {
+                                    SealUserInfoManager.getInstance().deleteBlackList(contactNotificationMessage.getSourceUserId());
+                                }
+
+                                @Override
+                                public void onFailure(int requestCode, int state, Object result) {
+
+                                }
+                            });
+                        }
+
+                        @Override
+                        public void onError(RongIMClient.ErrorCode errorCode) {
+                        }
+
+                    });
                 }
                 BroadcastManager.getInstance(mContext).sendBroadcast(UPDATE_FRIEND);
                 BroadcastManager.getInstance(mContext).sendBroadcast(UPDATE_RED_DOT);

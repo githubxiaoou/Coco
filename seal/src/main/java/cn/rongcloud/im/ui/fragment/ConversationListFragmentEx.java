@@ -46,7 +46,9 @@ public class ConversationListFragmentEx extends ConversationListFragment {
                 NToast.shortToast(getActivity(), "你们已经不是好友关系");
                 return;
             }
-        } else if (conversationType == Conversation.ConversationType.GROUP) {
+        }
+
+        if (conversationType == Conversation.ConversationType.GROUP) {
             List<GroupMember> groupMembers = SealUserInfoManager.getInstance().getGroupMembers(targetId);
             for (int i = 0; i < groupMembers.size(); i++) {
                 GroupMember member = groupMembers.get(i);

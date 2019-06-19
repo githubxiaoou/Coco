@@ -25,7 +25,6 @@
         android:maxLength="16"
         android:paddingLeft="14dp"
         android:paddingRight="14dp"
-        android:inputType="textPassword"
         android:textColor="#dadada"
         android:textSize="14sp" />
 

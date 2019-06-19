@@ -49,6 +49,7 @@ public class SinglePopWindow extends PopupWindow {
     private static final int ADDBLACKLIST = 167;
     private static final int REMOVEBLACKLIST = 168;
     private final BaseActivity mContext;
+    private final RongIMClient.BlacklistStatus mBlacklistStatus;
     private View conentView;
     private AsyncTaskManager asyncTaskManager;
 
@@ -83,6 +84,7 @@ public class SinglePopWindow extends PopupWindow {
         RelativeLayout rlSend = (RelativeLayout) conentView.findViewById(R.id.rl_send);
         final TextView blacklistText = (TextView) conentView.findViewById(R.id.blacklist_text_status);
 
+        mBlacklistStatus = blacklistStatus;
         if (blacklistStatus == RongIMClient.BlacklistStatus.IN_BLACK_LIST) {
             blacklistText.setText(R.string.remove_from_blacklist);
         } else {
@@ -197,12 +199,12 @@ public class SinglePopWindow extends PopupWindow {
     }
 
     /**
-     * 删除好友
+     * 删除好友：1、删除好友；2、拉入黑名单；3、删除对话框
      *
      * @param userId
      * @param friendId
      */
-    private void deleteFriend(String userId, String friendId) {
+    private void deleteFriend(String userId, final String friendId) {
         LoadDialog.show(mContext);
         HttpUtil.apiS().deleteFriend(userId, friendId)
                 .subscribeOn(Schedulers.io())
@@ -216,9 +218,60 @@ public class SinglePopWindow extends PopupWindow {
                 .subscribe(new NetObserver<NetData>() {
                     @Override
                     public void Successful(NetData netData) {
-                        mContext.startActivity(new Intent(mContext, MainActivity.class));
-                        BroadcastManager.getInstance(mContext).sendBroadcast(SealAppContext.UPDATE_FRIEND);
-                        SinglePopWindow.this.dismiss();
+                        if (mBlacklistStatus == RongIMClient.BlacklistStatus.IN_BLACK_LIST) {
+                            NToast.shortToast(mContext, "删除成功");
+                            mContext.startActivity(new Intent(mContext, MainActivity.class));
+                            BroadcastManager.getInstance(mContext).sendBroadcast(SealAppContext.UPDATE_FRIEND);
+                            SinglePopWindow.this.dismiss();
+                        } else {
+                            // 删除后直接加入黑名单
+                            RongIM.getInstance().addToBlacklist(friendId, new RongIMClient.OperationCallback() {
+                                @Override
+                                public void onSuccess() {
+
+                                    asyncTaskManager.request(REMOVEBLACKLIST, new OnDataListener() {
+                                        @Override
+                                        public Object doInBackground(int requestCode, String parameter) throws HttpException {
+                                            return new SealAction(mContext).addToBlackList(friendId);
+                                        }
+
+                                        @Override
+                                        public void onSuccess(int requestCode, Object result) {
+                                            SealUserInfoManager.getInstance().addBlackList(new BlackList(
+                                                    friendId,
+                                                    null,
+                                                    null
+                                            ));
+                                            // 把对话框也删除了
+                                            RongIM.getInstance().removeConversation(Conversation.ConversationType.PRIVATE, friendId, new RongIMClient.ResultCallback<Boolean>() {
+                                                @Override
+                                                public void onSuccess(Boolean aBoolean) {
+
+                                                }
+
+                                                @Override
+                                                public void onError(RongIMClient.ErrorCode errorCode) {
+
+                                                }
+                                            });
+                                            NToast.shortToast(mContext, "删除成功");
+                                            mContext.startActivity(new Intent(mContext, MainActivity.class));
+                                            BroadcastManager.getInstance(mContext).sendBroadcast(SealAppContext.UPDATE_FRIEND);
+                                            SinglePopWindow.this.dismiss();
+                                        }
+
+                                        @Override
+                                        public void onFailure(int requestCode, int state, Object result) {
+
+                                        }
+                                    });
+                                }
+
+                                @Override
+                                public void onError(RongIMClient.ErrorCode errorCode) {
+                                }
+                            });
+                        }
                     }
 
                     @Override

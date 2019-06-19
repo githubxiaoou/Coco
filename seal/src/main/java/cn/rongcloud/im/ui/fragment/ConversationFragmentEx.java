@@ -130,7 +130,7 @@ public class ConversationFragmentEx extends ConversationFragment {
                         GetGroupDetailResponse result = response.result;
                         isAdmin = null != result && "1".equals(result.isAdmin);
                         isCreator = null != result && mUserId.equals(result.creatorId);
-                        if (isAdmin || isCreator) {
+                        if ((isAdmin || isCreator) && mConversationType == Conversation.ConversationType.GROUP) {
                             addCallBack();
                         }
                     }

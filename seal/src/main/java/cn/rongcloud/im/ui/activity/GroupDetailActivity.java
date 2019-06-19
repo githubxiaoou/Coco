@@ -734,7 +734,17 @@ public class GroupDetailActivity extends BaseActivity implements View.OnClickLis
                 .subscribe(new NetObserver<NetData<List<String>>>() {
                     @Override
                     public void Successful(NetData<List<String>> listNetData) {
+                        RongIM.getInstance().removeConversation(Conversation.ConversationType.GROUP, fromConversationId, new RongIMClient.ResultCallback<Boolean>() {
+                            @Override
+                            public void onSuccess(Boolean aBoolean) {
 
+                            }
+
+                            @Override
+                            public void onError(RongIMClient.ErrorCode errorCode) {
+
+                            }
+                        });
                     }
 
                     @Override

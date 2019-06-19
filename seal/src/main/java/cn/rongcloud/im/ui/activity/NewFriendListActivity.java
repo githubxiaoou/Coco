@@ -20,7 +20,10 @@ import cn.rongcloud.im.R;
 import cn.rongcloud.im.SealAppContext;
 import cn.rongcloud.im.SealUserInfoManager;
 import cn.rongcloud.im.db.Friend;
+import cn.rongcloud.im.server.SealAction;
 import cn.rongcloud.im.server.broadcast.BroadcastManager;
+import cn.rongcloud.im.server.network.async.AsyncTaskManager;
+import cn.rongcloud.im.server.network.async.OnDataListener;
 import cn.rongcloud.im.server.network.http.HttpException;
 import cn.rongcloud.im.server.pinyin.CharacterParser;
 import cn.rongcloud.im.server.response.AgreeFriendsResponse;
@@ -29,6 +32,9 @@ import cn.rongcloud.im.server.utils.CommonUtils;
 import cn.rongcloud.im.server.utils.NToast;
 import cn.rongcloud.im.server.widget.LoadDialog;
 import cn.rongcloud.im.ui.adapter.NewFriendListAdapter;
+import cn.rongcloud.im.ui.widget.SinglePopWindow;
+import io.rong.imkit.RongIM;
+import io.rong.imlib.RongIMClient;
 
 
 public class NewFriendListActivity extends BaseActivity implements NewFriendListAdapter.OnItemButtonClick, View.OnClickListener {
@@ -133,6 +139,8 @@ public class NewFriendListActivity extends BaseActivity implements NewFriendList
                                 null,
                                 CharacterParser.getInstance().getSpelling(bean.getUser().getNickname()),
                                 CharacterParser.getInstance().getSpelling(bean.getDisplayName())));
+                        // 拉出黑名单
+                        removeFromBlackList();
                         // 通知好友列表刷新数据
                         NToast.shortToast(mContext, R.string.agreed_friend);
                         LoadDialog.dismiss(mContext);
@@ -142,6 +150,47 @@ public class NewFriendListActivity extends BaseActivity implements NewFriendList
 
             }
         }
+    }
+
+    private void removeFromBlackList() {
+        RongIM.getInstance().getBlacklistStatus(friendId, new RongIMClient.ResultCallback<RongIMClient.BlacklistStatus>() {
+            @Override
+            public void onSuccess(RongIMClient.BlacklistStatus blacklistStatus) {
+                if (blacklistStatus == RongIMClient.BlacklistStatus.IN_BLACK_LIST) {
+                    RongIM.getInstance().removeFromBlacklist(friendId, new RongIMClient.OperationCallback() {
+                        @Override
+                        public void onSuccess() {
+                            AsyncTaskManager.getInstance(mContext).request(111, new OnDataListener() {
+                                @Override
+                                public Object doInBackground(int requestCode, String parameter) throws HttpException {
+                                    return new SealAction(mContext).removeFromBlackList(friendId);
+                                }
+
+                                @Override
+                                public void onSuccess(int requestCode, Object result) {
+                                    SealUserInfoManager.getInstance().deleteBlackList(friendId);
+                                }
+
+                                @Override
+                                public void onFailure(int requestCode, int state, Object result) {
+
+                                }
+                            });
+                        }
+
+                        @Override
+                        public void onError(RongIMClient.ErrorCode errorCode) {
+                        }
+
+                    });
+                }
+            }
+
+            @Override
+            public void onError(RongIMClient.ErrorCode e) {
+
+            }
+        });
     }
 
 

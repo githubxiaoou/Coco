@@ -1,5 +1,7 @@
 package cn.rongcloud.im.ui.activity.collection;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
@@ -52,6 +54,8 @@ import io.rong.imkit.RongContext;
 import io.rong.imkit.RongIM;
 import io.rong.imkit.model.UIMessage;
 import io.rong.imkit.userInfoCache.RongUserInfoManager;
+import io.rong.imkit.utilities.PermissionCheckUtil;
+import io.rong.imkit.utils.RongOperationPermissionUtils;
 import io.rong.imkit.widget.adapter.MessageListAdapter;
 import io.rong.imkit.widget.provider.IContainerItemProvider;
 import io.rong.imkit.widget.provider.IContainerItemProvider.MessageProvider;
@@ -60,8 +64,11 @@ import io.rong.imlib.model.Conversation;
 import io.rong.imlib.model.Group;
 import io.rong.imlib.model.Message;
 import io.rong.imlib.model.UserInfo;
+import io.rong.message.SightMessage;
 import io.rong.message.TextMessage;
 import io.rong.push.RongPushClient;
+
+import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 
 /**
  * 收藏消息列表页面
@@ -146,7 +153,36 @@ public class CollectionActivity extends BaseActivity {
                         try {
                             ((MessageProvider) provider).onItemClick(view, position, message.getContent(), message);
                         } catch (Exception e) {
+                            if (message.getContent() instanceof SightMessage) {
+                                SightMessage content = (SightMessage) message.getContent();
+                                if (content != null) {
+                                    if (!RongOperationPermissionUtils.isMediaOperationPermit(view.getContext())) {
+                                        return;
+                                    }
 
+                                    String[] permissions = new String[]{"android.permission.WRITE_EXTERNAL_STORAGE"};
+                                    if (!PermissionCheckUtil.checkPermissions(view.getContext(), permissions)) {
+                                        Activity activity = (Activity)view.getContext();
+                                        PermissionCheckUtil.requestPermissions(activity, permissions, 100);
+                                        return;
+                                    }
+
+                                    Uri.Builder builder = new Uri.Builder();
+                                    builder.scheme("rong").authority(view.getContext().getPackageName()).appendPath("sight").appendPath("player");
+                                    String intentUrl = builder.build().toString();
+                                    Intent intent = new Intent("android.intent.action.VIEW", Uri.parse(intentUrl));
+                                    intent.setPackage(view.getContext().getPackageName());
+                                    intent.putExtra("SightMessage", content);
+                                    intent.putExtra("Message", message.getMessage());
+                                    intent.putExtra("Progress", message.getProgress());
+                                    if (intent.resolveActivity(view.getContext().getPackageManager()) != null) {
+                                        intent.setFlags(FLAG_ACTIVITY_NEW_TASK);
+                                        view.getContext().startActivity(intent);
+                                    } else {
+                                        Toast.makeText(view.getContext(), "Sight Module does not exist.", Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                            }
                         }
                     }
                 }
