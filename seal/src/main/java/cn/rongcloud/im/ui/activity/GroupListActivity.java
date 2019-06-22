@@ -1,8 +1,10 @@
 package cn.rongcloud.im.ui.activity;
 
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -23,10 +25,13 @@ import cn.rongcloud.im.App;
 import cn.rongcloud.im.R;
 import cn.rongcloud.im.SealConst;
 import cn.rongcloud.im.SealUserInfoManager;
+import cn.rongcloud.im.db.GroupMember;
 import cn.rongcloud.im.db.Groups;
 import cn.rongcloud.im.server.broadcast.BroadcastManager;
+import cn.rongcloud.im.server.utils.NToast;
 import cn.rongcloud.im.server.utils.RongGenerate;
 import cn.rongcloud.im.server.widget.SelectableRoundedImageView;
+import cn.rongcloud.im.ui.fragment.ConversationListFragmentEx;
 import io.rong.imageloader.core.ImageLoader;
 import io.rong.imkit.RongIM;
 
@@ -42,6 +47,8 @@ public class GroupListActivity extends BaseActivity {
     private EditText mSearch;
     private List<Groups> mList;
     private TextView mTextView;
+    private SharedPreferences sp;
+    private String mUserId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,12 +63,18 @@ public class GroupListActivity extends BaseActivity {
         BroadcastManager.getInstance(mContext).addAction(SealConst.GROUP_LIST_UPDATE, new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                initData();
+                getGroups(true);
             }
         });
     }
 
     private void initData() {
+        sp = getSharedPreferences("config", Activity.MODE_PRIVATE);
+        mUserId = sp.getString(SealConst.SEALTALK_LOGIN_ID, "");
+        getGroups(false);
+    }
+
+    private void getGroups(boolean forceFromNet) {
         SealUserInfoManager.getInstance().getGroups(new SealUserInfoManager.ResultCallback<List<Groups>>() {
             @Override
             public void onSuccess(List<Groups> groupsList) {
@@ -72,13 +85,7 @@ public class GroupListActivity extends BaseActivity {
                     mNoGroups.setVisibility(View.GONE);
                     mTextView.setVisibility(View.VISIBLE);
                     mTextView.setText(getString(R.string.ac_group_list_group_number, mList.size()));
-                    mGroupListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                        @Override
-                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                            Groups bean = (Groups) adapter.getItem(position);
-                            RongIM.getInstance().startGroupChat(GroupListActivity.this, bean.getGroupsId(), bean.getName());
-                        }
-                    });
+                    mGroupListView.setOnItemClickListener(new FuckListener());
                     mSearch.addTextChangedListener(new TextWatcher() {
                         @Override
                         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -103,8 +110,37 @@ public class GroupListActivity extends BaseActivity {
             public void onError(String errString) {
 
             }
-        });
+        }, forceFromNet);
     }
+
+    class FuckListener implements AdapterView.OnItemClickListener {
+        @Override
+        public void onItemClick(final AdapterView<?> parent, final View view, final int position, final long id) {
+            final Groups bean = (Groups) adapter.getItem(position);
+            SealUserInfoManager.getInstance().getGroupMembers(bean.getGroupsId(), new SealUserInfoManager.ResultCallback<List<GroupMember>>() {
+                @Override
+                public void onSuccess(List<GroupMember> groupMembers) {
+                    if (groupMembers != null) {
+                        for (int i = 0; i < groupMembers.size(); i++) {
+                            GroupMember member = groupMembers.get(i);
+                            if (mUserId.equals(member.getUserId())) {
+                                RongIM.getInstance().startGroupChat(GroupListActivity.this, bean.getGroupsId(), bean.getName());
+                                return;
+                            }
+                        }
+                    }
+                    NToast.shortToast(mContext, "你已经不是该群成员，不能查看群内消息");
+                }
+
+                @Override
+                public void onError(String errString) {
+
+                }
+            }, true);
+
+        }
+    }
+
 
     private void filterData(String s) {
         List<Groups> filterDataList = new ArrayList<>();

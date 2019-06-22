@@ -1025,11 +1025,22 @@ public class SealUserInfoManager implements OnDataListener {
     }
 
     /**
+     * added by swo
+     * @param callback
+     */
+    public void getGroups(final ResultCallback<List<Groups>> callback) {
+        getGroups(callback, false);
+    }
+
+    /**
      * 获取群组列表
      *
      * @param callback 群组列表的回调
      */
-    public void getGroups(final ResultCallback<List<Groups>> callback) {
+    public void getGroups(final ResultCallback<List<Groups>> callback, boolean forceFromNet) {
+        if (forceFromNet) {
+            mGetAllUserInfoState = NONE;
+        }
         mWorkHandler.post(new Runnable() {
             @Override
             public void run() {
@@ -1095,12 +1106,24 @@ public class SealUserInfoManager implements OnDataListener {
     }
 
     /**
+     * added by swo
+     * @param groupID
+     * @param callback
+     */
+    public void getGroupMembers(final String groupID, final ResultCallback<List<GroupMember>> callback) {
+        getGroupMembers(groupID, callback, false);
+    }
+
+    /**
      * 异步获取群组成员信息
      *
      * @param groupID  群组ID
      * @param callback 获取群组成员信息的回调
      */
-    public void getGroupMembers(final String groupID, final ResultCallback<List<GroupMember>> callback) {
+    public void getGroupMembers(final String groupID, final ResultCallback<List<GroupMember>> callback, boolean forceFromNet) {
+        if (forceFromNet) {
+            mGetAllUserInfoState = NONE;
+        }
         if (TextUtils.isEmpty(groupID)) {
             if (callback != null) {
                 callback.onError(null);

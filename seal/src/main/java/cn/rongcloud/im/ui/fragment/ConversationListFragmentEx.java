@@ -14,6 +14,7 @@ import cn.rongcloud.im.SealUserInfoManager;
 import cn.rongcloud.im.db.Friend;
 import cn.rongcloud.im.db.GroupMember;
 import cn.rongcloud.im.server.utils.NToast;
+import cn.rongcloud.im.server.widget.LoadDialog;
 import io.rong.imkit.fragment.ConversationListFragment;
 import io.rong.imkit.model.UIConversation;
 import io.rong.imlib.model.Conversation;
@@ -36,7 +37,7 @@ public class ConversationListFragmentEx extends ConversationListFragment {
     }
 
     @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+    public void onItemClick(final AdapterView<?> parent, final View view, final int position, final long id) {
         UIConversation item = (UIConversation) parent.getItemAtPosition(position);
         String targetId = item.getConversationTargetId();
         Conversation.ConversationType conversationType = item.getConversationType();
@@ -46,20 +47,31 @@ public class ConversationListFragmentEx extends ConversationListFragment {
                 NToast.shortToast(getActivity(), "你们已经不是好友关系");
                 return;
             }
+            super.onItemClick(parent, view, position, id);
         }
 
         if (conversationType == Conversation.ConversationType.GROUP) {
-            List<GroupMember> groupMembers = SealUserInfoManager.getInstance().getGroupMembers(targetId);
-            for (int i = 0; i < groupMembers.size(); i++) {
-                GroupMember member = groupMembers.get(i);
-                if (mUserId.equals(member.getUserId())) {
-                    super.onItemClick(parent, view, position, id);
-                    return;
+            SealUserInfoManager.getInstance().getGroupMembers(targetId, new SealUserInfoManager.ResultCallback<List<GroupMember>>() {
+                @Override
+                public void onSuccess(List<GroupMember> groupMembers) {
+                    if (groupMembers != null) {
+                        for (int i = 0; i < groupMembers.size(); i++) {
+                            GroupMember member = groupMembers.get(i);
+                            if (mUserId.equals(member.getUserId())) {
+                                ConversationListFragmentEx.super.onItemClick(parent, view, position, id);
+                                return;
+                            }
+                        }
+                    }
+                    NToast.shortToast(getActivity(), "你已经不是该群成员，不能查看群内消息");
                 }
-            }
-            NToast.shortToast(getActivity(), "你已经不是该群成员，不能查看群内消息");
-            return;
+
+                @Override
+                public void onError(String errString) {
+
+                }
+            }, true);
+
         }
-        super.onItemClick(parent, view, position, id);
     }
 }
