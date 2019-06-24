@@ -52,9 +52,7 @@ public class ConversationListFragmentEx extends ConversationListFragment {
             }
             LoadDialog.dismiss(getActivity());
             super.onItemClick(parent, view, position, id);
-        }
-
-        if (conversationType == Conversation.ConversationType.GROUP) {
+        } else if (conversationType == Conversation.ConversationType.GROUP) {
             SealUserInfoManager.getInstance().getGroupMembers(targetId, new SealUserInfoManager.ResultCallback<List<GroupMember>>() {
                 @Override
                 public void onSuccess(List<GroupMember> groupMembers) {
@@ -78,6 +76,9 @@ public class ConversationListFragmentEx extends ConversationListFragment {
                 }
             }, true);
 
+        } else {
+            ConversationListFragmentEx.super.onItemClick(parent, view, position, id);
+            LoadDialog.dismiss(getActivity());
         }
     }
 }
