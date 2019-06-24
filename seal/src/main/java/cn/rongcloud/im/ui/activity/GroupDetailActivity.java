@@ -703,7 +703,9 @@ public class GroupDetailActivity extends BaseActivity implements View.OnClickLis
                 startActivity(manageIntent);
                 break;
             case R.id.group_code:
-                GroupCodeActivity.actionStart(this, mGroup.getGroupsId(), mUserId, "1".equals(mGetGroupDetailResponse.isNeedVerification));
+                if (mGetGroupDetailResponse != null) {
+                    GroupCodeActivity.actionStart(this, mGroup.getGroupsId(), mUserId, "1".equals(mGetGroupDetailResponse.isNeedVerification));
+                }
                 break;
             case R.id.ll_set_chat_bg:
                 Intent bgIntent = new Intent(mContext, ChatBackgroundActivity.class);
@@ -823,6 +825,9 @@ public class GroupDetailActivity extends BaseActivity implements View.OnClickLis
 
                     @Override
                     public void onClick(View v) {
+                        if (mGetGroupDetailResponse == null) {
+                            return;
+                        }
                         Intent intent = new Intent(GroupDetailActivity.this, SelectFriendsActivity.class);
                         intent.putExtra("isDeleteGroupMember", true);
                         intent.putExtra("GroupId", mGroup.getGroupsId());

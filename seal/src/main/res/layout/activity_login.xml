@@ -26,8 +26,8 @@
 
         <ImageView
             android:id="@+id/de_login_logo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="51dip"
             android:src="@drawable/logo" />
@@ -192,7 +192,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Powered by 密聊"
+        android:text="Powered by Coco"
         android:textSize="12sp"
         android:visibility="gone"
         android:layout_alignParentBottom="true"

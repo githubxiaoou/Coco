@@ -614,13 +614,14 @@ public class SealUserInfoManager implements OnDataListener {
      * 返回群组成员信息
      *
      * @param groupsID 群组ID
+     * @param forceFromNet
      * @return 群组成员信息
      */
-    private List<GroupMember> pullGroupMembers(String groupsID) throws HttpException {
+    private List<GroupMember> pullGroupMembers(String groupsID, boolean forceFromNet) throws HttpException {
 
         int fetchGroupCount = 0;
         List<GroupMember> groupMembersList = null;
-        if (mGroupsList == null && hasGetGroups()) {
+        if (mGroupsList == null && hasGetGroups() || forceFromNet) {
             mGroupsList = getGroups();
         }
         if (mGroupsList != null && mGroupsList.size() > 0) {
@@ -1120,9 +1121,9 @@ public class SealUserInfoManager implements OnDataListener {
      * @param groupID  群组ID
      * @param callback 获取群组成员信息的回调
      */
-    public void getGroupMembers(final String groupID, final ResultCallback<List<GroupMember>> callback, boolean forceFromNet) {
+    public void getGroupMembers(final String groupID, final ResultCallback<List<GroupMember>> callback, final boolean forceFromNet) {
         if (forceFromNet) {
-            mGetAllUserInfoState = NONE;
+            mGetAllUserInfoState = GROUPS;
         }
         if (TextUtils.isEmpty(groupID)) {
             if (callback != null) {
@@ -1139,7 +1140,7 @@ public class SealUserInfoManager implements OnDataListener {
                             return;
                         }
                         try {
-                            groupMembersList = pullGroupMembers(groupID);
+                            groupMembersList = pullGroupMembers(groupID, forceFromNet);
                             sp.edit().putInt("getAllUserInfoState", mGetAllUserInfoState).commit();
                         } catch (HttpException e) {
                             onCallBackFail(callback);

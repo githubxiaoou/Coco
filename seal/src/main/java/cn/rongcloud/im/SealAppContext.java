@@ -82,6 +82,7 @@ public class SealAppContext implements RongIM.ConversationListBehaviorListener,
     public static final String UPDATE_GROUP_MEMBER = "update_group_member";
     public static final String GROUP_DISMISS = "group_dismiss";
     public static final String CHANGE_CREATOR = "change_creator";
+    public static final String GET_ALL_USER = "get_all_user";
 
     private Context mContext;
 
@@ -317,6 +318,9 @@ public class SealAppContext implements RongIM.ConversationListBehaviorListener,
             BroadcastManager.getInstance(mContext).sendBroadcast(UPDATE_RED_DOT);
             }*/
         } else if (messageContent instanceof GroupNotificationMessage) {
+            // 群组,群组成员信息
+            BroadcastManager.getInstance(mContext).sendBroadcast(GET_ALL_USER);
+
             GroupNotificationMessage groupNotificationMessage = (GroupNotificationMessage) messageContent;
             NLog.e("onReceived:" + groupNotificationMessage.getMessage());
             String groupID = message.getTargetId();

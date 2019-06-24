@@ -6,8 +6,8 @@
     android:orientation="vertical">
 
     <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
         android:layout_gravity="center_horizontal"
         android:layout_marginBottom="14dp"
         android:layout_marginTop="24dp"
@@ -18,7 +18,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginTop="5dp"
-        android:text="密聊 V1.0"
+        android:text="Coco V1.0"
         android:textColor="#999999"
         android:textSize="14sp"
         android:visibility="visible" />
@@ -94,7 +94,7 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_marginLeft="25dp"
-            android:text="密聊版本"
+            android:text="Coco版本"
             android:textColor="#353535"
             android:textSize="16sp" />
 

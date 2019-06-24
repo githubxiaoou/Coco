@@ -27,7 +27,7 @@
         android:paddingStart="16dp"
         android:paddingEnd="16dp"
         android:layout_marginTop="15dp"
-        android:text="你应保证你的投诉行为基于善意，并代表你本人真实意思。密聊作为中立的平台服务者,会将你的投诉尽快转给责任方进行优化，以利于群环境的和谐发展,共建良好虚拟聊天空间。"
+        android:text="你应保证你的投诉行为基于善意，并代表你本人真实意思。Coco作为中立的平台服务者,会将你的投诉尽快转给责任方进行优化，以利于群环境的和谐发展,共建良好虚拟聊天空间。"
         android:textSize="16sp"
         android:textColor="@color/black"
         android:layout_width="wrap_content"

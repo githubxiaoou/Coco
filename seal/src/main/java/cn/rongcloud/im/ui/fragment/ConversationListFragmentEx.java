@@ -25,6 +25,7 @@ import io.rong.imlib.model.Conversation;
 public class ConversationListFragmentEx extends ConversationListFragment {
     private SharedPreferences sp;
     private String mUserId;
+
     public ConversationListFragmentEx() {
 
     }
@@ -38,15 +39,18 @@ public class ConversationListFragmentEx extends ConversationListFragment {
 
     @Override
     public void onItemClick(final AdapterView<?> parent, final View view, final int position, final long id) {
+        LoadDialog.show(getActivity());
         UIConversation item = (UIConversation) parent.getItemAtPosition(position);
-        String targetId = item.getConversationTargetId();
+        final String targetId = item.getConversationTargetId();
         Conversation.ConversationType conversationType = item.getConversationType();
         if (conversationType == Conversation.ConversationType.PRIVATE) {
             Friend friendByID = SealUserInfoManager.getInstance().getFriendByID(targetId);
             if (friendByID == null) {
                 NToast.shortToast(getActivity(), "你们已经不是好友关系");
+                LoadDialog.dismiss(getActivity());
                 return;
             }
+            LoadDialog.dismiss(getActivity());
             super.onItemClick(parent, view, position, id);
         }
 
@@ -59,16 +63,18 @@ public class ConversationListFragmentEx extends ConversationListFragment {
                             GroupMember member = groupMembers.get(i);
                             if (mUserId.equals(member.getUserId())) {
                                 ConversationListFragmentEx.super.onItemClick(parent, view, position, id);
+                                LoadDialog.dismiss(getActivity());
                                 return;
                             }
                         }
                     }
-                    NToast.shortToast(getActivity(), "你已经不是该群成员，不能查看群内消息");
+                    LoadDialog.dismiss(getActivity());
+                    NToast.shortToast(getActivity(), "你不是该群成员，不能查看群内消息");
                 }
 
                 @Override
                 public void onError(String errString) {
-
+                    LoadDialog.dismiss(getActivity());
                 }
             }, true);
 

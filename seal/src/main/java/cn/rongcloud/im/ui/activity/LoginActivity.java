@@ -72,7 +72,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         setHeadLeftButtonVisibility(View.GONE);
-        setTitle("密聊");
+        setTitle("Coco");
         sp = getSharedPreferences("config", MODE_PRIVATE);
         editor = sp.edit();
         initView();
@@ -421,8 +421,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                         editor.commit();
                         RongIM.getInstance().refreshUserInfoCache(new UserInfo(connectResultId, nickName, Uri.parse(portraitUri)));
                     }
-                    //不继续在login界面同步好友,群组,群组成员信息
-                    SealUserInfoManager.getInstance().getAllUserInfo();
                     goToMain();
                     break;
                 case GET_TOKEN:

@@ -30,10 +30,10 @@ android {
 
     signingConfigs {
         config {
-            storeFile file("rong.key")
-            storePassword "Amigo123"
-            keyAlias "RongCloud"
-            keyPassword "Amigo123"
+            storeFile file("coco.key")
+            storePassword "coco123"
+            keyAlias "coco"
+            keyPassword "coco123"
         }
     }
     sourceSets {

@@ -29,8 +29,8 @@
 
         <ImageView
             android:id="@+id/de_login_logo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="61dip"
             android:src="@drawable/logo" />
@@ -44,6 +44,7 @@
             android:layout_marginRight="20dp"
             android:layout_marginTop="20dp"
             android:drawablePadding="5dip"
+            android:background="@drawable/rc_ed_public_service_search_selector"
             android:hint="@string/nickname"
             android:inputType="textPersonName"
             android:maxLength="32"
@@ -121,6 +122,7 @@
                 android:layout_gravity="center_horizontal"
                 android:drawablePadding="5dip"
                 android:hint="@string/phone_number"
+                android:background="@drawable/rc_ed_public_service_search_selector"
                 android:maxLength="20"
                 android:inputType="phone"
                 android:paddingLeft="10dip"
@@ -148,6 +150,7 @@
                 android:layout_gravity="center_horizontal"
                 android:layout_weight="7"
                 android:drawablePadding="5dip"
+                android:background="@drawable/rc_ed_public_service_search_selector"
                 android:hint="@string/code"
                 android:inputType="number"
                 android:maxLength="6"
@@ -182,6 +185,7 @@
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
             android:layout_marginTop="20dp"
+            android:background="@drawable/rc_ed_public_service_search_selector"
             android:drawablePadding="5dip"
             android:hint="@string/password"
             android:inputType="textPassword"
@@ -223,7 +227,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Powered by 密聊"
+        android:text="Powered by Coco"
         android:textSize="12sp"
         android:visibility="gone"
         android:layout_alignParentBottom="true"

@@ -24,7 +24,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cn.rongcloud.im.R;
+import cn.rongcloud.im.SealAppContext;
 import cn.rongcloud.im.SealConst;
+import cn.rongcloud.im.SealUserInfoManager;
 import cn.rongcloud.im.model.NetData;
 import cn.rongcloud.im.net.HttpUtil;
 import cn.rongcloud.im.net.NetObserver;
@@ -105,8 +107,20 @@ public class MainActivity extends BaseActivity implements
         }
         registerHomeKeyReceiver(this);
         lastUseTime();
+        BroadcastManager.getInstance(mContext).addAction(SealAppContext.GET_ALL_USER, new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                SealUserInfoManager.getInstance().getAllUserInfo();
+            }
+        });
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        //不继续在login界面同步好友,群组,群组成员信息
+        SealUserInfoManager.getInstance().getAllUserInfo();
+    }
 
     private void initViews() {
         RelativeLayout chatRLayout = (RelativeLayout) findViewById(R.id.seal_chat);
