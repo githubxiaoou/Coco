@@ -342,9 +342,10 @@
                 <action android:name="io.rong.push.intent.MESSAGE_CLICKED"/>
                 <action android:name="io.rong.push.intent.THIRD_PARTY_PUSH_STATE"/>
             </intent-filter>
-        </receiver> <!-- <meta-data -->
-        <!-- android:name="RONG_CLOUD_APP_KEY" -->
-        <!-- android:value="e0x9wycfx7flq" /> -->
+        </receiver>
+        <meta-data
+            android:name="RONG_CLOUD_APP_KEY"
+            android:value="k51hidwqk4p0b" />
         <!-- 正式 n19jmcy59f1q9  测试 p5tvi9dst25b4  小乔 e0x9wycfx7flq -->
         <!-- end rongcloud -->
         <!-- 请将CHANNAL改为app的发布渠道 < -->

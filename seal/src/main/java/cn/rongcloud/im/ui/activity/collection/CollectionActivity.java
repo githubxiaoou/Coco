@@ -1,10 +1,12 @@
 package cn.rongcloud.im.ui.activity.collection;
 
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
@@ -69,6 +71,7 @@ public class CollectionActivity extends BaseActivity {
     private SharedPreferences sp;
     private String mUserId;
     private List<String> mMessageIds;
+    private String mMsgIds;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,9 +84,12 @@ public class CollectionActivity extends BaseActivity {
     private void initData() {
         sp = getSharedPreferences("config", MODE_PRIVATE);
         mUserId = sp.getString(SealConst.SEALTALK_LOGIN_ID, "");
-        String msgIds = sp.getString(mUserId, "");
-        if (!TextUtils.isEmpty(msgIds)) {
-            mMessageIds = Arrays.asList(msgIds.split(","));
+        mMsgIds = sp.getString(mUserId, "");
+        if (!TextUtils.isEmpty(mMsgIds)) {
+            while (mMsgIds.contains(",,")) {
+                mMsgIds = mMsgIds.replace(",,", ",");
+            }
+            mMessageIds = Arrays.asList(mMsgIds.split(","));
             getHistoryMessages();
         }
     }
@@ -109,6 +115,26 @@ public class CollectionActivity extends BaseActivity {
 //                }
 //            }
 //        });
+
+        mLvCollection.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
+                final UIMessage uiMessage = mSourceDataList.get(position);
+                AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+                builder.setCancelable(true).setMessage("取消收藏?");
+                builder.setNegativeButton("取消", null);
+                builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        mMsgIds = mMsgIds.replace(uiMessage.getUId(), "");
+                        sp.edit().putString(mUserId, mMsgIds).apply();
+                        mSourceDataList.remove(position);
+                        mAdapter.notifyDataSetChanged();
+                    }
+                }).create().show();
+                return true;
+            }
+        });
 
         mLvCollection.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override

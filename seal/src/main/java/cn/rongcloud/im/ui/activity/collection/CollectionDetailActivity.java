@@ -9,7 +9,6 @@ import java.util.Locale;
 
 import cn.rongcloud.im.App;
 import cn.rongcloud.im.R;
-import cn.rongcloud.im.server.pinyin.CharacterParser;
 import cn.rongcloud.im.server.widget.SelectableRoundedImageView;
 import cn.rongcloud.im.ui.activity.BaseActivity;
 import io.rong.imageloader.core.ImageLoader;
