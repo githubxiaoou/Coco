@@ -25,8 +25,10 @@ import java.util.List;
 import java.util.Locale;
 
 import cn.rongcloud.im.db.Friend;
+import cn.rongcloud.im.message.GifMessage;
 import cn.rongcloud.im.message.TestMessage;
 import cn.rongcloud.im.message.provider.ContactNotificationMessageProvider;
+import cn.rongcloud.im.message.provider.GifMessageItemProvider;
 import cn.rongcloud.im.message.provider.TestMessageProvider;
 import cn.rongcloud.im.server.pinyin.CharacterParser;
 import cn.rongcloud.im.server.utils.NLog;
@@ -117,7 +119,8 @@ public class App extends MultiDexApplication {
                 RongIM.registerMessageTemplate(new RealTimeLocationMessageProvider());
                 RongIM.registerMessageType(TestMessage.class);
                 RongIM.registerMessageTemplate(new TestMessageProvider());
-
+                RongIM.registerMessageType(GifMessage.class);
+                RongIM.registerMessageTemplate(new GifMessageItemProvider());
 
             } catch (Exception e) {
                 e.printStackTrace();

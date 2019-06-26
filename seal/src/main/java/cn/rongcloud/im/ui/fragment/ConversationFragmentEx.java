@@ -14,10 +14,14 @@ import android.widget.Toast;
 
 import org.json.JSONObject;
 
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import cn.rongcloud.im.R;
 import cn.rongcloud.im.SealCSEvaluateInfo;
+import cn.rongcloud.im.message.GifMessage;
 import cn.rongcloud.im.model.NetData;
 import cn.rongcloud.im.model.SealCSEvaluateItem;
 import cn.rongcloud.im.net.HttpUtil;
@@ -32,6 +36,7 @@ import cn.rongcloud.im.ui.widget.BottomEvaluateDialog;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.Action;
 import io.reactivex.schedulers.Schedulers;
+import io.rong.imkit.RongContext;
 import io.rong.imkit.RongExtension;
 import io.rong.imkit.RongIM;
 import io.rong.imkit.RongMessageItemLongClickActionManager;
@@ -40,6 +45,7 @@ import io.rong.imkit.model.UIMessage;
 import io.rong.imkit.userInfoCache.RongUserInfoManager;
 import io.rong.imkit.widget.provider.MessageItemLongClickAction;
 import io.rong.imlib.CustomServiceConfig;
+import io.rong.imlib.IRongCallback;
 import io.rong.imlib.RongIMClient;
 import io.rong.imlib.cs.CustomServiceManager;
 import io.rong.imlib.model.Conversation;
@@ -390,5 +396,36 @@ public class ConversationFragmentEx extends ConversationFragment {
                 startActivity(data);
             }
         }
+    }
+
+    @Override
+    public void onImageResult(LinkedHashMap<String, Integer> selectedMedias, boolean origin) {
+        NToast.shortToast(getActivity(), "发送动态图喽");
+        Iterator var3 = selectedMedias.entrySet().iterator();
+
+        while(var3.hasNext()) {
+            Map.Entry<String, Integer> media = (Map.Entry)var3.next();
+            int mediaType = (Integer)media.getValue();
+            String mediaUri = (String) media.getKey();
+            GifMessage gifMessage = GifMessage.obtain(Uri.parse(mediaUri), Uri.parse(mediaUri), origin);
+            String pushContent = "发送动态图喽";
+            RongIM.getInstance().sendMessage(Message.obtain(this.mTargetId, this.mConversationType, gifMessage), pushContent, null, new IRongCallback.ISendMessageCallback() {
+                @Override
+                public void onAttached(Message message) {
+
+                }
+
+                @Override
+                public void onSuccess(Message message) {
+                    NToast.shortToast(getActivity(), "onSuccess");
+                }
+
+                @Override
+                public void onError(Message message, RongIMClient.ErrorCode errorCode) {
+                    NToast.shortToast(getActivity(), "onError");
+                }
+            });
+        }
+//        super.onImageResult(selectedMedias, origin);
     }
 }
