@@ -353,6 +353,8 @@ public class CollectionActivity extends BaseActivity {
                 viewHolder.chatRecordsDetailTextView.setText("[" + "名片" + "]");
             } else if (objectName.contains("Img")) {
                 viewHolder.chatRecordsDetailTextView.setText("[" + "图片" + "]");
+            } else if (objectName.contains("Gif")) {
+                viewHolder.chatRecordsDetailTextView.setText("[" + "gif动态图" + "]");
             } else if (objectName.contains("Vc")) {
                 viewHolder.chatRecordsDetailTextView.setText("[" + "语音" + "]");
             } else if (objectName.contains("Sight")) {

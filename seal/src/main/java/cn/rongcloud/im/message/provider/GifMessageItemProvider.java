@@ -16,13 +16,15 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 
+import cn.rongcloud.im.R;
 import cn.rongcloud.im.message.GifMessage;
+import cn.rongcloud.im.ui.activity.GifPreviewActivity;
 import io.rong.imageloader.core.ImageLoader;
 import io.rong.imkit.R.drawable;
 import io.rong.imkit.R.id;
 import io.rong.imkit.R.layout;
-import io.rong.imkit.R.string;
 import io.rong.imkit.model.ProviderTag;
 import io.rong.imkit.model.UIMessage;
 import io.rong.imkit.widget.AsyncImageView;
@@ -37,7 +39,7 @@ import io.rong.message.utils.BitmapUtil;
     showProgress = false,
     showReadState = true
 )
-public class GifMessageItemProvider extends MessageProvider<ImageMessage> {
+public class GifMessageItemProvider extends MessageProvider<GifMessage> {
     private static final String TAG = "GifMessageItemProvider";
 
     public GifMessageItemProvider() {
@@ -52,9 +54,9 @@ public class GifMessageItemProvider extends MessageProvider<ImageMessage> {
         return view;
     }
 
-    public void onItemClick(View view, int position, ImageMessage content, UIMessage message) {
+    public void onItemClick(View view, int position, GifMessage content, UIMessage message) {
         if (content != null) {
-            Intent intent = new Intent("io.rong.imkit.intent.action.picturepagerview");
+            Intent intent = new Intent(view.getContext(), GifPreviewActivity.class);
             intent.setPackage(view.getContext().getPackageName());
             intent.putExtra("message", message.getMessage());
             view.getContext().startActivity(intent);
@@ -62,7 +64,7 @@ public class GifMessageItemProvider extends MessageProvider<ImageMessage> {
 
     }
 
-    public void bindView(View v, int position, ImageMessage content, UIMessage message) {
+    public void bindView(View v, int position, GifMessage content, UIMessage message) {
         GifMessageItemProvider.ViewHolder holder = (GifMessageItemProvider.ViewHolder)v.getTag();
         if (message.getMessageDirection() == MessageDirection.SEND) {
             v.setBackgroundResource(drawable.rc_ic_bubble_no_right);
@@ -75,13 +77,16 @@ public class GifMessageItemProvider extends MessageProvider<ImageMessage> {
             if (bitmap != null) {
                 Bitmap blurryBitmap = BitmapUtil.getBlurryBitmap(v.getContext(), bitmap, 5.0F, 0.25F);
 //                holder.img.setBitmap(blurryBitmap);
-                Glide.with(v).asGif().load(blurryBitmap).into(holder.img);
+                Glide.with(v).applyDefaultRequestOptions(new RequestOptions().override(300, 300)
+                        .placeholder(R.drawable.loadfailure))
+                        .asGif().load(blurryBitmap).into(holder.img);
             }
         } else {
 //            holder.img.setResource(content.getThumUri());
-            Glide.with(v).asGif().load(content.getThumUri()).into(holder.img);
+            Glide.with(v).applyDefaultRequestOptions(new RequestOptions().override(300, 300)
+                    .placeholder(R.drawable.loadfailure))
+                    .asGif().load(content.getThumUri() == null ? content.getMediaUrl() : content.getThumUri()).into(holder.img);
         }
-
 
         int progress = message.getProgress();
         SentStatus status = message.getSentStatus();
@@ -94,11 +99,12 @@ public class GifMessageItemProvider extends MessageProvider<ImageMessage> {
 
     }
 
-    public Spannable getContentSummary(ImageMessage data) {
-        return null;
+    @Override
+    public Spannable getContentSummary(GifMessage gifMessage) {
+        return new SpannableString("[gif动态图]");
     }
 
-    public Spannable getContentSummary(Context context, ImageMessage data) {
+    public Spannable getContentSummary(Context context, ImageMessage GifMessage) {
         return new SpannableString("[gif动态图]");
     }
 

@@ -13,17 +13,19 @@ import io.rong.common.RLog;
 import io.rong.imlib.DestructionTag;
 import io.rong.imlib.MessageTag;
 import io.rong.imlib.model.UserInfo;
-import io.rong.message.MediaMessageContent;
+import io.rong.message.ImageMessage;
 
+// 必须定义新的objectName，不然会和imageMessage的冲突。handler类倒是可以直接用原来的。
 @MessageTag(
         value = "RCD:GifMsg",
-        flag = 3,
-        messageHandler = GifMessageHandler.class
+//        value = "RC:ImgMsg",
+        flag = 3
+//        messageHandler = GifMessageHandler.class
 )
 @DestructionTag(
         destructionFlag = 0
 )
-public class GifMessage extends MediaMessageContent {
+public class GifMessage extends ImageMessage {
     private Uri mThumUri;
     private boolean mUpLoadExp = false;
     private String mBase64;
@@ -37,7 +39,7 @@ public class GifMessage extends MediaMessageContent {
             return new GifMessage[size];
         }
     };
-    
+
     public GifMessage(byte[] data) {
         String jsonStr = new String(data);
 
@@ -230,3 +232,4 @@ public class GifMessage extends MediaMessageContent {
         ParcelUtils.writeToParcel(dest, this.getDestructTime());
     }
 }
+

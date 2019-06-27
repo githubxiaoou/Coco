@@ -24,6 +24,7 @@ import android.widget.ViewAnimator;
 import java.util.List;
 
 import cn.rongcloud.im.db.GroupMember;
+import cn.rongcloud.im.message.GifMessage;
 import cn.rongcloud.im.server.pinyin.CharacterParser;
 import cn.rongcloud.im.server.utils.NToast;
 import io.rong.contactcard.R;
@@ -180,6 +181,8 @@ public class ForwardDetailActivity extends RongBaseNoActionbarActivity {
                 mContactName.setText(getString(R.string.rc_plugins_contact) + ": " + ((ContactMessage) mMessage.getContent()).getName());
             } else if (objectName.contains("Img")) {
                 mContactName.setText("[" + "图片" + "]");
+            } else if (objectName.contains("Gif")) {
+                mContactName.setText("[" + "gif动态图" + "]");
             } else if (objectName.contains("Vc")) {
                 mContactName.setText("[" + "语音" + "]");
             } else if (objectName.contains("Sight")) {
@@ -246,6 +249,26 @@ public class ForwardDetailActivity extends RongBaseNoActionbarActivity {
                     ImageMessage imageMessage = ((ImageMessage) mMessage.getContent());
                     String pushContent = "[图片]";
                     RongIM.getInstance().sendMessage(Message.obtain(mTargetId, mConversationType, imageMessage),
+                            pushContent, null, new IRongCallback.ISendMessageCallback() {
+                                @Override
+                                public void onAttached(Message message) {
+
+                                }
+
+                                @Override
+                                public void onSuccess(Message message) {
+                                    Toast.makeText(ForwardDetailActivity.this, "已发送", Toast.LENGTH_SHORT).show();
+                                }
+
+                                @Override
+                                public void onError(Message message, RongIMClient.ErrorCode errorCode) {
+
+                                }
+                            });
+                } else if (mMessage.getContent() instanceof GifMessage){
+                    GifMessage gifMessage = (GifMessage) mMessage.getContent();
+                    String pushContent = "[gif动态图]";
+                    RongIM.getInstance().sendMessage(Message.obtain(mTargetId, mConversationType, gifMessage),
                             pushContent, null, new IRongCallback.ISendMessageCallback() {
                                 @Override
                                 public void onAttached(Message message) {

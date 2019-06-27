@@ -20,5 +20,5 @@
         android:background="#75000000"
         android:gravity="center"
         android:textColor="@android:color/white"
-        android:textSize="11sp" />
+        android:textSize="12sp" />
 </io.rong.imkit.widget.RCMessageFrameLayout>

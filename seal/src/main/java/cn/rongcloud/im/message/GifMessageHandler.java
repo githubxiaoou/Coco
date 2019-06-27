@@ -79,7 +79,7 @@ public class GifMessageHandler extends MessageHandler<GifMessage> {
 
     @Override
     public void encodeMessage(Message message) {
-        ImageMessage model = (ImageMessage)message.getContent();
+        GifMessage model = (GifMessage)message.getContent();
         Uri uri = NativeClient.getInstance().obtainMediaFileSavedUri();
         String name = message.getMessageId() + ".gif";
         BitmapFactory.Options options = new BitmapFactory.Options();

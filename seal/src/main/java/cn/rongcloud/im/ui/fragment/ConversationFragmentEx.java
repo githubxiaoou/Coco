@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 import org.json.JSONObject;
 
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -22,6 +23,7 @@ import java.util.Map;
 import cn.rongcloud.im.R;
 import cn.rongcloud.im.SealCSEvaluateInfo;
 import cn.rongcloud.im.message.GifMessage;
+import cn.rongcloud.im.message.manager.SendGifManager;
 import cn.rongcloud.im.model.NetData;
 import cn.rongcloud.im.model.SealCSEvaluateItem;
 import cn.rongcloud.im.net.HttpUtil;
@@ -41,6 +43,8 @@ import io.rong.imkit.RongExtension;
 import io.rong.imkit.RongIM;
 import io.rong.imkit.RongMessageItemLongClickActionManager;
 import io.rong.imkit.fragment.ConversationFragment;
+import io.rong.imkit.manager.SendImageManager;
+import io.rong.imkit.manager.SendMediaManager;
 import io.rong.imkit.model.UIMessage;
 import io.rong.imkit.userInfoCache.RongUserInfoManager;
 import io.rong.imkit.widget.provider.MessageItemLongClickAction;
@@ -400,31 +404,55 @@ public class ConversationFragmentEx extends ConversationFragment {
 
     @Override
     public void onImageResult(LinkedHashMap<String, Integer> selectedMedias, boolean origin) {
-        NToast.shortToast(getActivity(), "发送动态图喽");
+//        NToast.shortToast(getActivity(), "发送动态图喽");
+//        Iterator var3 = selectedMedias.entrySet().iterator();
+//
+//        while(var3.hasNext()) {
+//            Map.Entry<String, Integer> media = (Map.Entry)var3.next();
+//            int mediaType = (Integer)media.getValue();
+//            String mediaUri = (String) media.getKey();
+//            GifMessage gifMessage = GifMessage.obtain(Uri.parse(mediaUri), Uri.parse(mediaUri), origin);
+//            String pushContent = "发送动态图喽";
+//            RongIM.getInstance().sendMessage(Message.obtain(this.mTargetId, this.mConversationType, gifMessage), pushContent, null, new IRongCallback.ISendMessageCallback() {
+//                @Override
+//                public void onAttached(Message message) {
+//
+//                }
+//
+//                @Override
+//                public void onSuccess(Message message) {
+//                    NToast.shortToast(getActivity(), "onSuccess");
+//                }
+//
+//                @Override
+//                public void onError(Message message, RongIMClient.ErrorCode errorCode) {
+//                    NToast.shortToast(getActivity(), "onError");
+//                }
+//            });
+//        }
         Iterator var3 = selectedMedias.entrySet().iterator();
 
         while(var3.hasNext()) {
             Map.Entry<String, Integer> media = (Map.Entry)var3.next();
             int mediaType = (Integer)media.getValue();
-            String mediaUri = (String) media.getKey();
-            GifMessage gifMessage = GifMessage.obtain(Uri.parse(mediaUri), Uri.parse(mediaUri), origin);
-            String pushContent = "发送动态图喽";
-            RongIM.getInstance().sendMessage(Message.obtain(this.mTargetId, this.mConversationType, gifMessage), pushContent, null, new IRongCallback.ISendMessageCallback() {
-                @Override
-                public void onAttached(Message message) {
-
-                }
-
-                @Override
-                public void onSuccess(Message message) {
-                    NToast.shortToast(getActivity(), "onSuccess");
-                }
-
-                @Override
-                public void onError(Message message, RongIMClient.ErrorCode errorCode) {
-                    NToast.shortToast(getActivity(), "onError");
-                }
-            });
+            String mediaUri = (String)media.getKey();
+            switch(mediaType) {
+                case 1:
+                    if (mediaUri.endsWith(".gif")) {
+                        SendGifManager.getInstance().sendImages(this.mConversationType, this.mTargetId, Collections.singletonList(Uri.parse(mediaUri)), origin);
+                    } else {
+                        SendImageManager.getInstance().sendImages(this.mConversationType, this.mTargetId, Collections.singletonList(Uri.parse(mediaUri)), origin);
+                    }
+                    if (this.mConversationType.equals(Conversation.ConversationType.PRIVATE)) {
+                        RongIMClient.getInstance().sendTypingStatus(this.mConversationType, this.mTargetId, "RC:ImgMsg");
+                    }
+                    break;
+                case 3:
+                    SendMediaManager.getInstance().sendMedia(this.mConversationType, this.mTargetId, Collections.singletonList(Uri.parse(mediaUri)), origin);
+                    if (this.mConversationType.equals(Conversation.ConversationType.PRIVATE)) {
+                        RongIMClient.getInstance().sendTypingStatus(this.mConversationType, this.mTargetId, "RC:SightMsg");
+                    }
+            }
         }
 //        super.onImageResult(selectedMedias, origin);
     }

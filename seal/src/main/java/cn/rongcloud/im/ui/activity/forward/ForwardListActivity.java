@@ -62,9 +62,17 @@ public class ForwardListActivity extends BaseActivity implements View.OnClickLis
         RongIMClient.getInstance().getConversationList(new RongIMClient.ResultCallback<List<Conversation>>() {
             @Override
             public void onSuccess(List<Conversation> conversations) {
+                List<Conversation> temp = new ArrayList<>();
+                for (int i = 0; i < conversations.size(); i++) {
+                    Conversation conversation = conversations.get(i);
+                    if (conversation.getConversationType() == Conversation.ConversationType.PRIVATE ||
+                            conversation.getConversationType() == Conversation.ConversationType.GROUP) {
+                        temp.add(conversation);
+                    }
+                }
                 LoadDialog.dismiss(mContext);
                 mSourceDataList.clear();
-                mSourceDataList.addAll(conversations);
+                mSourceDataList.addAll(temp);
                 mAdapter.setList(mSourceDataList);
                 mAdapter.notifyDataSetChanged();
             }

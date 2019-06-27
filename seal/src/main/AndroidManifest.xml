@@ -516,7 +516,8 @@
         <activity android:name=".ui.activity.groupmanage.GroupManageActivity"/>
         <activity
             android:name=".ui.activity.forward.ForwardDetailActivity"
-            android:theme="@android:style/Theme.Dialog"/> <!-- 推送配置项 -->
+            android:theme="@android:style/Theme.Dialog"/>
+        <activity android:name=".ui.activity.GifPreviewActivity" /> <!-- 推送配置项 -->
         <meta-data
             android:name="com.vivo.push.api_key"
             android:value="2efff5bb-2713-424a-8042-5242421b3dc9"/>
