@@ -25,6 +25,7 @@ import java.util.Locale;
 
 import cn.rongcloud.im.App;
 import cn.rongcloud.im.R;
+import cn.rongcloud.im.SealAppContext;
 import cn.rongcloud.im.SealConst;
 import cn.rongcloud.im.SealUserInfoManager;
 import cn.rongcloud.im.server.SealAction;
@@ -198,6 +199,7 @@ public class MineFragment extends Fragment implements View.OnClickListener {
                 break;
             case R.id.mine_about:
                 mNewVersionView.setVisibility(View.GONE);
+                BroadcastManager.getInstance(getActivity()).sendBroadcast(SHOW_RED, "clear");
                 Intent intent = new Intent(getActivity(), AboutRongCloudActivity.class);
                 intent.putExtra("isHasNewVersion", isHasNewVersion);
                 if (!TextUtils.isEmpty(url)) {

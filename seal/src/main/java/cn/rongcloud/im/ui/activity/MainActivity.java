@@ -80,6 +80,7 @@ public class MainActivity extends BaseActivity implements
     private Context mContext;
     private Conversation.ConversationType[] mConversationsTypes = null;
     private TextView mTvTitle;
+    private ImageView mContactRed;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -136,6 +137,7 @@ public class MainActivity extends BaseActivity implements
 //        mTextFind = (TextView) findViewById(R.id.tab_text_find);
         mTextMe = (TextView) findViewById(R.id.tab_text_me);
         mMineRed = (ImageView) findViewById(R.id.mine_red);
+        mContactRed = ((ImageView) findViewById(R.id.contact_red));
         moreImage = (ImageView) findViewById(R.id.seal_more);
         mSearchImageView = (ImageView) findViewById(R.id.ac_iv_search);
         mTvTitle = ((TextView) findViewById(R.id.tv_title1));
@@ -148,9 +150,19 @@ public class MainActivity extends BaseActivity implements
         moreImage.setOnClickListener(this);
         mSearchImageView.setOnClickListener(this);
         BroadcastManager.getInstance(mContext).addAction(MineFragment.SHOW_RED, new BroadcastReceiver() {
+
             @Override
             public void onReceive(Context context, Intent intent) {
-                mMineRed.setVisibility(View.VISIBLE);
+                String string = intent.getStringExtra("String");
+                mMineRed.setVisibility(!TextUtils.isEmpty(string) && string.equals("clear") ? View.GONE : View.VISIBLE);
+            }
+        });
+        BroadcastManager.getInstance(mContext).addAction(SealAppContext.UPDATE_RED_DOT, new BroadcastReceiver() {
+
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                String string = intent.getStringExtra("String");
+                mContactRed.setVisibility(!TextUtils.isEmpty(string) && string.equals("clear") ? View.GONE : View.VISIBLE);
             }
         });
     }
@@ -327,7 +339,6 @@ public class MainActivity extends BaseActivity implements
 //                break;
             case R.id.seal_me:
                 mViewPager.setCurrentItem(2, false);
-                mMineRed.setVisibility(View.GONE);
                 break;
             case R.id.seal_more:
                 MorePopWindow morePopWindow = new MorePopWindow(MainActivity.this);

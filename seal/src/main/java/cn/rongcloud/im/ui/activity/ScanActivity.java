@@ -57,6 +57,7 @@ public class ScanActivity extends BaseActivity implements QRCodeView.Delegate ,E
     private SoundPool mSoundPool = null;
     private SparseIntArray soundID = new SparseIntArray();
     private PhotoUtils mPhotoUtils;
+    private TextView mTvTip;
 
 
     public static void actionStart(Activity activity) {
@@ -83,6 +84,7 @@ public class ScanActivity extends BaseActivity implements QRCodeView.Delegate ,E
         mZXingView = findViewById(R.id.zxingview);
         mTvTitle = findViewById(R.id.tv_title);
         mCbScan = findViewById(R.id.cb_scan);
+        mTvTip = ((TextView) findViewById(R.id.tv_tip));
         TextView tvRight = findViewById(R.id.text_right);
         tvRight.setText("图片");
         tvRight.setVisibility(View.VISIBLE);
@@ -191,11 +193,14 @@ public class ScanActivity extends BaseActivity implements QRCodeView.Delegate ,E
 //        setResult(RESULT_OK, data);
 //        result = "z2mlAvb0c";// 测试用
         if (!TextUtils.isEmpty(result)) {
+            mTvTip.setText("识别成功");
             if (result.contains(",")) {
                 toGroupApply(result);
             } else {
                 toUserApply(result);
             }
+        } else {
+            mTvTip.setText("信息未识别");
         }
 
     }
@@ -210,6 +215,7 @@ public class ScanActivity extends BaseActivity implements QRCodeView.Delegate ,E
         Intent intent = new Intent(this, UserDetailActivity.class);
         UserInfo userInfo = RongUserInfoManager.getInstance().getUserInfo(result);
         if (userInfo == null) {
+            mTvTip.setText("信息未识别");
             if (BuildConfig.DEBUG) {
                 NToast.shortToast(mContext, result);
             }

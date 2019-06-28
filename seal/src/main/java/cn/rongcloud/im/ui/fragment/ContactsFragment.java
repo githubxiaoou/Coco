@@ -209,6 +209,7 @@ public class ContactsFragment extends Fragment implements View.OnClickListener {
         switch (v.getId()) {
             case R.id.re_newfriends:
                 mUnreadTextView.setVisibility(View.GONE);
+                BroadcastManager.getInstance(getActivity()).sendBroadcast(SealAppContext.UPDATE_RED_DOT, "clear");
                 Intent intent = new Intent(getActivity(), NewFriendListActivity.class);
                 startActivityForResult(intent, 20);
                 break;

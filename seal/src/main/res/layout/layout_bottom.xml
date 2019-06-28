@@ -88,35 +88,49 @@
             android:layout_weight="1"
             android:padding="3dp">
 
-            <RelativeLayout
+            <FrameLayout
                 android:layout_width="60dp"
                 android:layout_height="match_parent"
-                android:layout_centerHorizontal="true"
-                android:gravity="center">
+                android:layout_centerHorizontal="true">
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="2dp"
+                    android:layout_centerHorizontal="true"
+                    android:gravity="center">
+
+                    <ImageView
+                        android:id="@+id/tab_img_contact"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerHorizontal="true"
+                        android:background="#ffffff"
+                        android:focusable="false"
+                        android:scaleType="centerInside" />
+                    <!--android:src="@drawable/tab_contact_list"-->
+
+                    <TextView
+                        android:id="@+id/tab_text_contact"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/tab_img_contact"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="3dp"
+                        android:text="@string/contacts"
+                        android:textColor="#abadbb"
+                        android:textSize="12sp" />
+                </RelativeLayout>
 
                 <ImageView
-                    android:id="@+id/tab_img_contact"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerHorizontal="true"
-                    android:background="#ffffff"
-                    android:focusable="false"
-                    android:scaleType="centerInside" />
-                <!--android:src="@drawable/tab_contact_list"-->
+                    android:id="@+id/contact_red"
+                    android:layout_width="10dp"
+                    android:layout_height="10dp"
+                    android:layout_gravity="right"
+                    android:layout_marginRight="16dp"
+                    android:background="@drawable/aii"
+                    android:visibility="gone" />
+            </FrameLayout>
 
-                <TextView
-                    android:id="@+id/tab_text_contact"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/tab_img_contact"
-                    android:layout_centerHorizontal="true"
-                    android:layout_marginTop="3dp"
-                    android:text="@string/contacts"
-                    android:textColor="#abadbb"
-                    android:textSize="12sp" />
-
-
-            </RelativeLayout>
         </RelativeLayout>
 
         <!--<RelativeLayout
@@ -171,6 +185,7 @@
 
                 <RelativeLayout
                     android:layout_width="match_parent"
+                    android:layout_marginBottom="2dp"
                     android:layout_height="match_parent"
                     android:gravity="center">
 
@@ -203,7 +218,7 @@
                     android:layout_gravity="right"
                     android:layout_marginRight="16dp"
                     android:background="@drawable/aii"
-                    android:visibility="visible" />
+                    android:visibility="gone" />
 
             </FrameLayout>
         </RelativeLayout>

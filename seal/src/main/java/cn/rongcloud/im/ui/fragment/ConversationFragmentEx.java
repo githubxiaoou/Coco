@@ -22,6 +22,8 @@ import java.util.Map;
 
 import cn.rongcloud.im.R;
 import cn.rongcloud.im.SealCSEvaluateInfo;
+import cn.rongcloud.im.SealUserInfoManager;
+import cn.rongcloud.im.db.GroupMember;
 import cn.rongcloud.im.message.GifMessage;
 import cn.rongcloud.im.message.manager.SendGifManager;
 import cn.rongcloud.im.model.NetData;
@@ -108,6 +110,42 @@ public class ConversationFragmentEx extends ConversationFragment {
         getBgImage();
         addForward();
         addCollection();
+        if (mConversationType == Conversation.ConversationType.GROUP) {
+            judgeIfInGroup();
+        }
+    }
+
+    private void judgeIfInGroup() {
+        SealUserInfoManager.getInstance().getGroupMembers(mTargetId, new SealUserInfoManager.ResultCallback<List<GroupMember>>() {
+            @Override
+            public void onSuccess(List<GroupMember> groupMembers) {
+                if (groupMembers != null) {
+                    for (int i = 0; i < groupMembers.size(); i++) {
+                        GroupMember member = groupMembers.get(i);
+                        if (mUserId.equals(member.getUserId())) {
+                            return;
+                        }
+                    }
+                }
+                RongIM.getInstance().removeConversation(Conversation.ConversationType.GROUP, mTargetId, new RongIMClient.ResultCallback<Boolean>() {
+                    @Override
+                    public void onSuccess(Boolean aBoolean) {
+                        NToast.shortToast(getActivity(), "您已非本群成员");
+                        getActivity().finish();
+                    }
+
+                    @Override
+                    public void onError(RongIMClient.ErrorCode errorCode) {
+
+                    }
+                });
+            }
+
+            @Override
+            public void onError(String errString) {
+                LoadDialog.dismiss(getActivity());
+            }
+        }, true);
     }
 
     @Override
