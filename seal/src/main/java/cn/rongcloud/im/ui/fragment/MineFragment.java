@@ -199,7 +199,7 @@ public class MineFragment extends Fragment implements View.OnClickListener {
                 break;
             case R.id.mine_about:
                 mNewVersionView.setVisibility(View.GONE);
-                BroadcastManager.getInstance(getActivity()).sendBroadcast(SHOW_RED, "clear");
+                BroadcastManager.getInstance(getActivity()).sendBroadcast(SealAppContext.CLEAR_MINE_RED);
                 Intent intent = new Intent(getActivity(), AboutRongCloudActivity.class);
                 intent.putExtra("isHasNewVersion", isHasNewVersion);
                 if (!TextUtils.isEmpty(url)) {

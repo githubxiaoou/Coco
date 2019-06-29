@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_alignParentBottom="true"
-    android:background="#f9f9f9"
-    android:orientation="vertical">
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_alignParentBottom="true"
+              android:background="#f9f9f9"
+              android:orientation="vertical">
 
     <View
         android:layout_width="match_parent"
@@ -35,7 +36,6 @@
 
                 <RelativeLayout
                     android:id="@+id/ll"
-                    android:layout_marginBottom="2dp"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_centerHorizontal="true"
@@ -48,6 +48,7 @@
                         android:layout_centerHorizontal="true"
                         android:background="#ffffff"
                         android:focusable="false"
+                        tools:src="@drawable/tab_chat"
                         android:scaleType="centerInside" />
 
                     <TextView
@@ -85,18 +86,16 @@
             android:id="@+id/seal_contact_list"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:padding="3dp">
+            android:layout_weight="1">
 
             <FrameLayout
-                android:layout_width="60dp"
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_centerHorizontal="true">
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_marginBottom="2dp"
-                    android:layout_centerHorizontal="true"
                     android:gravity="center">
 
                     <ImageView
@@ -105,6 +104,7 @@
                         android:layout_height="wrap_content"
                         android:layout_centerHorizontal="true"
                         android:background="#ffffff"
+                        tools:src="@drawable/tab_contacts"
                         android:focusable="false"
                         android:scaleType="centerInside" />
                     <!--android:src="@drawable/tab_contact_list"-->
@@ -115,7 +115,7 @@
                         android:layout_height="wrap_content"
                         android:layout_below="@id/tab_img_contact"
                         android:layout_centerHorizontal="true"
-                        android:layout_marginTop="3dp"
+                        android:layout_marginTop="2dp"
                         android:text="@string/contacts"
                         android:textColor="#abadbb"
                         android:textSize="12sp" />
@@ -175,11 +175,10 @@
             android:id="@+id/seal_me"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:padding="3dp">
+            android:layout_weight="1">
 
             <FrameLayout
-                android:layout_width="60dp"
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_centerHorizontal="true">
 
@@ -196,6 +195,7 @@
                         android:layout_centerHorizontal="true"
                         android:background="#ffffff"
                         android:focusable="false"
+                        tools:src="@drawable/tab_me"
                         android:scaleType="centerInside" />
 
                     <TextView
@@ -204,7 +204,7 @@
                         android:layout_height="wrap_content"
                         android:layout_below="@id/tab_img_me"
                         android:layout_centerHorizontal="true"
-                        android:layout_marginTop="3dp"
+                        android:layout_marginTop="2dp"
                         android:text="@string/me"
                         android:textColor="#abadbb"
                         android:textSize="12sp" />

@@ -83,6 +83,8 @@ public class SealAppContext implements RongIM.ConversationListBehaviorListener,
     public static final String GROUP_DISMISS = "group_dismiss";
     public static final String CHANGE_CREATOR = "change_creator";
     public static final String GET_ALL_USER = "get_all_user";
+    public static final String CLEAR_CONTACT_RED = "clear_contact_red";
+    public static final String CLEAR_MINE_RED = "clear_mine_red";
 
     private Context mContext;
 

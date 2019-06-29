@@ -153,16 +153,26 @@ public class MainActivity extends BaseActivity implements
 
             @Override
             public void onReceive(Context context, Intent intent) {
-                String string = intent.getStringExtra("String");
-                mMineRed.setVisibility(!TextUtils.isEmpty(string) && string.equals("clear") ? View.GONE : View.VISIBLE);
+                mMineRed.setVisibility(View.VISIBLE);
             }
         });
         BroadcastManager.getInstance(mContext).addAction(SealAppContext.UPDATE_RED_DOT, new BroadcastReceiver() {
 
             @Override
             public void onReceive(Context context, Intent intent) {
-                String string = intent.getStringExtra("String");
-                mContactRed.setVisibility(!TextUtils.isEmpty(string) && string.equals("clear") ? View.GONE : View.VISIBLE);
+                mContactRed.setVisibility(View.VISIBLE);
+            }
+        });
+        BroadcastManager.getInstance(mContext).addAction(SealAppContext.CLEAR_CONTACT_RED, new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                mContactRed.setVisibility(View.GONE);
+            }
+        });
+        BroadcastManager.getInstance(mContext).addAction(SealAppContext.CLEAR_MINE_RED, new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                mMineRed.setVisibility(View.GONE);
             }
         });
     }
