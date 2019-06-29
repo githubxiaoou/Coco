@@ -380,13 +380,13 @@ public class GroupManageActivity extends BaseActivity implements View.OnClickLis
                 .doOnTerminate(new Action() {
                     @Override
                     public void run() throws Exception {
+                        getInviteList();
                         LoadDialog.dismiss(mContext);
                     }
                 }).observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new NetObserver<NetData>() {
                     @Override
                     public void Successful(NetData listNetData) {
-                        getInviteList();
                     }
 
                     @Override
