@@ -25,7 +25,9 @@ import cn.rongcloud.im.SealUserInfoManager;
 import cn.rongcloud.im.SealAppContext;
 import cn.rongcloud.im.SealConst;
 import cn.rongcloud.im.db.Friend;
+import cn.rongcloud.im.server.SealAction;
 import cn.rongcloud.im.server.network.async.AsyncTaskManager;
+import cn.rongcloud.im.server.network.async.OnDataListener;
 import cn.rongcloud.im.server.network.http.HttpException;
 import cn.rongcloud.im.server.response.FriendInvitationResponse;
 import cn.rongcloud.im.server.response.GetUserInfoByPhoneResponse;
@@ -36,7 +38,9 @@ import cn.rongcloud.im.server.widget.LoadDialog;
 import cn.rongcloud.im.server.widget.SelectableRoundedImageView;
 import io.rong.imageloader.core.ImageLoader;
 import io.rong.imkit.RongConfigurationManager;
+import io.rong.imkit.RongIM;
 import io.rong.imkit.utilities.LangUtils;
+import io.rong.imlib.RongIMClient;
 import io.rong.imlib.model.UserInfo;
 
 public class SearchFriendActivity extends BaseActivity implements View.OnClickListener  {
@@ -201,6 +205,7 @@ public class SearchFriendActivity extends BaseActivity implements View.OnClickLi
                     FriendInvitationResponse fres = (FriendInvitationResponse) result;
                     if (fres.getCode() == 200) {
                         NToast.shortToast(mContext, getString(R.string.request_success));
+                        removeFromBlackList();
                         LoadDialog.dismiss(mContext);
                     } else {
                         NToast.shortToast(mContext, mContext.getString(R.string.quest_failed_error_code) + fres.getCode());
@@ -381,5 +386,46 @@ public class SearchFriendActivity extends BaseActivity implements View.OnClickLi
             mCountryCodeTv.setText(zipCode);
             mCountryNameTv.setText(countryName);
         }
+    }
+
+    private void removeFromBlackList() {
+        RongIM.getInstance().getBlacklistStatus(mFriendId, new RongIMClient.ResultCallback<RongIMClient.BlacklistStatus>() {
+            @Override
+            public void onSuccess(RongIMClient.BlacklistStatus blacklistStatus) {
+                if (blacklistStatus == RongIMClient.BlacklistStatus.IN_BLACK_LIST) {
+                    RongIM.getInstance().removeFromBlacklist(mFriendId, new RongIMClient.OperationCallback() {
+                        @Override
+                        public void onSuccess() {
+                            AsyncTaskManager.getInstance(mContext).request(111, new OnDataListener() {
+                                @Override
+                                public Object doInBackground(int requestCode, String parameter) throws HttpException {
+                                    return new SealAction(mContext).removeFromBlackList(mFriendId);
+                                }
+
+                                @Override
+                                public void onSuccess(int requestCode, Object result) {
+                                    SealUserInfoManager.getInstance().deleteBlackList(mFriendId);
+                                }
+
+                                @Override
+                                public void onFailure(int requestCode, int state, Object result) {
+
+                                }
+                            });
+                        }
+
+                        @Override
+                        public void onError(RongIMClient.ErrorCode errorCode) {
+                        }
+
+                    });
+                }
+            }
+
+            @Override
+            public void onError(RongIMClient.ErrorCode e) {
+
+            }
+        });
     }
 }

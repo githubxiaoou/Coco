@@ -107,13 +107,13 @@ public class ConversationFragmentEx extends ConversationFragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         sp = getActivity().getSharedPreferences("config", 0x0000);
-        getBgImage();
         addForward();
         addCollection();
         if (mConversationType == Conversation.ConversationType.GROUP) {
             judgeIfInGroup();
         }
     }
+
 
     private void judgeIfInGroup() {
         SealUserInfoManager.getInstance().getGroupMembers(mTargetId, new SealUserInfoManager.ResultCallback<List<GroupMember>>() {
@@ -151,6 +151,7 @@ public class ConversationFragmentEx extends ConversationFragment {
     @Override
     public void onResume() {
         super.onResume();
+        getBgImage();
         if (mConversationType != Conversation.ConversationType.PRIVATE) {
             // 群聊为管理员和群主添加撤回按钮
             getGroupDetail();

@@ -285,33 +285,6 @@ public class SealAppContext implements RongIM.ConversationListBehaviorListener,
                                     CharacterParser.getInstance().getSpelling(contactNotificationMessageData.getSourceUserNickname()),
                                     null));
 
-                    // 重新添加好友后，把对方重新移出黑名单
-                    RongIM.getInstance().removeFromBlacklist(contactNotificationMessage.getSourceUserId(), new RongIMClient.OperationCallback() {
-                        @Override
-                        public void onSuccess() {
-                            AsyncTaskManager.getInstance(mContext).request(111, new OnDataListener() {
-                                @Override
-                                public Object doInBackground(int requestCode, String parameter) throws HttpException {
-                                    return new SealAction(mContext).removeFromBlackList(contactNotificationMessage.getSourceUserId());
-                                }
-
-                                @Override
-                                public void onSuccess(int requestCode, Object result) {
-                                    SealUserInfoManager.getInstance().deleteBlackList(contactNotificationMessage.getSourceUserId());
-                                }
-
-                                @Override
-                                public void onFailure(int requestCode, int state, Object result) {
-
-                                }
-                            });
-                        }
-
-                        @Override
-                        public void onError(RongIMClient.ErrorCode errorCode) {
-                        }
-
-                    });
                 }
                 BroadcastManager.getInstance(mContext).sendBroadcast(UPDATE_FRIEND);
                 BroadcastManager.getInstance(mContext).sendBroadcast(UPDATE_RED_DOT);
