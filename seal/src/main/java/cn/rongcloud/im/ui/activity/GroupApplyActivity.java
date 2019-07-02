@@ -7,19 +7,17 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.alibaba.fastjson.JSONException;
+
 import java.util.Collections;
-import java.util.List;
 
 import cn.rongcloud.im.App;
 import cn.rongcloud.im.R;
 import cn.rongcloud.im.SealConst;
-import cn.rongcloud.im.SealUserInfoManager;
-import cn.rongcloud.im.db.GroupMember;
 import cn.rongcloud.im.model.NetData;
 import cn.rongcloud.im.net.HttpUtil;
 import cn.rongcloud.im.net.NetObserver;
 import cn.rongcloud.im.server.network.http.HttpException;
-import cn.rongcloud.im.server.response.AddGroupMemberResponse;
 import cn.rongcloud.im.server.response.GetGroupDetailResponse;
 import cn.rongcloud.im.server.utils.NToast;
 import cn.rongcloud.im.server.widget.LoadDialog;
@@ -154,6 +152,10 @@ public class GroupApplyActivity extends BaseActivity implements View.OnClickList
         switch (requestCode) {
             case ADD_GROUP_MEMBER:
                 LoadDialog.dismiss(mContext);
+                if (result instanceof JSONException) {
+                    NToast.shortToast(mContext, "您已经是这个群聊成员");
+                    return;
+                }
                 NToast.shortToast(mContext, mContext.getString(R.string.add_group_member_request_failed));
                 break;
         }

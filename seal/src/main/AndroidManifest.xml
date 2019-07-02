@@ -512,7 +512,8 @@
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.Translucent.NoTitleBar"/>
         <activity android:name=".ui.activity.UpdateMailActivity"/>
-        <activity android:name=".ui.activity.ScanActivity"/>
+        <activity android:name=".ui.activity.ScanActivity"
+            android:screenOrientation="portrait"/>
         <activity android:name=".ui.activity.groupmanage.GroupManageActivity"/>
         <activity
             android:name=".ui.activity.forward.ForwardDetailActivity"

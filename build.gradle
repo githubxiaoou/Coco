@@ -1,6 +1,7 @@
 buildscript {
     repositories {
         jcenter()
+        maven { url 'https://dl.bintray.com/umsdk/release' }
         mavenCentral()
         google()
     }
@@ -14,6 +15,7 @@ buildscript {
 allprojects {
     repositories {
         jcenter()
+        maven { url 'https://dl.bintray.com/umsdk/release' }
         mavenCentral()
         maven {
             url 'https://maven.google.com/'

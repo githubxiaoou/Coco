@@ -20,6 +20,8 @@ import android.view.View;
 //import com.facebook.stetho.inspector.database.DefaultDatabaseConnectionProvider;
 //import com.facebook.stetho.inspector.protocol.ChromeDevtoolsDomain;
 
+import com.umeng.commonsdk.UMConfigure;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -68,6 +70,8 @@ public class App extends MultiDexApplication {
 
         super.onCreate();
         sInstance = this;
+        UMConfigure.init(this, "5d1ac0594ca35764f3000be7", "Umeng", UMConfigure.DEVICE_TYPE_PHONE,
+                null);
 
         // fackbook的拦截器和retrofit冲突
 //        Stetho.initialize(new Stetho.Initializer(this) {

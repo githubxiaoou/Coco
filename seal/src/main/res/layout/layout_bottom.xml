@@ -67,17 +67,14 @@
                     android:id="@+id/seal_num"
                     android:layout_width="19dp"
                     android:layout_height="19dp"
-                    android:layout_gravity="right"
+                    android:layout_gravity="center_horizontal"
                     android:layout_marginTop="2dp"
-                    android:layout_marginRight="19dp"
-                    android:layout_toRightOf="@id/ll"
+                    android:layout_marginStart="20dp"
                     android:textColor="@android:color/white"
                     android:textSize="12sp"
-                    android:visibility="invisible" />
-
-
+                    android:visibility="invisible"
+                    android:layout_marginLeft="20dp" />
             </FrameLayout>
-
 
         </RelativeLayout>
 
@@ -123,10 +120,12 @@
                     android:id="@+id/contact_red"
                     android:layout_width="10dp"
                     android:layout_height="10dp"
-                    android:layout_gravity="right"
-                    android:layout_marginRight="16dp"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginStart="20dp"
                     android:background="@drawable/aii"
-                    android:visibility="gone" />
+                    android:visibility="gone"
+                    android:layout_marginTop="2dp"
+                    android:layout_marginLeft="20dp" />
             </FrameLayout>
 
         </RelativeLayout>
@@ -212,10 +211,12 @@
                     android:id="@+id/mine_red"
                     android:layout_width="10dp"
                     android:layout_height="10dp"
-                    android:layout_gravity="right"
-                    android:layout_marginRight="16dp"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginStart="20dp"
                     android:background="@drawable/aii"
-                    android:visibility="gone" />
+                    android:layout_marginTop="2dp"
+                    android:visibility="gone"
+                    android:layout_marginLeft="20dp" />
 
             </FrameLayout>
         </RelativeLayout>
