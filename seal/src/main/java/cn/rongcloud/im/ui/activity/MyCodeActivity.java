@@ -53,6 +53,10 @@ public class MyCodeActivity extends BaseActivity implements View.OnClickListener
 
     private void initData() {
         mUserInfo = RongUserInfoManager.getInstance().getUserInfo(mLoginId);
+        if (mUserInfo == null) {
+            NToast.shortToast(mContext, "用户信息获取失败，请重新登录");
+            return;
+        }
         ImageLoader.getInstance().displayImage(mUserInfo.getPortraitUri().toString(), mIvPortrait, App.getOptions());
         mTvName.setText(mUserInfo.getName());
         Observable.create(new ObservableOnSubscribe<Bitmap>() {

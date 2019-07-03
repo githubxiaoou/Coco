@@ -117,27 +117,7 @@ public class GroupListActivity extends BaseActivity {
         @Override
         public void onItemClick(final AdapterView<?> parent, final View view, final int position, final long id) {
             final Groups bean = (Groups) adapter.getItem(position);
-            SealUserInfoManager.getInstance().getGroupMembers(bean.getGroupsId(), new SealUserInfoManager.ResultCallback<List<GroupMember>>() {
-                @Override
-                public void onSuccess(List<GroupMember> groupMembers) {
-                    if (groupMembers != null) {
-                        for (int i = 0; i < groupMembers.size(); i++) {
-                            GroupMember member = groupMembers.get(i);
-                            if (mUserId.equals(member.getUserId())) {
-                                RongIM.getInstance().startGroupChat(GroupListActivity.this, bean.getGroupsId(), bean.getName());
-                                return;
-                            }
-                        }
-                    }
-                    NToast.shortToast(mContext, "你已经不是该群成员，不能查看群内消息");
-                }
-
-                @Override
-                public void onError(String errString) {
-
-                }
-            }, true);
-
+            RongIM.getInstance().startGroupChat(GroupListActivity.this, bean.getGroupsId(), bean.getName());
         }
     }
 

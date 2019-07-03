@@ -152,4 +152,9 @@ public interface ServiceS {
                                                @Query("chat_id") String chatId,
                                                @Query("img_url") String imgUrl,
                                                @Query("type") String type);// 1:群组聊天 2:单人聊天 3:全局聊天
+
+    /*解散群聊通知：群主解散群的时候调用一下，发送通知给群成员*/
+    @GET("group/dismiss-group")
+    Observable<NetData> dismissGroup(@Query("group_id") String groupId,
+                                     @Query("user_id") String userId);
 }

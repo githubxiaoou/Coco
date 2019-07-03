@@ -18,6 +18,7 @@ import io.rong.imlib.RongIMClient;
 public class NewMessageRemindActivity extends BaseActivity {
 
     private SharedPreferences.Editor editor;
+    private RelativeLayout mNotice;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,7 +31,7 @@ public class NewMessageRemindActivity extends BaseActivity {
         editor = sp.edit();
         boolean isOpenDisturb = sp.getBoolean("isOpenDisturb", true);
 
-        final RelativeLayout mNotice = (RelativeLayout) findViewById(R.id.seal_notice);
+        mNotice = (RelativeLayout) findViewById(R.id.seal_notice);
         SwitchButton switchButton = (SwitchButton) findViewById(R.id.remind_switch);
 
         switchButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -73,6 +74,13 @@ public class NewMessageRemindActivity extends BaseActivity {
             }
         });
 
+        mNotice.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(NewMessageRemindActivity.this, MessageDisturbActivity.class));
+            }
+        });
+
         switchButton.setChecked(isOpenDisturb);
         if (isOpenDisturb) {
             mNotice.setClickable(true);
@@ -82,11 +90,5 @@ public class NewMessageRemindActivity extends BaseActivity {
             mNotice.setBackgroundColor(Color.parseColor("#f0f0f6"));
         }
 
-        mNotice.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(NewMessageRemindActivity.this, MessageDisturbActivity.class));
-            }
-        });
     }
 }

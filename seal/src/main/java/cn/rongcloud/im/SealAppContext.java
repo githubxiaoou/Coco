@@ -51,6 +51,7 @@ import io.rong.imlib.model.Conversation;
 import io.rong.imlib.model.Group;
 import io.rong.imlib.model.Message;
 import io.rong.imlib.model.MessageContent;
+import io.rong.imlib.model.UnknownMessage;
 import io.rong.imlib.model.UserInfo;
 import io.rong.message.ContactNotificationMessage;
 import io.rong.message.GroupNotificationMessage;
@@ -383,6 +384,15 @@ public class SealAppContext implements RongIM.ConversationListBehaviorListener,
             if (informationNotificationMessage.getMessage().contains("已成为新群主")) {
 //                BroadcastManager.getInstance(mContext).sendBroadcast(CHANGE_CREATOR);
             }
+        } else if (messageContent instanceof UnknownMessage) {
+            String objectName = message.getObjectName();
+            if (objectName != null) {
+                String groupId = objectName.substring(objectName.indexOf(":") + 1);
+                if (!TextUtils.isEmpty(groupId)) {
+                    hangUpWhenQuitGroup();      //挂断电话
+                    handleGroupDismiss(groupId);
+                }
+            }
         }
         return false;
     }
@@ -395,6 +405,17 @@ public class SealAppContext implements RongIM.ConversationListBehaviorListener,
                     @Override
                     public void onSuccess(Boolean aBoolean) {
                         RongIM.getInstance().removeConversation(Conversation.ConversationType.GROUP, groupID, null);
+                    }
+
+                    @Override
+                    public void onError(RongIMClient.ErrorCode e) {
+
+                    }
+                });
+                RongIM.getInstance().clearMessages(Conversation.ConversationType.PRIVATE, "__system__", new RongIMClient.ResultCallback<Boolean>() {
+                    @Override
+                    public void onSuccess(Boolean aBoolean) {
+                        RongIM.getInstance().removeConversation(Conversation.ConversationType.PRIVATE, "__system__", null);
                     }
 
                     @Override

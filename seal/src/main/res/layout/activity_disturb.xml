@@ -4,11 +4,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="@color/seal_bg"
     android:visibility="visible">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@drawable/btn_list_item_bg"
         android:layout_marginBottom="8dp"
         android:layout_marginTop="8dp">
 
@@ -56,6 +58,7 @@
             android:layout_marginBottom="12dp"
             android:layout_marginLeft="24dp"
             android:layout_marginRight="13dp"
+            android:textColor="@color/color_gray_text"
             android:text="@string/de_notification_information" />
 
     </RelativeLayout>
@@ -67,6 +70,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
+        android:background="@drawable/btn_list_item_bg"
         android:visibility="gone">
 
         <RelativeLayout
@@ -90,6 +94,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
+                android:textColor="@color/color_gray_text"
                 android:layout_marginBottom="16dp"
                 android:layout_marginRight="18dp"
                 android:layout_marginTop="18dp" />
@@ -99,6 +104,7 @@
 
         <RelativeLayout
             android:id="@+id/end_notification"
+            android:background="@drawable/btn_list_item_bg"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
@@ -118,6 +124,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
+                android:textColor="@color/color_gray_text"
                 android:layout_marginBottom="16dp"
                 android:layout_marginRight="18dp"
                 android:layout_marginTop="18dp" />

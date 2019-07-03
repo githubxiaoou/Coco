@@ -72,7 +72,6 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.Action;
 import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
-import io.rong.contactcard.activities.ContactListActivity;
 import io.rong.imageloader.core.ImageLoader;
 import io.rong.imkit.RongIM;
 import io.rong.imkit.emoticon.AndroidEmoji;
@@ -449,6 +448,22 @@ public class GroupDetailActivity extends BaseActivity implements View.OnClickLis
 
                             }
                         });
+                        HttpUtil.apiS()
+                                .dismissGroup(mGroup.getGroupsId(), mCreatorId)
+                                .subscribeOn(Schedulers.io())
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe(new NetObserver<NetData>() {
+                                    @Override
+                                    public void Successful(NetData netData) {
+                                        Log.e("swo", "解散消息发送成功");
+                                    }
+
+                                    @Override
+                                    public void Failure(Throwable t) {
+
+                                    }
+                                });
+
                         SealUserInfoManager.getInstance().deleteGroups(new Groups(fromConversationId));
                         SealUserInfoManager.getInstance().deleteGroupMembers(fromConversationId);
                         BroadcastManager.getInstance(mContext).sendBroadcast(SealConst.GROUP_LIST_UPDATE);

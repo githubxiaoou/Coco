@@ -837,15 +837,17 @@ public class SealUserInfoManager implements OnDataListener {
         if (list != null && list.size() > 0) {
             mGroupsList = new ArrayList<>();
             for (GetGroupResponse.ResultEntity groups : list) {
-                String portrait = groups.getGroup().getPortraitUri();
-                if (TextUtils.isEmpty(portrait)) {
-                    portrait = RongGenerate.generateDefaultAvatar(groups.getGroup().getName(), groups.getGroup().getId());
+                if (groups.getGroup() != null) {
+                    String portrait = groups.getGroup().getPortraitUri();
+                    if (TextUtils.isEmpty(portrait)) {
+                        portrait = RongGenerate.generateDefaultAvatar(groups.getGroup().getName(), groups.getGroup().getId());
+                    }
+                    mGroupsList.add(new Groups(groups.getGroup().getId(),
+                            groups.getGroup().getName(),
+                            portrait,
+                            String.valueOf(groups.getRole())
+                    ));
                 }
-                mGroupsList.add(new Groups(groups.getGroup().getId(),
-                        groups.getGroup().getName(),
-                        portrait,
-                        String.valueOf(groups.getRole())
-                ));
             }
             if (mGroupsList.size() > 0) {
                 if (mGroupsDao != null) {

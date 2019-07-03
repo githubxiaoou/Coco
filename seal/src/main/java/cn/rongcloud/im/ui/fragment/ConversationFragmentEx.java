@@ -199,7 +199,7 @@ public class ConversationFragmentEx extends ConversationFragment {
         // 如果原来有撤回按钮，先移除。统一添加
         List<MessageItemLongClickAction> actions = RongMessageItemLongClickActionManager.getInstance().getMessageItemLongClickActions();
         for (int i = 0; i < actions.size(); i++) {
-            if (actions.get(i).getTitle(getActivity()).contains("撤回")) {
+            if ("撤回消息".equals(actions.get(i).getTitle(getActivity()))) {
                 RongMessageItemLongClickActionManager.getInstance().removeMessageItemLongClickAction(actions.get(i));
             }
         }
