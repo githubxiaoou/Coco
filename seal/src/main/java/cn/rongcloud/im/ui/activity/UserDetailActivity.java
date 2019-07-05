@@ -45,6 +45,7 @@ import io.rong.imageloader.core.ImageLoader;
 import io.rong.imkit.RongIM;
 import io.rong.imlib.IRongCallback;
 import io.rong.imlib.RongIMClient;
+import io.rong.imlib.model.Conversation;
 import io.rong.imlib.model.UserInfo;
 import io.rong.imlib.model.UserOnlineStatusInfo;
 
@@ -85,6 +86,7 @@ public class UserDetailActivity extends BaseActivity implements View.OnClickList
 
     private UserDetailActivityHandler mHandler = new UserDetailActivityHandler(this);
     private String mTargetId;// 只有在聊天头像点进来的用户详情会有这个id
+    private int mConversationType;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -114,6 +116,7 @@ public class UserDetailActivity extends BaseActivity implements View.OnClickList
     private void initData() {
         sp = getSharedPreferences("config", MODE_PRIVATE);
         mUserId = sp.getString(SealConst.SEALTALK_LOGIN_ID, "");
+        mConversationType = getIntent().getIntExtra("conversationType", -1);
         mType = getIntent().getIntExtra("type", 0);
         openProtect = getIntent().getBooleanExtra("openProtect", false);
         mTargetId = getIntent().getStringExtra("targetId");
@@ -254,6 +257,11 @@ public class UserDetailActivity extends BaseActivity implements View.OnClickList
     }
 
     public void startChat(View view) {
+        if (mConversationType == Conversation.ConversationType.PRIVATE.getValue()) {
+            // 私聊页面直接返回，不重新创建新的会话页面。
+            finish();
+            return;
+        }
         String displayName = mFriend.getDisplayName();
         if (!TextUtils.isEmpty(displayName)) {
             RongIM.getInstance().startPrivateChat(mContext, mFriend.getUserId(), displayName);
