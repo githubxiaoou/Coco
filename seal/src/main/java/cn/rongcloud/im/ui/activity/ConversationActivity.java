@@ -1,6 +1,7 @@
 package cn.rongcloud.im.ui.activity;
 
 import android.annotation.TargetApi;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -26,18 +27,11 @@ import java.util.Locale;
 import cn.rongcloud.im.R;
 import cn.rongcloud.im.SealAppContext;
 import cn.rongcloud.im.SealConst;
-import cn.rongcloud.im.model.NetData;
-import cn.rongcloud.im.net.HttpUtil;
-import cn.rongcloud.im.net.NetObserver;
-import cn.rongcloud.im.server.response.GetGroupDetailResponse;
+import cn.rongcloud.im.server.broadcast.BroadcastManager;
 import cn.rongcloud.im.server.utils.NLog;
 import cn.rongcloud.im.server.utils.NToast;
-import cn.rongcloud.im.server.widget.LoadDialog;
 import cn.rongcloud.im.ui.fragment.ConversationFragmentEx;
 import cn.rongcloud.im.ui.widget.LoadingDialog;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.functions.Action;
-import io.reactivex.schedulers.Schedulers;
 import io.rong.imkit.RongIM;
 import io.rong.imkit.RongKitIntent;
 import io.rong.imkit.fragment.UriFragment;
@@ -137,6 +131,13 @@ public class ConversationActivity extends BaseActivity implements View.OnClickLi
         title = intent.getData().getQueryParameter("title");
 
         setActionBarTitle(mConversationType, mTargetId);
+        BroadcastManager.getInstance(mContext).addAction(SealConst.SEALTALK_UPDATE_GROUP_TITLE, new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                title = intent.getStringExtra("String");
+                setActionBarTitle(mConversationType, mTargetId);
+            }
+        });
 
 
         if (mConversationType.equals(Conversation.ConversationType.GROUP)) {

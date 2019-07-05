@@ -523,6 +523,7 @@ public class GroupDetailActivity extends BaseActivity implements View.OnClickLis
                         );
                         mGroupName.setText(newGroupName);
                         RongIM.getInstance().refreshGroupInfoCache(new Group(fromConversationId, newGroupName, TextUtils.isEmpty(mGroup.getPortraitUri()) ? Uri.parse(RongGenerate.generateDefaultAvatar(newGroupName, mGroup.getGroupsId())) : Uri.parse(mGroup.getPortraitUri())));
+                        BroadcastManager.getInstance(mContext).sendBroadcast(SealConst.SEALTALK_UPDATE_GROUP_TITLE, newGroupName);
                         LoadDialog.dismiss(mContext);
                         NToast.shortToast(mContext, getString(R.string.update_success));
                     }
