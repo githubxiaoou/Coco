@@ -29,3 +29,6 @@ Coco项目基于Material Design + MVP + Rxjava2 + Retrofit + Dagger2 + SQLite + 
 5. 其他功能：二维码识别群聊或个人信息功能，好友添加，删除拉黑等功能。
 
 ## Preview
+<div align="center">
+    <img src="https://github.com/githubxiaoou/Seal/blob/master/raw/spy.jpg" width="280"><img src="https://github.com/githubxiaoou/Seal/blob/master/raw/hhlb.jpg" width="280"><img src="https://github.com/githubxiaoou/Seal/blob/master/raw/ltk.jpg" width="280">
+</div>
